@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "cashcontroller-app:build:production"
+              "buildTarget": "cashcontroller-app:build:production"
             },
             "development": {
-              "browserTarget": "cashcontroller-app:build:development"
+              "buildTarget": "cashcontroller-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -75,7 +75,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cashcontroller-app:build"
+            "buildTarget": "cashcontroller-app:build"
           }
         },
         "test": {
