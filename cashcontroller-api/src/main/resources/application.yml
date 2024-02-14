@@ -1,0 +1,21 @@
+server:
+  port: 8080
+spring:
+  datasource:    
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cashcontroller?useTimezone=true&serverTimezone=UTC
+    username: root
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: debug
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
