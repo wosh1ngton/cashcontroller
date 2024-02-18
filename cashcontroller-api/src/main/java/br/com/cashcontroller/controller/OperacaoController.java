@@ -2,10 +2,13 @@ package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.OperacaoRendaFixaDTO;
 import br.com.cashcontroller.dto.OperacaoRendaVariavelDTO;
+import br.com.cashcontroller.dto.TipoOperacaoDTO;
 import br.com.cashcontroller.service.OperacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -14,6 +17,15 @@ public class OperacaoController {
 
     @Autowired
     OperacaoService operacaoService;
+
+    @GetMapping("/renda-variavel")
+    public ResponseEntity<List<OperacaoRendaVariavelDTO>> getOperacoesRendaVariavel() {
+        return ResponseEntity.ok(this.operacaoService.listarOperacoesRendaVariavel());
+    }
+    @GetMapping("/tipo-operacoes")
+    public ResponseEntity<List<TipoOperacaoDTO>> getTiposOperacao() {
+        return ResponseEntity.ok(this.operacaoService.listarTipoOperacao());
+    }
 
     @PostMapping
     public ResponseEntity<OperacaoRendaVariavelDTO> cadastrarOperacaoRendaVariavel(@RequestBody OperacaoRendaVariavelDTO operacaoRendaVariavelDTO) {

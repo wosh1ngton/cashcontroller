@@ -1,0 +1,46 @@
+<form #f="ngForm">    
+        <div class="field p-fluid">
+            <label for="tipo-operacao"> Ativo Negociado </label> 
+            <p-dropdown [options]="ativos" [(ngModel)]="operacaoRendaVariavel.ativo"             
+                    optionLabel="nome" [showClear]="true"
+                    placeholder="Selecione um ativo" name="ativoDto"                   
+                    >
+            </p-dropdown>            
+        </div> 
+        <div class="field p-fluid">
+            <label for="tipo-operacao"> Tipo da Operação </label>
+            <p-dropdown [options]="tiposOperacao" 
+                [(ngModel)]="operacaoRendaVariavel.tipoOperacao" optionLabel="nome"
+                [showClear]="true" placeholder="Tipo da Operação" 
+                name="tipoOperacaoDto">
+            </p-dropdown>
+        </div>
+        <div class="field p-fluid">
+            <label for="quantidade"> Quantidade </label>
+            <p-inputNumber inputId="quantidade" 
+            [(ngModel)]="operacaoRendaVariavel.quantidadeNegociada" 
+            name="quantidadeNegociada" [useGrouping]="false"
+                [min]="0" mode="decimal"> </p-inputNumber>
+        </div>
+        <div class="field p-fluid">
+            <label for="valorAtivo"> Valor do Ativo </label>
+            <p-inputNumber inputId="valorAtivo" [min]="0" 
+            [(ngModel)]="operacaoRendaVariavel.valorUnitario" name="valorUnitario"> </p-inputNumber>
+        </div>
+        <div class="field p-fluid">
+            <label for="valorCorretagem"> Valor da Corretagem </label>
+            <p-inputNumber inputId="integeronly" [min]="0" 
+            [(ngModel)]="operacaoRendaVariavel.valorCorretagem" name="valorCorretagem">
+            </p-inputNumber>
+        </div>
+        <div class="field p-fluid">
+            <label for="icondisplay"> Data da Operação </label>
+            <p-calendar [(ngModel)]="operacaoRendaVariavel.dataOperacao" 
+                [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                dateFormat="dd.mm.yy"
+                name="dataOperacao"></p-calendar>
+        </div>
+        <div class="field p-fluid">
+            <p-button label="Cadastrar" (onClick)="save(f.value)"></p-button>
+        </div>    
+</form>

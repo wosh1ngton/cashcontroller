@@ -15,7 +15,7 @@ public interface OperacaoRendaFixaMapper {
 	
 	OperacaoRendaFixaMapper INSTANCE = Mappers.getMapper(OperacaoRendaFixaMapper.class);
 	
-	@Mapping(source = "ativo", target = "ativoDto")
+	@Mapping(source = "ativo", target = "ativoDto")	
 	@Mapping(source = "tipoOperacao", target = "tipoOperacaoDto")
 	@Mapping(source = "indexador", target = "indexadorDto")
 	OperacaoRendaFixaDTO toDTO(OperacaoRendaFixa operacaoRendaFixa);

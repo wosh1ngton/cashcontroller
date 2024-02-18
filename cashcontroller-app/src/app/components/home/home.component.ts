@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +9,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
+
+  items: MenuItem[] | undefined;
 
   ngOnInit(): void {
-  }
+    this.items = [
+      {
+          label: 'Renda Fixa',
+          icon: 'pi pi-fw pi-power-off'
+      },
+      {
+        label: 'Renda Variável',
+        icon: 'pi pi-fw pi-power-off',
+        routerLink: 'renda-variavel'        
+      },
+    ];
+    }
+  
+
+  
 
 }
