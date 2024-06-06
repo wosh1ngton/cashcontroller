@@ -2,14 +2,9 @@ package br.com.cashcontroller.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import br.com.cashcontroller.utils.Taxa;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,9 +37,13 @@ public class OperacaoRendaVariavel {
 	
 	@Column(name = "QT_ATIVO")
 	private int quantidadeNegociada;
+
+	@Column(name = "QT_VALOR_TOTAL")
+	private double valorTotal;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
+
 	
 }

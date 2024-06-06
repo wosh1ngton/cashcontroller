@@ -3,15 +3,15 @@ import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
-import { OperacaoRendaVariavel } from '../models/operacao-renda-variavel.model';
-import { MessageService, SelectItem } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { AtivoService } from 'src/app/services/ativo.service';
-import { HttpClient } from '@angular/common/http';
-import { Ativo } from '../models/ativo.model';
-import { Observable, tap } from 'rxjs';
+import { Ativo } from 'src/app/models/ativo.model';
+import { tap } from 'rxjs';
 import { OperacaoRendaVariavelService } from 'src/app/services/operacao-renda-variavel.service';
-import { TipoOperacao } from '../models/tipo-operacao.model';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TipoOperacao } from 'src/app/models/tipo-operacao.model';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { OperacaoRendaVariavelDto } from 'src/app/models/dto/operacao-renda-variavel.model';
+import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
 
 @Component({
   selector: 'app-renda-variavel-form',
@@ -27,9 +27,10 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 })
 export class RendaVariavelFormComponent {
 
-  operacaoRendaVariavel: OperacaoRendaVariavel = new OperacaoRendaVariavel();
+  operacaoRendaVariavel: OperacaoRendaVariavelDto = new OperacaoRendaVariavelDto();
   value: string | undefined;
   ativos: Ativo[] = [];
+  ativosBrapi: any;
   ativoSelecionado: any;
   tiposOperacao: TipoOperacao[] = [];
   tipoOperacaoSelecionado: any;
@@ -47,25 +48,42 @@ export class RendaVariavelFormComponent {
   {}
 
   ngOnInit(): void {
-    this.buscarAtivos();
+    this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);    
     this.buscarTiposOperacao();
   }  
 
-  private buscarAtivos() {
-    this.ativoService.getAtivos().subscribe(
+  private buscarAtivos(id: number) {
+    this.ativoService.getAtivosPorClasse(id).subscribe(
         ativos => this.ativos = ativos
     );
   }
 
+  // private buscarAtivosBrapi() {
+  //   this.ativoService.getAtivosBrapi().subscribe(
+  //       ativos => {
+  //         this.ativosBrapi = ativos.stocks.map((a:any) => { 
+  //           return {sigla: a.stock,  nome: a.name, logo: a.logo}
+  //         }) ; 
+          
+  //         console.log('teste', this.ativosBrapi)
+  //       }
+  //   );
+  // }
+
   private buscarTiposOperacao() {
-    this.operacaoRendaVariavelService.getTipoOperacoes().subscribe(     
-        tipos => this.tiposOperacao = tipos      
+    this.operacaoRendaVariavelService.getTipoOperacoes().subscribe(  
+      
+        tipos => {console.log(tipos), this.tiposOperacao = tipos      }
     );
   }
 
   save(operacao: any) {    
-    this.operacaoRendaVariavelService.save(operacao)
-    .pipe(tap(() => this.dialogRef.close(operacao)))
-    .subscribe();
+    console.log(operacao)
+    this.operacaoRendaVariavelService
+      .save(operacao)
+        .pipe(
+          tap(() => {this.dialogRef.close(operacao)})
+          )
+        .subscribe();
   }
 }

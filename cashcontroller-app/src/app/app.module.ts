@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,11 +10,21 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
+import { OperacaoRendaVariavelService } from './services/operacao-renda-variavel.service';
+import { ListarCarteiraAcoesComponent } from './components/renda-variavel/listar-carteira-acoes/listar-carteira-acoes.component';
+import { registerLocaleData } from '@angular/common';
+// Import the locale data for Brazilian Portuguese
+import localePt from '@angular/common/locales/pt';
+import localePtExtra from '@angular/common/locales/extra/pt';
+
+
+registerLocaleData(localePt, 'pt-BR', localePtExtra);
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent    
+    HomeComponent,
+    ListarCarteiraAcoesComponent
   ],
   imports: [
     BrowserModule,
@@ -22,10 +32,12 @@ import { MessageService } from 'primeng/api';
     PrimengModule,
     BrowserAnimationsModule,
     FormsModule
-  ],
+  ],  
   providers: [
     provideHttpClient(),
-    MessageService
+    MessageService,
+    OperacaoRendaVariavelService,
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],
   bootstrap: [AppComponent]
 })

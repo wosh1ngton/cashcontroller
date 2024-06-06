@@ -14,10 +14,10 @@ public interface SubclasseAtivoMapper {
 	
 	SubclasseAtivoMapper INSTANCE = Mappers.getMapper(SubclasseAtivoMapper.class);
 	
-	@Mapping(source = "classeAtivo", target = "classeAtivoDto")	
+
 	SubclasseAtivoDTO toDTO(SubclasseAtivo subclasseAtivo);
 	
-	@Mapping(source = "classeAtivoDto", target = "classeAtivo")	
+
 	SubclasseAtivo toEntity(SubclasseAtivoDTO subclasseAtivoDto);
 	
 	List<SubclasseAtivoDTO> toListDTO(List<SubclasseAtivo> subclasseAtivos);

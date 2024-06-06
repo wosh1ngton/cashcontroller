@@ -1,0 +1,25 @@
+:root {
+    --primary-color-cc: #ffffff;
+    --secondary-color-cc: #000080;
+}
+html {
+    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+}
+
+body {
+    font-size: 1rem;
+}
+
+.p-inputnumber-input {    
+    width: 100px; 
+ }
+ 
+ .p-menubar ul {
+    margin-left: 8vw;
+}
+
+.p-menubar {    
+    background-color: var(--secondary-color-cc);    
+}

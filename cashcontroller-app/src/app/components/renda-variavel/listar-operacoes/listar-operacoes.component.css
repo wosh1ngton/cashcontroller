@@ -1,0 +1,33 @@
+::ng-deep .mesSelecionado {
+    background-color:  var(--secondary-color-cc);
+    color: white;
+    border-color: var(--secondary-color-cc);
+}
+
+.venda {    
+    color: #ff5252;   
+}
+
+.compra {    
+    color: #1e7f4d;
+}
+.dialog-content {
+    height: auto;
+}
+
+.tabela-operacoes thead, .tabela-operacoes tr {
+    font-size: 13px;
+    
+}
+
+::ng-deep .p-button {
+    background-color: #000080;
+    border: none;
+}
+/* .container-filtros {
+    
+}
+
+.container-filtros-superiores {
+    
+} */

@@ -50,6 +50,11 @@ public class AtivoService {
 		List<Ativo> ativos =  ativoRepository.findAll();
 		return AtivoMapper.INSTANCE.toListDTO(ativos);
 	}
+
+	public List<AtivoDTO> listarAtivosPorClasse(int id) {
+		List<Ativo> ativos =  ativoRepository.findByClasseAtivo(id);
+		return AtivoMapper.INSTANCE.toListDTO(ativos);
+	}
 	
 	public List<SubclasseAtivoDTO> listarSubclasseAtivos() {
 		List<SubclasseAtivo> subclasseAtivos =  subclasseRepository.findAll();

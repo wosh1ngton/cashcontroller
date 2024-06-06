@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListarRendaVariavelComponent } from './listar-renda-variavel.component';
+import { ListarRendaVariavelComponent } from './listar-operacoes.component';
 
 describe('ListarRendaVariavelComponent', () => {
   let component: ListarRendaVariavelComponent;

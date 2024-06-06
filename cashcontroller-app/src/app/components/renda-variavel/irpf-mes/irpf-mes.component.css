@@ -1,0 +1,9 @@
+.tabela-irpf tbody td, .tabela-irpf thead th  {    
+    padding: 5px;
+}
+.tabela-irpf thead, .tabela-irpf tr  {
+    font-size: 12px;    
+}
+
+
+

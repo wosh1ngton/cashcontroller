@@ -1,15 +1,26 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { ListarRendaVariavelComponent } from './components/renda-variavel/listar-renda-variavel/listar-renda-variavel.component';
+
+import { ListarRendaFixaComponent } from './components/renda-fixa/listar-renda-fixa/listar-renda-fixa.component';
+import { ListarOperacoesComponent } from './components/renda-variavel/listar-operacoes/listar-operacoes.component';
+import { ListarCarteiraAcoesComponent } from './components/renda-variavel/listar-carteira-acoes/listar-carteira-acoes.component';
 
 const routes: Routes = [
   { path: '', 
     children: [
       {
         path: 'renda-variavel', 
-        component: ListarRendaVariavelComponent        
-      }
+        component: ListarOperacoesComponent
+      },
+      {
+        path: 'renda-fixa', 
+        component: ListarRendaFixaComponent
+      },
+      {
+        path: 'carteira-acoes', 
+        component: ListarCarteiraAcoesComponent
+      },
     ],
     component: HomeComponent },
   

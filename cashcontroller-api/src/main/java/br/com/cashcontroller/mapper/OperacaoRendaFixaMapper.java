@@ -25,6 +25,6 @@ public interface OperacaoRendaFixaMapper {
 	@Mapping(source = "indexadorDto", target = "indexador")
 	OperacaoRendaFixa toEntity(OperacaoRendaFixaDTO operacaoRendaFixaDto);
 	
-	List<OperacaoRendaVariavelDTO> toListDTO(List<OperacaoRendaVariavel> subclasseAtivos);
-	List<OperacaoRendaVariavel> toListEntity(List<OperacaoRendaVariavelDTO> operacoesRendaVariavel);
+	List<OperacaoRendaFixaDTO> toListDTO(List<OperacaoRendaFixa> operacoesEntity);
+	List<OperacaoRendaFixa> toListEntity(List<OperacaoRendaFixaDTO> operacoesDto);
 }

@@ -2,6 +2,7 @@ package br.com.cashcontroller.controller;
 
 import java.util.List;
 
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,12 @@ public class AtivoController {
 
 	@Autowired
 	private AtivoService ativoService;
-	
-	
+
+	@PostMapping("/em-lote")
+	ResponseEntity<List<AtivoDTO>> cadastrarAtivos(@RequestBody List<AtivoDTO> ativosDto) {
+		ativosDto.forEach(ativoDto -> this.ativoService.cadastrarAtivo(ativoDto));
+		return ResponseEntity.ok(ativosDto);
+	}
 	@PostMapping
 	ResponseEntity<AtivoDTO> cadastrarAtivo(@RequestBody AtivoDTO ativoDto) {		
 		return ResponseEntity.ok(this.ativoService.cadastrarAtivo(ativoDto));
@@ -45,6 +50,12 @@ public class AtivoController {
 	@GetMapping
 	ResponseEntity<List<AtivoDTO>> getAtivos() {
 		List<AtivoDTO> ativos = this.ativoService.listarAtivos();		
+		return ResponseEntity.ok(ativos);
+	}
+
+	@GetMapping(value = "/por-classe/{id}")
+	ResponseEntity<List<AtivoDTO>> getAtivosPorClasse(@PathVariable(value="id")  Integer id) {
+		List<AtivoDTO> ativos = this.ativoService.listarAtivosPorClasse(id);
 		return ResponseEntity.ok(ativos);
 	}
 	

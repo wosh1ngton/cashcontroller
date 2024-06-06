@@ -1,19 +1,33 @@
- <div class="container">
-    <div class="navbar">
-        <h1> Ca$hController </h1>
+<div class="grid">
+  <div class="col-12 header">
+    <div class="banner">
+      <h1> Ca$hController </h1>
+    </div> 
         <p-menubar [model]="items">
-          <ng-template pTemplate="start">
-              <span> Logo </span>
-          </ng-template>
-          <ng-template pTemplate="end">
-              <span> Sair </span>
-          </ng-template>
-      </p-menubar>
-    </div>
-    <div class="main-content">
-      <router-outlet></router-outlet>
-    </div>
-    <div class="footer">
-      <span>Todos os direitos reservados | CashController - 2024 </span>
-    </div>
-  </div> 
+            <ng-template let-item pTemplate="item" class="p-menuitem">             
+                <a [routerLink]="item.routerLink"  class="p-menuitem-link"
+                styleClass="selectedMenu !== 'undefined' ? p-menuitem-link-active : ''" 
+                (click)="item.command($event)">
+                  <span class="p-menuitem-icon {{item.icon}}"></span>
+                  <span class="p-menuitem-text">
+                    {{ item.label }}
+                  </span>
+                </a>          
+
+            </ng-template>
+
+   
+        </p-menubar>
+ 
+
+
+  </div>
+  <div class="col-10 col-offset-1 content">
+    <router-outlet></router-outlet>
+  </div>
+
+  <footer class="p-2 footer">
+    Todos os direitos reservados | CashController - 2024
+  </footer>
+
+</div>

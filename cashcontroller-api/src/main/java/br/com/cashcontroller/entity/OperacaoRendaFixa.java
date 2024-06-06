@@ -23,7 +23,7 @@ import lombok.Setter;
 public class OperacaoRendaFixa {
 	
 	@Id
-	@Column(name = "ID_OPERACAO_RENDA_VARIAVEL")
+	@Column(name = "ID_OPERACAO_RENDA_FIXA")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	

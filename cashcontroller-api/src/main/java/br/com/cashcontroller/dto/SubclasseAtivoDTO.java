@@ -13,6 +13,6 @@ public class SubclasseAtivoDTO {
 	
 	private int id;	
 	private String nome;	
-	private ClasseAtivoDTO classeAtivoDto;
+	private ClasseAtivoDTO classeAtivo;
 
 }
