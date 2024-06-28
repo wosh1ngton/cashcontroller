@@ -1,28 +1,12 @@
-<div class="grid">
+<div>
     <div class="col-12">
-        <div class="grid container-filtros-superiores">
-           
-
-            <div class="col-8 flex align-items-center gap-2 flex-wrap meses col-offset-2">
-                <p-chip [styleClass]="mes.mesString === selectedMonth ? 'mesSelecionado' : '' "
-                (click)="filtrarPorMes(mes)"
-                *ngFor="let mes of filtroMes$ | async" [label]="mes.mesString" />                              
-            </div>
-
-            <div class="p-2 col-2">
-                <div class="ui-g pt-2">
-                    <p-dropdown [(ngModel)]="filter.ano" [options]="anos" appendTo="body" 
-                        name="ano" [showClear]="true"
-                        placeholder="Ano" [style]="{'width': '100%'}"
-                        (onChange)="getMeses($event.value)" 
-                        >
-                    </p-dropdown>
-                </div>
-            </div>
-        </div>
+        <app-filtro-superior [selectedMonth]="filter.mes" [selectedAno]="filter.ano"
+            (selecaoMes)="filtrarPorMes($event)">
+        </app-filtro-superior>
         <p-toast></p-toast>
+        
         <div class="grid">
-            <div class="p-2 col-2 container-filtros">
+            <div class="p-2 col-2">
                 <p-card header="Filtros">
                     <div class="p-2">
                         <label for="subclasse"> Filtrar por Classe</label>
@@ -61,11 +45,14 @@
                 <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
 
                 </app-irpf-mes>
-
-                <div class="p-2 col-offset-11">
-                    <p-button (click)="showDialog()" [raised]="true" [rounded]="true"
-                        icon="pi pi-plus"></p-button>
+                <div class="col grid">
+                    <div class="col-4 col-offset-9">
+                        <p-button (click)="showEventoDialog()" label="Evento" class="btnAdicionarOperacao p-3"></p-button>
+                        <p-button (click)="showDialog()" label="Operação" class="btnAdicionarOperacao"></p-button>
+                    </div>                    
                 </div>
+                <p-tabView  [(activeIndex)]="activeIndex">
+                    <p-tabPanel header="Operações">
                 <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes" [value]="operacoes"
                     [tableStyle]="{ 'min-width': '50rem', 'min-height': '20rem', 'border': '1px solid #e9e9e9' }">
                     <ng-template pTemplate="header" let-columns>
@@ -73,6 +60,7 @@
                             <th *ngFor="let col of columns">
                                 {{ col.header }}
                             </th>
+
                             <th>
 
                             </th>
@@ -168,6 +156,12 @@
                                 {{ operacao.valorTotal | currency:'BRL'}}
                             </td>
                             <td>
+                                <span *ngIf="operacao.tipoOperacaoDto.id == 2">
+                                    {{ operacao.custoTotal | currency:'BRL'}}
+                                </span>
+                            </td>
+
+                            <td>
                                 <div class="flex align-items-center justify-content-center gap-2">
                                     <p-toast></p-toast>
                                     <p-confirmDialog></p-confirmDialog>
@@ -192,6 +186,43 @@
 
                     </ng-template>
                 </p-table>
+            </p-tabPanel>
+            <p-tabPanel header="Eventos">
+                <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns">
+                                {{ col.header }}
+                            </th>
+                            <th>
+                               
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                           
+                            <td *ngFor="let col of columns">
+                                <ng-container *ngIf="col.type !== 'objeto'">
+                                     {{ rowData[col.field] }} 
+                                </ng-container>
+                                <ng-container *ngIf="col.type === 'objeto'">                                    
+                                    {{ rowData[col.field].nome }}                             
+                                </ng-container>
+                            </td>
+                            <td>
+                                <button pButton pRipple type="button"
+                                icon="pi pi-pencil" (click)="showEventoDialog(rowData)"
+                                class="p-button-rounded p-button-text p-button-primary mr-2"></button> 
+
+                                <p-button icon="pi pi-trash" (click)="validarExclusao"
+                                styleClass="p-button-danger p-button-text"></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
+            </p-tabView>
             </div>
         </div>
     </div>

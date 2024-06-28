@@ -1,0 +1,46 @@
+<div class="dialog-content">
+    <form #f="ngForm">
+        
+        <div class="field p-fluid">
+            <label for="ativo"> Ativo Negociado </label>
+            <p-dropdown [options]="ativos" [filter]="true" filterBy="sigla" 
+                [(ngModel)]="eventoRendaVariavel.ativo.id"
+                
+                [showClear]="true" placeholder="Selecione um ativo" name="ativo"
+                optionValue="id"
+                optionLabel="sigla" 
+                >
+            </p-dropdown>
+        </div>
+        <div class="field p-fluid">            
+            <label for="tipo-evento"> Tipo do Evento </label>
+            <p-dropdown [options]="tiposEvento" [(ngModel)]="eventoRendaVariavel.tipoEvento"
+                [showClear]="true" placeholder="Tipo do Evento" name="tipoEvento"
+                optionValue="id"  optionLabel="nome">
+            </p-dropdown>
+        </div>
+        <div class="field p-fluid">
+            <label for="icondisplay"> Data Com </label>
+            <p-calendar [(ngModel)]="eventoRendaVariavel.dataCom" [iconDisplay]="'input'" [showIcon]="true"
+                inputId="icondisplay" dateFormat="dd/mm/yy" name="dataCom"></p-calendar>
+        </div>
+
+        <div class="field p-fluid">
+            <label for="icondisplay"> Data Pagamento </label>
+            <p-calendar [(ngModel)]="eventoRendaVariavel.dataPagamento" [iconDisplay]="'input'" [showIcon]="true"
+                inputId="icondisplay" dateFormat="dd/mm/yy" name="dataPagamento"></p-calendar>
+        </div>
+        
+        <div class="field p-fluid">
+            <label for="valor"> Valor a Receber </label>
+            <p-inputNumber inputId="valor" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
+                inputId="currency-brazil" [(ngModel)]="eventoRendaVariavel.valor" name="valor">
+            </p-inputNumber>
+        </div>
+       
+      
+        <div class="field p-fluid">
+            <p-button label="Cadastrar" (onClick)="save(f.value)"></p-button>
+        </div>
+    </form>
+</div>

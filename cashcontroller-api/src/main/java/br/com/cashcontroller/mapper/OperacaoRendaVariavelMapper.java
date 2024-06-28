@@ -38,6 +38,10 @@ public interface OperacaoRendaVariavelMapper {
 	@Mapping(target = "ativo", source = "ativoDto")
 	@Mapping(target = "tipoOperacao", source = "tipoOperacaoDto")
 	OperacaoRendaVariavel toEntity(OperacaoRendaVariavelDTO operacaoRendaVariavelDTO);
+
+	@Mapping(source = "ativoDto.id", target = "ativoDto")
+	@Mapping(source = "tipoOperacaoDto.id", target = "tipoOperacaoDto")
+	OperacaoRendaVariavelSaveDTO FromDTOtoSaveDTO(OperacaoRendaVariavelDTO operacaoRendaVariavelDTO);
 	
 	List<OperacaoRendaVariavelDTO> toListDTO(List<OperacaoRendaVariavel> operacoesEntity);
 	List<OperacaoRendaVariavel> toListEntity(List<OperacaoRendaVariavelDTO> operacoesDTO);

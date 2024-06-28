@@ -56,5 +56,10 @@ export class OperacaoRendaVariavelService {
     getMesesComOperacoesPorAno(ano?: number): Observable<any> {
         return this.http.get(this.baseUrl + '/operacoes/MesesComOperacoesPorAno/' + ano)
     }
+
+    posicoesEncerradas() {
+        console.log('oi')
+        return this.http.get<any[]>(this.baseUrl + '/operacoes/posicoes-encerradas');
+    }
 	
 }

@@ -1,7 +1,6 @@
 package br.com.cashcontroller.service;
 
 import br.com.cashcontroller.dto.*;
-import br.com.cashcontroller.entity.Ativo;
 import br.com.cashcontroller.entity.OperacaoRendaFixa;
 import br.com.cashcontroller.entity.OperacaoRendaVariavel;
 import br.com.cashcontroller.entity.TipoOperacao;
@@ -14,19 +13,15 @@ import br.com.cashcontroller.repository.TipoOperacaoRepository;
 import br.com.cashcontroller.utils.Taxa;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -51,15 +46,36 @@ public class OperacaoService {
         return OperacaoRendaVariavelMapper.INSTANCE.toListDTO(operacoes);
     }
 
-    public double valorTotalOperacao(double valorUnitario, double valorCorretagem, int quantidadeNegociada) {
+    public double valorTotalOperacao(
+            OperacaoRendaVariavelSaveDTO operacaoDto) {
 
-        double valorBase = valorUnitario * quantidadeNegociada;
-		double taxas = Taxa.TAXA_LIQUIDACAO_B3 + Taxa.TAXA_EMOLUMENTOS;
-        double impostos = (valorCorretagem/Taxa.IMPOSTOS)-valorCorretagem;
-        double taxaCorretora = valorCorretagem * Taxa.TAXA_OPERACIONAL_XP;
-		double custos =  impostos + (valorBase * (taxas/100));
-        return valorBase + custos + valorCorretagem + taxaCorretora;
+        double   valorBase = operacaoDto.getValorUnitario() * operacaoDto.getQuantidadeNegociada();
+        return calcularTaxas(operacaoDto, valorBase);
     }
+
+    public double custoTotalOperacao(OperacaoRendaVariavelSaveDTO operacaoDto) {
+
+        double valorBase = 0.0;
+        if(operacaoDto.getTipoOperacaoDto() == 2) {
+            double pmAtivo;
+            LocalDate startDate = LocalDate.of(2015, 1, 1);
+             pmAtivo = this.operacaoRendaVariavelRepository.calcularPrecoMedio(operacaoDto.getAtivoDto(), operacaoDto.getDataOperacao(), startDate).getPrecoMedio();
+            valorBase = pmAtivo * operacaoDto.getQuantidadeNegociada();
+        } else {
+            valorBase = operacaoDto.getValorUnitario() * operacaoDto.getQuantidadeNegociada();
+        }
+
+        return calcularTaxas(operacaoDto, valorBase);
+    }
+
+    private static double calcularTaxas(OperacaoRendaVariavelSaveDTO operacaoDto, double valorBase) {
+        double taxas = Taxa.TAXA_LIQUIDACAO_B3 + Taxa.TAXA_EMOLUMENTOS;
+        double impostos = (operacaoDto.getValorCorretagem()/Taxa.IMPOSTOS)- operacaoDto.getValorCorretagem();
+        double taxaCorretora = operacaoDto.getValorCorretagem() * Taxa.TAXA_OPERACIONAL_XP;
+        double custos =  impostos + (valorBase * (taxas/100));
+        return valorBase + custos + operacaoDto.getValorCorretagem() + taxaCorretora;
+    }
+
     public List<OperacaoRendaFixaDTO> listarOperacoesRendaFixa() {
         List<OperacaoRendaFixa> operacoes = operacaoRendaFixaRepository.findAll();
         return OperacaoRendaFixaMapper.INSTANCE.toListDTO(operacoes);
@@ -71,13 +87,31 @@ public class OperacaoService {
     }
 
     public OperacaoRendaVariavelDTO cadastrarOperacaoRendaVariavel(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
-        operacaoRendaVariavelSaveDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelSaveDTO.getValorUnitario(),operacaoRendaVariavelSaveDTO.getValorCorretagem(), operacaoRendaVariavelSaveDTO.getQuantidadeNegociada()));
+
+        if(operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == 3) {
+           operacaoRendaVariavelSaveDTO.setQuantidadeNegociada(desdobrarAtivo(operacaoRendaVariavelSaveDTO));
+        }
+
+        operacaoRendaVariavelSaveDTO.setCustoTotal(custoTotalOperacao(operacaoRendaVariavelSaveDTO));
+        operacaoRendaVariavelSaveDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelSaveDTO));
         OperacaoRendaVariavel operacao = OperacaoRendaVariavelMapper.INSTANCE.toSaveEntity(operacaoRendaVariavelSaveDTO);
         return OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.save(operacao));
     }
 
+
+
+    private Long desdobrarAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
+        Long fatorDeProporcao = (long) operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
+        Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
+        Long totalDoAumento = (fatorDeProporcao * totalAtualDeAcoes )- totalAtualDeAcoes;
+        return  totalDoAumento;
+    }
+
     public OperacaoRendaVariavelDTO atualizarOperacaoRendaVariavel(OperacaoRendaVariavelDTO operacaoRendaVariavelDTO) {
-        operacaoRendaVariavelDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelDTO.getValorUnitario(),operacaoRendaVariavelDTO.getValorCorretagem(), operacaoRendaVariavelDTO.getQuantidadeNegociada()));
+
+        var saveDto = OperacaoRendaVariavelMapper.INSTANCE.FromDTOtoSaveDTO(operacaoRendaVariavelDTO);
+        operacaoRendaVariavelDTO.setCustoTotal(custoTotalOperacao(saveDto));
+        operacaoRendaVariavelDTO.setValorTotal(valorTotalOperacao(saveDto));
         OperacaoRendaVariavel operacao = new OperacaoRendaVariavel();
         if(operacaoRendaVariavelDTO.getId() != 0) {
             this.operacaoRendaVariavelRepository.findById(operacaoRendaVariavelDTO.getId()).get();
@@ -121,18 +155,18 @@ public class OperacaoService {
     public IrpfMesDTO calcularImpostoMensal(Filter filter) {
 
         var vendasDoMes = listarVendasDoMes(filter);
-        oterResultadoOperacao(filter, vendasDoMes);
+        oterResultadoOperacao(vendasDoMes);
         double resultadoMes = vendasDoMes.stream().mapToDouble(op -> op.getResultadoOperacao()).sum();
 
         IrpfMesDTO irMes = new IrpfMesDTO();
 
         String monthName = filter.getEndDate().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"));
         irMes.setMes(monthName);
-        var totalVendido = vendasDoMes.stream().mapToDouble(op -> op.getValorTotal()).sum();
+        var valorTotalEmVendas = vendasDoMes.stream().mapToDouble(op -> op.getValorTotal()).sum();
         irMes.setAtivosVendidos(vendasDoMes);
         irMes.setResultadoMes(resultadoMes);
-        irMes.setTotalVendido(totalVendido);
-        if(totalVendido > Taxa.LIMITE_IR && resultadoMes > 0) {
+        irMes.setTotalVendido(valorTotalEmVendas);
+        if(valorTotalEmVendas > Taxa.LIMITE_IR && resultadoMes > 0) {
             irMes.setImposto(true);
             irMes.setValorAPagar(resultadoMes * Taxa.ALIQUOTA_IR);
         }
@@ -141,10 +175,9 @@ public class OperacaoService {
 
 
 
-    private void oterResultadoOperacao(Filter filter, List<OperacaoRendaVariavelDTO> vendasDoMes) {
+    private void oterResultadoOperacao(List<OperacaoRendaVariavelDTO> vendasDoMes) {
         for (OperacaoRendaVariavelDTO op : vendasDoMes) {
-            op.setAtivoDto(calcularPrecoMedio(op.getAtivoDto().getId(), filter.getEndDate()));
-            double resultadoOperacao = op.getValorTotal() - (op.getQuantidadeNegociada() * op.getAtivoDto().getPrecoMedio());
+            double resultadoOperacao = op.getValorTotal() - op.getCustoTotal();
             op.setResultadoOperacao(resultadoOperacao);
         }
     }
@@ -167,6 +200,10 @@ public class OperacaoService {
 
     public List<AtivoCarteiraDTO> listarCarteiraDeAcoes() {
         return  this.operacaoRendaVariavelRepository.listarCarteiraDeAcoes();
+    }
+
+    public List<PosicaoEncerradaDTO> listarPosicoesEncerradas() {
+        return this.operacaoRendaVariavelRepository.listarAtivosComOperacoesFechadas();
     }
 
     public List<Integer> listarAnosComOperacoes() {

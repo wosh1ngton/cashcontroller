@@ -1,9 +1,7 @@
 package br.com.cashcontroller.dto;
 
 import java.time.LocalDate;
-import java.util.Map;
 
-import br.com.cashcontroller.utils.Taxa;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +18,9 @@ public class OperacaoRendaVariavelDTO {
 	private AtivoDTO ativoDto;
 	private double valorCorretagem;
 	private LocalDate dataOperacao;
-	private int quantidadeNegociada;
+	private Long quantidadeNegociada;
 	private TipoOperacaoDTO tipoOperacaoDto;
+	private double custoTotal;
 	private double valorTotal;
 
 	private double resultadoOperacao;

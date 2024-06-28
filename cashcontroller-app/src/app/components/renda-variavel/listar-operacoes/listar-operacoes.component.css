@@ -20,14 +20,7 @@
     
 }
 
-::ng-deep .p-button {
+::ng-deep .btnAdicionarOperacao > .p-button {
     background-color: #000080;
     border: none;
 }
-/* .container-filtros {
-    
-}
-
-.container-filtros-superiores {
-    
-} */

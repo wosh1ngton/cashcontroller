@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { PrimengModule } from 'src/app/primeng/primeng.module';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -23,6 +23,11 @@ import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
 import { FilterOperacao } from 'src/app/models/filter-operacao.model';
 import { IrpfMesComponent } from '../irpf-mes/irpf-mes.component';
 import { Mes } from 'src/app/models/dto/mes';
+import { FiltroSuperiorComponent } from '../../filtro-superior/filtro-superior.component';
+import { DateUtil } from 'src/app/shared/util/date-util';
+import { EventoRendaVariavel } from 'src/app/models/evento-renda-variavel.model';
+import { EventoRvFormComponent } from 'src/app/src/app/components/renda-variavel/evento-rv-form/evento-rv-form.component';
+import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variavel.service';
 
 
 
@@ -40,51 +45,61 @@ import { Mes } from 'src/app/models/dto/mes';
     ConfirmDialogModule,
     InputTextModule,
     InputNumberModule,
-    IrpfMesComponent
-
+    IrpfMesComponent,
+    FiltroSuperiorComponent,
+     
   ],
+
   templateUrl: './listar-operacoes.component.html',
   styleUrl: './listar-operacoes.component.css',
   providers: [DialogService, ConfirmationService]
 })
-export class ListarOperacoesComponent implements OnChanges {
+export class ListarOperacoesComponent   {
 
   item: MenuItem[] | undefined;
   ativos: Ativo[] = [];
-  subclasses: SubclasseAtivo[] = [];
-  anos: [] = [];
+  subclasses: SubclasseAtivo[] = [];  
   visible = false;
   ref: DynamicDialogRef | undefined;
+  refEvento: DynamicDialogRef | undefined;
   cols!: Column[]
+  
   operacoes: any[] = [];
+  
+  eventos: any[] = [];
   subclasse: number = 0;
   tiposOperacao: TipoOperacao[] = [];
   clonedOperacoes: { [s: string]: OperacaoRendaVariavel } = {};
   filter: FilterOperacao = new FilterOperacao();
   filtroChange: boolean = false;
-  filtroMes$: Observable<any[]> | undefined;
+  
   meses: Mes[] = [];
   mesSelecionado: number = 0;
-  mesAtual: number = 0;
-  selectedMonth: any;
+  mesAtual: number = 0;  
+  activeIndex: number = 0;
 
   constructor(public dialogService: DialogService,
     public ativoService: AtivoService,
     public operacaoRendaVariavelService: OperacaoRendaVariavelService,
+    private eventoRendaVariavelService: EventoRendaVariavelService,
     public messageService: MessageService,
     private confirmationService: ConfirmationService
   ) { }
 
+  colsEventos = [
+    {field: 'ativo', header: 'Ativo', type: 'objeto'},
+    {field: 'dataCom', header: 'Data Com'},
+    {field: 'dataPagamento', header: 'Data do Pagamento'},
+    {field: 'valor', header: 'Valor a ser Pago'}
+  ]
   ngOnInit() {
-
 
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
-    this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
-    this.buscarAnosComDespesas();
-
-    this.getMeses(2024)
+    this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);    
+    this.listarEventos();
     this.filterData();
+
     this.cols = [
       { field: 'ativoDto', header: 'Ativo' },
       { field: 'quantidadeNegociada', header: 'Quantidade' },
@@ -92,14 +107,14 @@ export class ListarOperacoesComponent implements OnChanges {
       { field: 'valorUnitario', header: 'Valor Unitário' },
       { field: 'tipoOperacaoDto', header: 'Operação' },
       { field: 'valorCorretagem', header: 'Corretagem' },
-      { field: 'valorTotal', header: 'Total' }
+      { field: 'valorTotal', header: 'Total' },
+      { field: 'custoTotal', header: 'Custo' }
 
     ];
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('mudei', changes)
-  }
+  }   
+
+
   showDialog() {
     this.ref = this.dialogService.open(RendaVariavelFormComponent, {
       header: 'Cadastro de Operação - Renda Variável',
@@ -113,13 +128,43 @@ export class ListarOperacoesComponent implements OnChanges {
 
     this.ref.onClose.pipe(
       filter(val => !!val),
-      tap(() => {
-        this.filterData();
+      tap((val) => {
+        this.filter.startDate = null;
+        this.filter.ano = val.dataOperacao.getFullYear();                       
+        this.filter.mes = DateUtil.getMonthNumber(val.dataOperacao);                
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Operação Cadastrada' })
-
+        
       })
-    ).subscribe();
+    ).subscribe((val) => this.filterData());
   }
+
+  showEventoDialog(dados? : any) {
+    console.log('dados', dados)
+    this.ref = this.dialogService.open(EventoRvFormComponent, {
+      header: 'Cadastro de Evento - Renda Variável',
+      width: '50vw',
+      modal: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      data: {
+        isEdit: dados === undefined ? false : true,
+        rowData: dados
+      } 
+    });
+
+    this.ref.onClose.subscribe((val) => this.listarEventos())
+  }
+
+
+  filtrarPorDataEspecifica(): void {
+    if(this.filter.startDate != null && this.filter.endDate != null ) {
+      this.filter.ano = 0;
+      this.filter.mes = 0;
+    }
+  }
+
 
   private buscarAtivos(id: number) {
     this.ativoService.getAtivosPorClasse(id).subscribe(
@@ -127,186 +172,124 @@ export class ListarOperacoesComponent implements OnChanges {
     );
   }
 
-  buscarAnosComDespesas() {
-    this.operacaoRendaVariavelService.getAnosComOperacoes().subscribe((res) => {
-      this.anos = res;
-    });
-  }
 
-
-  // getMeses(ano?: number) {
-  //   console.log('oioi')
-  //   this.filtroMes$ = this.operacaoRendaVariavelService.getMesesComOperacoesPorAno(ano)
-  //     .pipe(
-  //       map((meses) => {          
-  //         if (meses) {
-  //           meses.forEach((element:any) => {
-  //             element.mesString = element.mesString.slice(0, 3)
-  //           });
-  //           if (this.mesSelecionado === undefined) {
-  //             this.mesSelecionado = this.mesAtual;
-  //           }
-  //           //compara o mês selecionado com os meses existentes para o ano e destaca com o selected
-  //           meses.find((m:any) => m.mesInteiro == this.mesSelecionado).selected = true;
-
-  //         }
-  //         return meses;
-  //       })
-  //     )
-  // }
-
-
-  getLastDayOfMonth(year: number, month: number): Date {
-    const nextMonth = new Date(year, month, 1);
-    nextMonth.setDate(nextMonth.getDate() - 1);
-    return nextMonth;
-  }
-
-  filtrarPorMes($event: any) {
-    
-    this.selectedMonth = $event.mesString;
-    console.log(this.selectedMonth)
+  filtrarPorMes($event: any) {      
     this.filter.startDate = null;
     this.filter.ano = $event.ano;
     this.filter.mes = $event.mesInteiro;
-    this.filter.endDate = this.getLastDayOfMonth(this.filter.ano, this.filter.mes);
+    this.filter.endDate = DateUtil.getLastDayOfMonthByYear(this.filter.ano, this.filter.mes);
     this.filterData();
+  }
+  
 
+  buscarSubclassesAtivos(id: number) {
+    this.ativoService.getSubclasseAtivos().subscribe(
+      sc => {
+        this.subclasses = sc.filter(c => c.classeAtivo.id === id)
+      }
+    );
   }
 
-  getMeses(ano?: number) {
-
-    this.filtroMes$ = this.operacaoRendaVariavelService.getMesesComOperacoesPorAno(ano).pipe(
-      map((meses) => {
-        if (meses) {
-          meses.forEach(
-            (element: any) => {             
-              element.mesString = element.mesString.slice(0, 3);
-            });           
-        }
-        return meses;
-      }
-      ))
-
-
-  // .pipe(
-  //   map((meses) => {          
-  //     if (meses) {
-  //       meses.forEach((element:any) => {
-  //         element.mesString = element.mesString.slice(0, 3)
-  //       });
-  //       if (this.mesSelecionado === undefined) {
-  //         this.mesSelecionado = this.mesAtual;
-  //       }
-  //       //compara o mês selecionado com os meses existentes para o ano e destaca com o selected
-  //       meses.find((m:any) => m.mesInteiro == this.mesSelecionado).selected = true;
-
-  //     }
-  //     return meses;
-  //   })
-  // )
-}
-buscarSubclassesAtivos(id: number) {
-  this.ativoService.getSubclasseAtivos().subscribe(
-    sc => {
-      this.subclasses = sc.filter(c => c.classeAtivo.id === id)
-    }
-  );
-}
-
   private buscarTiposOperacao() {
-  this.operacaoRendaVariavelService.getTipoOperacoes()
-    .subscribe(
-      tipos => this.tiposOperacao = tipos
-    );
-}
+    this.operacaoRendaVariavelService.getTipoOperacoes()
+      .subscribe(
+        tipos => this.tiposOperacao = tipos
+      );
+  }
 
   private listarOperacoes() {
-  this.operacaoRendaVariavelService.getOperacoesRendaVariavel()
-    .subscribe(
-      (ops: any[]) => {
-        this.operacoes = ops
-      }
-    );
-}
+    this.operacaoRendaVariavelService.getOperacoesRendaVariavel()
+      .subscribe(
+        (ops: any[]) => {
+          this.eventos = ops
+          console.log('op', this.eventos)
+        }
+      );
+  }
+
+  private listarEventos() {
+    this.eventoRendaVariavelService.getEventosRendaVariavel()
+      .subscribe(
+        (eventos: any[]) => {
+          this.eventos = eventos
+          console.log('op', this.eventos)
+        }
+      );
+  }
 
   private listarOperacoesPorSubclasse(subclasse: number) {
-  this.operacaoRendaVariavelService.getOperacoesRendaVariavel()
-    .subscribe(
-      (ops: any[]) => {
-        this.operacoes = ops.filter(op => op.ativoDto.subclasseAtivoDto.id == subclasse)
-      }
-    );
-}
-
-onRowEditInit(operacao: OperacaoRendaVariavel) {
-  console.log('open edit', operacao);
-  this.clonedOperacoes[operacao.id as string] = { ...operacao };
-  const selectedAtivo = this.ativos.find(ativo => ativo.id === operacao.ativoDto.id)!;
-  operacao.dataOperacao = new Date(operacao.dataOperacao);
-  operacao.ativoDto = selectedAtivo;
-
-
-}
-
-onRowEditCancel(operacao: OperacaoRendaVariavel, index: number) {
-  this.operacoes[index] = this.clonedOperacoes[operacao.id as string];
-  delete this.clonedOperacoes[operacao.id as string];
-}
-
-onRowEditSave(operacao: any) {
-  if (operacao.valorUnitario > 0) {
-
-    delete this.clonedOperacoes[operacao.id as string];
-
-    this.operacaoRendaVariavelService.editar(operacao)
-      .subscribe({
-        next: () => {
-          this.filterData();
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Operação Atualizada' })
-        },
-        error: err => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Valor inválido' + err })
-      }
+    this.operacaoRendaVariavelService.getOperacoesRendaVariavel()
+      .subscribe(
+        (ops: any[]) => {
+          this.operacoes = ops.filter(op => op.ativoDto.subclasseAtivoDto.id == subclasse)
+        }
       );
-  };
-}
+  }
 
-validarExclusao(operacao: any, event: Event) {
+  onRowEditInit(operacao: OperacaoRendaVariavel) {
+    this.clonedOperacoes[operacao.id as string] = { ...operacao };
+    const selectedAtivo = this.ativos.find(ativo => ativo.id === operacao.ativoDto.id)!;
+    operacao.dataOperacao = new Date(operacao.dataOperacao);
+    operacao.ativoDto = selectedAtivo;
+  }
 
-  this.confirmationService.confirm({
-    target: event.target as EventTarget,
-    message: 'Tem certeza que deseja excluir esta operação?',
-    header: 'Confirmação',
-    icon: 'pi pi-exclamation-triangle',
-    acceptIcon: "none",
-    rejectIcon: "none",
-    rejectButtonStyleClass: "p-button-text",
-    accept: () => {
-      this.excluirOperacao(operacao.id).subscribe(() => this.filterData());
-      this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Confirmada a exclusão' });
-    },
-    reject: () => {
-      this.listarOperacoes();
-      this.messageService.add({ severity: 'error', summary: 'Rejeitado', detail: 'Cancelada a exclusão', life: 3000 });
-    }
-  });
-}
+  onRowEditCancel(operacao: OperacaoRendaVariavel, index: number) {
+    this.operacoes[index] = this.clonedOperacoes[operacao.id as string];
+    delete this.clonedOperacoes[operacao.id as string];
+  }
 
-excluirOperacao(id: string) {
-  return this.operacaoRendaVariavelService.excluir(id);
-}
+  onRowEditSave(operacao: any) {
+    if (operacao.valorUnitario > 0) {
 
+      delete this.clonedOperacoes[operacao.id as string];
 
-filterData() {
- if(this.filter.startDate != null) {
-    this.filter.ano = 0;
-    this.filter.mes = 0
- }
-  return this.operacaoRendaVariavelService.filter(this.filter)
-    .subscribe((x: any) => {
-      this.operacoes = x,
-        this.filtroChange = !this.filtroChange;
+      this.operacaoRendaVariavelService.editar(operacao)
+        .subscribe({
+          next: () => {
+            this.filterData();
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Operação Atualizada' })
+          },
+          error: err => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Valor inválido' + err })
+        }
+        );
+    };
+  }
+
+  validarExclusao(operacao: any, event: Event) {
+
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Tem certeza que deseja excluir esta operação?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: "none",
+      rejectIcon: "none",
+      rejectButtonStyleClass: "p-button-text",
+      accept: () => {
+        this.excluirOperacao(operacao.id).subscribe(() => this.filterData());
+        this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Confirmada a exclusão' });
+      },
+      reject: () => {
+        this.listarOperacoes();
+        this.messageService.add({ severity: 'error', summary: 'Rejeitado', detail: 'Cancelada a exclusão', life: 3000 });
+      }
     });
-}
+  }
+
+  excluirOperacao(id: string) {
+    return this.operacaoRendaVariavelService.excluir(id);
+  }
+
+
+  filterData() {   
+    this.filtrarPorDataEspecifica();
+    return this.operacaoRendaVariavelService.filter(this.filter)
+      .subscribe((res: any) => {
+        this.operacoes = res,     
+        console.log('ano ', this.filter.ano)
+        console.log('meses: ', this.filter.mes)
+        this.filtroChange = !this.filtroChange;
+      });
+  }
 
 }

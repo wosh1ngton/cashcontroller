@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home.component';
 import { ListarRendaFixaComponent } from './components/renda-fixa/listar-renda-fixa/listar-renda-fixa.component';
 import { ListarOperacoesComponent } from './components/renda-variavel/listar-operacoes/listar-operacoes.component';
 import { ListarCarteiraAcoesComponent } from './components/renda-variavel/listar-carteira-acoes/listar-carteira-acoes.component';
+import { PosicoesEncerradasComponent } from './components/renda-variavel/posicoes-encerradas/posicoes-encerradas.component';
 
 const routes: Routes = [
   { path: '', 
@@ -20,6 +21,10 @@ const routes: Routes = [
       {
         path: 'carteira-acoes', 
         component: ListarCarteiraAcoesComponent
+      },
+      {
+        path: 'posicoes-encerradas', 
+        component: PosicoesEncerradasComponent
       },
     ],
     component: HomeComponent },

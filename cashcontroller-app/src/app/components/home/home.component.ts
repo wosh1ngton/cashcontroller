@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
+
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],  
 })
 export class HomeComponent implements OnInit {
 
@@ -14,6 +16,10 @@ export class HomeComponent implements OnInit {
 
   items: MenuItem[] | undefined;
   selectedMenu: any;
+  
+  
+  
+
   ngOnInit(): void {
     this.items = [
       {
@@ -37,12 +43,18 @@ export class HomeComponent implements OnInit {
         id: '3',
         command: (event) => this.getMenuSelecionado(event)
       },
+      {
+        label: 'Posições Encerradas',
+        icon: PrimeIcons.ANGLE_DOWN,
+        routerLink: 'posicoes-encerradas',
+        id: '4',
+        command: (event) => this.getMenuSelecionado(event)
+      },
     ];
   }
 
-  getMenuSelecionado($event:any) {    
-    const clickedItem = $event.item;    
-    this.selectedMenu = clickedItem;    
+  getMenuSelecionado($event: MenuItemCommandEvent) {    
+    this.selectedMenu = $event.item?.id;
   }
 
 }

@@ -1,25 +1,30 @@
 <div class="grid">
   <div class="col-12 header">
-    <div class="banner">
-      <h1> Ca$hController </h1>
-    </div> 
+    
         <p-menubar [model]="items">
-            <ng-template let-item pTemplate="item" class="p-menuitem">             
-                <a [routerLink]="item.routerLink"  class="p-menuitem-link"
-                styleClass="selectedMenu !== 'undefined' ? p-menuitem-link-active : ''" 
+          <ng-template  pTemplate="start">
+          <a routerLink="/"  >
+          <span class="p-menuitem-text"> 
+                    <h3> Ca$hController </h3>
+                    </span>
+                </a>   
+          </ng-template>
+          <ng-template let-item pTemplate="item" class="p-menuitem">                       
+            
+                <a [routerLink]="item.routerLink" class="p-menuitem-link"  [ngClass]="selectedMenu == item.id ? 'p-menuitem-link-active' : ''"                
                 (click)="item.command($event)">
                   <span class="p-menuitem-icon {{item.icon}}"></span>
                   <span class="p-menuitem-text">
                     {{ item.label }}
                   </span>
                 </a>          
-
+            
             </ng-template>
 
    
         </p-menubar>
  
-
+<!-- {{selectedMenu}} -->
 
   </div>
   <div class="col-10 col-offset-1 content">

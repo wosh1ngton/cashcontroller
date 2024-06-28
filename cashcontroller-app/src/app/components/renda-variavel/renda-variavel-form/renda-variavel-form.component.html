@@ -3,17 +3,26 @@
         <div class="field p-fluid">
             <label for="tipo-operacao"> Ativo Negociado </label>
             <p-dropdown [options]="ativos" [filter]="true" filterBy="sigla" [(ngModel)]="operacaoRendaVariavel.ativoDto"
-                optionLabel="sigla" [showClear]="true" placeholder="Selecione um ativo" name="ativoDto" optionValue="id">
+                optionLabel="sigla" [showClear]="true" placeholder="Selecione um ativo" name="ativoDto"
+                optionValue="id">
             </p-dropdown>
         </div>
-        <div class="field p-fluid">
+        <div class="field p-fluid">            
             <label for="tipo-operacao"> Tipo da Operação </label>
-            <p-dropdown [options]="tiposOperacao" [(ngModel)]="operacaoRendaVariavel.tipoOperacaoDto" optionLabel="nome"
-                [showClear]="true" placeholder="Tipo da Operação" name="tipoOperacaoDto" optionValue="id">
+            <p-dropdown #tipoOperacao [options]="tiposOperacao" [(ngModel)]="operacaoRendaVariavel.tipoOperacaoDto"
+                optionLabel="nome" [showClear]="true" placeholder="Tipo da Operação" name="tipoOperacaoDto"
+                optionValue="id">
             </p-dropdown>
         </div>
         <div class="field p-fluid">
-            <label for="quantidade"> Quantidade </label>
+            
+            <div *ngIf="tipoOperacao?.value !== 3">
+                <label for="quantidade"> Quantidade </label>
+            </div>
+            <div *ngIf="tipoOperacao?.value === 3">
+                <label for="quantidade"> Fator de Proporção (uma ação vira quantas?) </label>
+            </div>
+            
             <p-inputNumber inputId="quantidade" [(ngModel)]="operacaoRendaVariavel.quantidadeNegociada"
                 name="quantidadeNegociada" [useGrouping]="false" [min]="0" mode="decimal"> </p-inputNumber>
         </div>

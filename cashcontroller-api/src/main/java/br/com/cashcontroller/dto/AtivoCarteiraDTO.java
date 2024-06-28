@@ -26,4 +26,6 @@ public class AtivoCarteiraDTO {
         this.custodia = custodia;
         this.precoMedio = precoMedio;
     }
+
+
 }

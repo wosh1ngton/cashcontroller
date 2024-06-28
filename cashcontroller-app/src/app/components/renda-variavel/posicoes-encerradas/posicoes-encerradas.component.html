@@ -1,0 +1,28 @@
+<span> Carteira </span>
+<p-table [value]="posicoes" 
+[tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" class="tabela-irpf">
+<ng-template pTemplate="header">
+    <tr>
+        <th>Ativo</th>
+        <th>Início da Posição</th>
+        <th>Encerramento da Posição</th>
+        <th>Valor Investido</th>
+        <th>Valor da Venda</th>
+        <th>Resultado </th>
+        
+    </tr>
+</ng-template>
+<ng-template pTemplate="body" locale="pt-BR" let-item>
+    <tr>
+        <td>{{ item.nomeAtivo }}</td>
+        <td>{{ item.dataInicio }}</td>
+        <td>{{ item.dataEncerramento }}</td>        
+        <td>{{ item.valorInvestido | currency: 'BRL' }}</td>        
+        <td>{{ item.valorVenda | currency: 'BRL'  }} </td>
+        <td>{{ item.resultadoAtivo | currency: 'BRL'  }} </td>
+        
+    </tr>
+</ng-template>
+</p-table>
+
+

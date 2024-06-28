@@ -4,6 +4,9 @@ import { TableModule } from 'primeng/table';
 import { MenubarModule } from 'primeng/menubar';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
+import { DropdownModule } from 'primeng/dropdown';
+import { TabViewModule } from 'primeng/tabview';
+
 
 @NgModule({
   declarations: [],
@@ -12,7 +15,9 @@ import { ChipModule } from 'primeng/chip';
     TableModule,
     MenubarModule,
     CardModule,
-    ChipModule
+    ChipModule,
+    DropdownModule,
+    TabViewModule
   ]
 })
 export class PrimengModule { }

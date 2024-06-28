@@ -1,5 +1,5 @@
 :root {
-    --primary-color-cc: #ffffff;
+    --primary-color-cc: #f4f4f4;
     --secondary-color-cc: #000080;
 }
 html {
@@ -16,10 +16,10 @@ body {
     width: 100px; 
  }
  
- .p-menubar ul {
-    margin-left: 8vw;
+ /* .p-menubar ul {
+    margin-left: 3px;
 }
 
 .p-menubar {    
     background-color: var(--secondary-color-cc);    
-}
+} */

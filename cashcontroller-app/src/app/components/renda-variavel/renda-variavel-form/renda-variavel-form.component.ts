@@ -12,6 +12,7 @@ import { TipoOperacao } from 'src/app/models/tipo-operacao.model';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OperacaoRendaVariavelDto } from 'src/app/models/dto/operacao-renda-variavel.model';
 import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-renda-variavel-form',
@@ -19,6 +20,7 @@ import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
   imports: [
     DropdownModule,
     FormsModule,
+    CommonModule,
     InputNumberModule,
     CalendarModule
   ],

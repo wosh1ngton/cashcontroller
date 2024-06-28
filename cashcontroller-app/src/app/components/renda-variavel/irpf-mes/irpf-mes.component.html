@@ -8,8 +8,7 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th>Ativo</th>
-                    <th>Qt negociada</th>
-                    <th>Preço Médio</th>
+                    <th>Qt negociada</th>                    
                     <th>Resultado </th>
 
                 </tr>
@@ -17,8 +16,7 @@
             <ng-template pTemplate="body" let-op>
                 <tr>
                     <td>{{ op.ativoDto.nome }}</td>
-                    <td>{{ op.quantidadeNegociada }}</td>
-                    <td>{{ op.ativoDto.precoMedio | currency: 'BRL' }}</td>
+                    <td>{{ op.quantidadeNegociada }}</td>                    
                     <td>{{ op.resultadoOperacao | currency: 'BRL' }}</td>
                     
                 </tr>
@@ -32,4 +30,5 @@
             Total em vendas {{ irpfMes.totalVendido | currency: 'BRL'}} 
         </p>
     </div>
+   
     </p-card>

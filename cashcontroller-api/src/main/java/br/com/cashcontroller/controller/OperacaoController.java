@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -86,13 +88,20 @@ public class OperacaoController {
 
     @GetMapping(value = "/carteira-acoes")
     ResponseEntity<List<AtivoCarteiraDTO>> listarCarteiraAcoes() {
+        var carteira = this.operacaoService.listarCarteiraDeAcoes();
+        return ResponseEntity.ok(carteira);
+    }
 
-        return ResponseEntity.ok(this.operacaoService.listarCarteiraDeAcoes());
+    @GetMapping(value = "/posicoes-encerradas")
+    ResponseEntity<List<PosicaoEncerradaDTO>> listarPosicoesEncerradas() {
+        var encerradaDTOS = this.operacaoService.listarPosicoesEncerradas();
+        return ResponseEntity.ok(encerradaDTOS);
     }
 
     @GetMapping("/anos-com-operacoes")
     ResponseEntity<List<Integer>> listarAnosComOperacoes() {
-        return ResponseEntity.ok(this.operacaoService.listarAnosComOperacoes());
+        var anosOrdenados = this.operacaoService.listarAnosComOperacoes().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        return ResponseEntity.ok(anosOrdenados);
     }
     @GetMapping("/MesesComOperacoesPorAno/{ano}")
     ResponseEntity<List<MesDTO>> listarMesesComDespesas(@PathVariable(value = "ano") Integer ano) {

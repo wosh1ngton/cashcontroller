@@ -17,4 +17,24 @@ export class DateUtil {
         clear: 'Limpar'
     };
 
+    static getMonthNumber(date: Date) {
+        const month = date.getMonth() + 1;
+        return month;
+    }
+
+    static getFirstDayOfMonth(date: Date): Date {
+        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+        return firstDay;
+    }
+
+    static getLastDayOfMonthByYear(year: number, month: number): Date {
+        const nextMonth = new Date(year, month, 1);
+        nextMonth.setDate(nextMonth.getDate() - 1);
+        return nextMonth;
+    }
+
+    static getLastDayOfMonth(date: Date): Date {
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        return lastDay;
+      }
 }

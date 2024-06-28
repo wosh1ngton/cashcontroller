@@ -2,9 +2,7 @@ package br.com.cashcontroller.entity;
 
 import java.time.LocalDate;
 
-import br.com.cashcontroller.utils.Taxa;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,6 +35,9 @@ public class OperacaoRendaVariavel {
 	
 	@Column(name = "QT_ATIVO")
 	private int quantidadeNegociada;
+
+	@Column(name = "QT_CUSTO_TOTAL")
+	private double custoTotal;
 
 	@Column(name = "QT_VALOR_TOTAL")
 	private double valorTotal;
