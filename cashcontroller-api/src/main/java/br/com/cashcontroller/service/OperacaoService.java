@@ -92,6 +92,10 @@ public class OperacaoService {
            operacaoRendaVariavelSaveDTO.setQuantidadeNegociada(desdobrarAtivo(operacaoRendaVariavelSaveDTO));
         }
 
+        if(operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == 5) {
+            operacaoRendaVariavelSaveDTO.setQuantidadeNegociada(agruparAtivo(operacaoRendaVariavelSaveDTO));
+        }
+
         operacaoRendaVariavelSaveDTO.setCustoTotal(custoTotalOperacao(operacaoRendaVariavelSaveDTO));
         operacaoRendaVariavelSaveDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelSaveDTO));
         OperacaoRendaVariavel operacao = OperacaoRendaVariavelMapper.INSTANCE.toSaveEntity(operacaoRendaVariavelSaveDTO);
@@ -105,6 +109,13 @@ public class OperacaoService {
         Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
         Long totalDoAumento = (fatorDeProporcao * totalAtualDeAcoes )- totalAtualDeAcoes;
         return  totalDoAumento;
+    }
+
+    private Long agruparAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
+        Long fatorDeProporcao = (long) operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
+        Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
+        Long totalDecrescimo = totalAtualDeAcoes - (totalAtualDeAcoes / fatorDeProporcao);
+        return  totalDecrescimo;
     }
 
     public OperacaoRendaVariavelDTO atualizarOperacaoRendaVariavel(OperacaoRendaVariavelDTO operacaoRendaVariavelDTO) {

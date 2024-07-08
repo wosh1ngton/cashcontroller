@@ -1,8 +1,6 @@
 package br.com.cashcontroller.controller;
 
-import br.com.cashcontroller.dto.EventoAddRendaVariavelDTO;
-import br.com.cashcontroller.dto.EventoListRendaVariavelDTO;
-import br.com.cashcontroller.dto.TipoEventoDTO;
+import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.service.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,22 +16,22 @@ public class EventoController {
 	@Autowired
 	private EventoService eventoService;
 	@PostMapping
-	ResponseEntity<EventoAddRendaVariavelDTO> cadastrarAtivo(@RequestBody EventoAddRendaVariavelDTO eventoDTO) {
+	ResponseEntity<EventoAddRendaVariavelDTO> cadastrarEvento(@RequestBody EventoAddRendaVariavelDTO eventoDTO) {
 		return ResponseEntity.ok(this.eventoService.cadastrarEvento(eventoDTO));
 	}
 	
-//	@PutMapping
-//	ResponseEntity<AtivoDTO> editarAtivo(@RequestBody AtivoDTO ativoDto) {
-//		return ResponseEntity.ok(this.ativoService.atualizarAtivo(ativoDto));
-//	}
-//
-//	@DeleteMapping(value = "/{id}")
-//	ResponseEntity<?> excluirAtivo(@PathVariable(value="id") Integer id) {
-//		this.ativoService.excluirAtivo(id);
-//		return ResponseEntity.noContent().build();
-//	}
-//
-//
+	@PutMapping
+	ResponseEntity<EventoAddRendaVariavelDTO> editarEvento(@RequestBody EventoAddRendaVariavelDTO eventoDto) {
+		return ResponseEntity.ok(this.eventoService.atualizarEvento(eventoDto));
+	}
+
+	@DeleteMapping(value = "/{id}")
+	ResponseEntity<?> excluirEvento(@PathVariable(value="id") Integer id) {
+		this.eventoService.excluirEvento(id);
+		return ResponseEntity.noContent().build();
+	}
+
+
 	@GetMapping("/tipo-eventos")
 	ResponseEntity<List<TipoEventoDTO>> getTipoEventos() {
 		List<TipoEventoDTO> subclasses = this.eventoService.listarTipoEventos();
@@ -41,7 +39,7 @@ public class EventoController {
 	}
 
 	@GetMapping
-	ResponseEntity<List<EventoListRendaVariavelDTO>> getAtivos() {
+	ResponseEntity<List<EventoListRendaVariavelDTO>> getEventos() {
 		List<EventoListRendaVariavelDTO> ativos = this.eventoService.listarEventos();
 		return ResponseEntity.ok(ativos);
 	}
@@ -51,5 +49,13 @@ public class EventoController {
 //		List<AtivoDTO> ativos = this.ativoService.listarAtivosPorClasse(id);
 //		return ResponseEntity.ok(ativos);
 //	}
+
+
+	@PostMapping("/filter")
+	public ResponseEntity<List<EventoListRendaVariavelDTO>> filter(@RequestBody Filter filter) {
+
+		List<EventoListRendaVariavelDTO> operacoes = eventoService.listarEventosRendaVariavelPorData(filter);
+		return ResponseEntity.ok(operacoes);
+	}
 	
 }

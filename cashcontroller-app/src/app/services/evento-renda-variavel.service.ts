@@ -35,7 +35,7 @@ export class EventoRendaVariavelService {
     }
 
     filter(filter: FilterOperacao) {
-        return this.http.post(this.baseUrl + '/eventos/renda-variavel/filter', filter);
+        return this.http.post(this.baseUrl + '/eventos/filter', filter);
     }
 
     excluir(id: string) {

@@ -17,6 +17,7 @@ public class EventoListRendaVariavelDTO {
     private LocalDate dataCom;
     private LocalDate dataPagamento;
     private double valor;
+    private double valorTotal;
     private TipoEventoDTO tipoEvento;
 
 }

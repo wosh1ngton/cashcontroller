@@ -1,12 +1,12 @@
 <div class="grid container-filtros-superiores">          
-    <div class="col-8 flex align-items-center gap-2 flex-wrap meses col-offset-2">
+    <div class="col-12 flex align-items-center gap-2 flex-wrap meses">
         <p-chip [styleClass]="mes.mesInteiro === selectedMonth ? 'mesSelecionado' : '' "
         (click)="selecionarMes(mes)" 
         *ngFor="let mes of filtroMes$ | async" [label]="mes.mesString" />                              
     </div>
 
-    <div class="p-2 col-2">
-        <div class="ui-g pt-2">
+    <div class="p-2 col-12">
+        <div>
             <p-dropdown [(ngModel)]="filter.ano" [options]="anos" appendTo="body" 
                 name="ano" [showClear]="true"
                 placeholder="Ano" [style]="{'width': '100%'}"

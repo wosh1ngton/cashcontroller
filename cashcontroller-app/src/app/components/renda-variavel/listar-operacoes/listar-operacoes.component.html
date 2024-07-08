@@ -1,13 +1,16 @@
 <div>
     <div class="col-12">
-        <app-filtro-superior [selectedMonth]="filter.mes" [selectedAno]="filter.ano"
-            (selecaoMes)="filtrarPorMes($event)">
-        </app-filtro-superior>
-        <p-toast></p-toast>
-        
+
+
         <div class="grid">
             <div class="p-2 col-2">
                 <p-card header="Filtros">
+                    <div class="p-2">
+                        <app-filtro-superior [selectedMonth]="filter.mes" [selectedAno]="filter.ano"
+                            (selecaoMes)="filtrarPorMes($event)">
+                        </app-filtro-superior>
+                        <p-toast></p-toast>
+                    </div>
                     <div class="p-2">
                         <label for="subclasse"> Filtrar por Classe</label>
                         <div class="ui-g pt-2">
@@ -45,184 +48,193 @@
                 <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
 
                 </app-irpf-mes>
-                <div class="col grid">
-                    <div class="col-4 col-offset-9">
-                        <p-button (click)="showEventoDialog()" label="Evento" class="btnAdicionarOperacao p-3"></p-button>
-                        <p-button (click)="showDialog()" label="Operação" class="btnAdicionarOperacao"></p-button>
-                    </div>                    
+                <div class="painel-de-botoes">                    
+                    <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
+                    <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
                 </div>
-                <p-tabView  [(activeIndex)]="activeIndex">
+                
+                
+                <p-tabView [(activeIndex)]="activeIndex">
                     <p-tabPanel header="Operações">
-                <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes" [value]="operacoes"
-                    [tableStyle]="{ 'min-width': '50rem', 'min-height': '20rem', 'border': '1px solid #e9e9e9' }">
-                    <ng-template pTemplate="header" let-columns>
-                        <tr>
-                            <th *ngFor="let col of columns">
-                                {{ col.header }}
-                            </th>
+                        <p-confirmDialog key="deleteOperacao" />
+                        <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes"
+                            [value]="operacoes" styleClass="p-datatable-sm"
+                            [tableStyle]="{ 'min-width': '50rem', 'min-height': '20rem', 'border': '1px solid #e9e9e9' }">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{ col.header }}
+                                    </th>
 
-                            <th>
+                                    <th>
 
-                            </th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-editing="editing" let-ri="rowIndex" let-operacao
-                        let-columns="columns">
-                        <tr [pEditableRow]="operacao"
-                            [ngClass]="{'venda': operacao.tipoOperacaoDto.id === 2, 'compra': operacao.tipoOperacaoDto.id === 1}">
-                            <td>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <p-dropdown [options]="ativos" appendTo="body" [(ngModel)]="operacao.ativoDto"
-                                            optionLabel="sigla" [showClear]="true" placeholder="Ativo"
-                                            [style]="{'width':'100%'}">
-                                        </p-dropdown>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{operacao.ativoDto.nome }}
-                                    </ng-template>
-                                </p-cellEditor>
-                            </td>
-                            <td>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <p-inputNumber classStyle="width: 25%" locale="pt-BR"
-                                            [(ngModel)]="operacao.quantidadeNegociada">
-                                        </p-inputNumber>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{operacao.quantidadeNegociada}}
-                                    </ng-template>
-                                </p-cellEditor>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-editing="editing" let-ri="rowIndex" let-operacao
+                                let-columns="columns">
+                                <tr [pEditableRow]="operacao"
+                                    [ngClass]="{'venda': operacao.tipoOperacaoDto.id === 2, 'compra': operacao.tipoOperacaoDto.id === 1}">
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="ativos" appendTo="body"
+                                                    [(ngModel)]="operacao.ativoDto" optionLabel="sigla"
+                                                    [showClear]="true" placeholder="Ativo" [style]="{'width':'100%'}">
+                                                </p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{operacao.ativoDto.nome }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputNumber classStyle="width: 25%" locale="pt-BR"
+                                                    [(ngModel)]="operacao.quantidadeNegociada">
+                                                </p-inputNumber>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{operacao.quantidadeNegociada}}
+                                            </ng-template>
+                                        </p-cellEditor>
 
-                            </td>
-                            <td>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <span class="p-float-label">
-                                            <p-calendar [(ngModel)]="operacao.dataOperacao" [iconDisplay]="'input'"
-                                                [showIcon]="true" inputId="icondisplay"
-                                                dateFormat="dd/mm/yy"></p-calendar>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <span class="p-float-label">
+                                                    <p-calendar [(ngModel)]="operacao.dataOperacao"
+                                                        [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                                                        dateFormat="dd/mm/yy"></p-calendar>
+                                                </span>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{operacao.dataOperacao | date: 'dd/MM/yyyy'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputNumber [(ngModel)]="operacao.valorUnitario" locale="pt-BR"
+                                                    mode="currency" currency="BRL" inputId="currency-brazil">
+                                                </p-inputNumber>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{operacao.valorUnitario | currency: 'BRL'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="tiposOperacao" appendTo="body"
+                                                    [(ngModel)]="operacao.tipoOperacaoDto" optionLabel="nome"
+                                                    [showClear]="true" placeholder="Tipo da Operação">
+                                                </p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{operacao.tipoOperacaoDto.nome }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputNumber locale="pt-BR" mode="currency" currency="BRL"
+                                                    inputId="currency-brazil" styleClass="small-input"
+                                                    [(ngModel)]="operacao.valorCorretagem">
+                                                </p-inputNumber>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{operacao.valorCorretagem | currency:'BRL'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+
+                                    </td>
+                                    <td>
+                                        {{ operacao.valorTotal | currency:'BRL'}}
+                                    </td>
+                                    <td>
+                                        <span *ngIf="operacao.tipoOperacaoDto.id == 2">
+                                            {{ operacao.custoTotal | currency:'BRL'}}
                                         </span>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{operacao.dataOperacao | date: 'dd/MM/yyyy'}}
-                                    </ng-template>
-                                </p-cellEditor>
+                                    </td>
 
-                            </td>
-                            <td>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <p-inputNumber [(ngModel)]="operacao.valorUnitario" locale="pt-BR"
-                                            mode="currency" currency="BRL" inputId="currency-brazil">
-                                        </p-inputNumber>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{operacao.valorUnitario | currency: 'BRL'}}
-                                    </ng-template>
-                                </p-cellEditor>
+                                    <td>
+                                        <div class="flex align-items-center justify-content-center gap-2">
+                                            <p-toast></p-toast>
+                                            
+                                            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
+                                                icon="pi pi-pencil" (click)="onRowEditInit(operacao)"
+                                                class="p-button-rounded p-button-text"></button>
+                                            
+                                            
+                                            <p-button *ngIf="!editing" icon="pi pi-trash"
+                                                (onClick)="validarExclusao(operacao, $event, 'deleteOperacao')"
+                                                styleClass="p-button-danger p-button-text"></p-button>
 
-                            </td>
-                            <td>
-                                <p-cellEditor>
+                                            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                                icon="pi pi-check" (click)="onRowEditSave(operacao)"
+                                                class="p-button-rounded p-button-text p-button-success mr-2"></button>
 
-                                    <ng-template pTemplate="input">
-                                        <p-dropdown [options]="tiposOperacao" appendTo="body"
-                                            [(ngModel)]="operacao.tipoOperacaoDto" optionLabel="nome" [showClear]="true"
-                                            placeholder="Tipo da Operação">
-                                        </p-dropdown>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{operacao.tipoOperacaoDto.nome }}
-                                    </ng-template>
-                                </p-cellEditor>
-                            </td>
-                            <td>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <p-inputNumber locale="pt-BR" mode="currency" currency="BRL"
-                                            inputId="currency-brazil" styleClass="small-input"
-                                            [(ngModel)]="operacao.valorCorretagem">
-                                        </p-inputNumber>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{operacao.valorCorretagem | currency:'BRL'}}
-                                    </ng-template>
-                                </p-cellEditor>
+                                            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                                icon="pi pi-times" (click)="onRowEditCancel(operacao, ri)"
+                                                class="p-button-rounded p-button-text p-button-danger"></button>
+                                        </div>
+                                    </td>
+                                </tr>
 
-                            </td>
-                            <td>
-                                {{ operacao.valorTotal | currency:'BRL'}}
-                            </td>
-                            <td>
-                                <span *ngIf="operacao.tipoOperacaoDto.id == 2">
-                                    {{ operacao.custoTotal | currency:'BRL'}}
-                                </span>
-                            </td>
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+                    <p-tabPanel header="Eventos">
+                        <p-confirmDialog key="deleteEvento" />
+                        <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{ col.header }}
+                                    </th>
+                                    <th>
 
-                            <td>
-                                <div class="flex align-items-center justify-content-center gap-2">
-                                    <p-toast></p-toast>
-                                    <p-confirmDialog></p-confirmDialog>
-                                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
-                                        icon="pi pi-pencil" (click)="onRowEditInit(operacao)"
-                                        class="p-button-rounded p-button-text"></button>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr>
 
-                                    <p-button *ngIf="!editing" icon="pi pi-trash"
-                                        (click)="validarExclusao(operacao, $event)"
-                                        styleClass="p-button-danger p-button-text"></p-button>
-
-                                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
-                                        icon="pi pi-check" (click)="onRowEditSave(operacao)"
-                                        class="p-button-rounded p-button-text p-button-success mr-2"></button>
-
-                                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
-                                        icon="pi pi-times" (click)="onRowEditCancel(operacao, ri)"
-                                        class="p-button-rounded p-button-text p-button-danger"></button>
-                                </div>
-                            </td>
-                        </tr>
-
-                    </ng-template>
-                </p-table>
-            </p-tabPanel>
-            <p-tabPanel header="Eventos">
-                <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }">
-                    <ng-template pTemplate="header" let-columns>
-                        <tr>
-                            <th *ngFor="let col of columns">
-                                {{ col.header }}
-                            </th>
-                            <th>
-                               
-                            </th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-rowData let-columns="columns">
-                        <tr>
-                           
-                            <td *ngFor="let col of columns">
-                                <ng-container *ngIf="col.type !== 'objeto'">
-                                     {{ rowData[col.field] }} 
-                                </ng-container>
-                                <ng-container *ngIf="col.type === 'objeto'">                                    
-                                    {{ rowData[col.field].nome }}                             
-                                </ng-container>
-                            </td>
-                            <td>
-                                <button pButton pRipple type="button"
-                                icon="pi pi-pencil" (click)="showEventoDialog(rowData)"
-                                class="p-button-rounded p-button-text p-button-primary mr-2"></button> 
-
-                                <p-button icon="pi pi-trash" (click)="validarExclusao"
-                                styleClass="p-button-danger p-button-text"></p-button>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </p-tabPanel>
-            </p-tabView>
+                                    <td *ngFor="let col of columns">
+                                        <ng-container *ngIf="col.type !== 'objeto' && col.type !== 'date' ">
+                                            {{ rowData[col.field] | currency: 'BRL' }}
+                                        </ng-container>
+                                        <ng-container *ngIf="col.type === 'objeto'">
+                                            {{ rowData[col.field].nome }}
+                                        </ng-container>
+                                        <ng-container *ngIf="col.type === 'date'">
+                                            {{ rowData[col.field] | date: 'dd/MM/yyyy'}}
+                                            
+                                        </ng-container>
+                                    </td>
+                                    <td>
+                                        <button pButton pRipple type="button" icon="pi pi-pencil"
+                                            (click)="showEventoDialog(rowData)"
+                                            class="p-button-rounded p-button-text p-button-primary mr-2"></button>
+                                       
+                                        <p-button icon="pi pi-trash" (click)="validarExclusaoEvento(rowData, $event, 'deleteEvento')"
+                                                styleClass="p-button-danger p-button-text"></p-button>
+                                        
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+                </p-tabView>
             </div>
         </div>
     </div>

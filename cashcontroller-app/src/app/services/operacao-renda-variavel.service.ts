@@ -35,7 +35,7 @@ export class OperacaoRendaVariavelService {
 
     filter(filter: FilterOperacao) {
         return this.http.post(this.baseUrl + '/operacoes/renda-variavel/filter', filter);
-    }
+    }    
 
     excluir(id: string) {
         return this.http.delete(this.baseUrl + '/operacoes/' + id);

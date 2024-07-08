@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
@@ -19,87 +24,98 @@ import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variav
   selector: 'app-evento-rv-form',
   standalone: true,
   imports: [
-    FormsModule, 
-    PrimengModule, 
-    DropdownModule,    
+    FormsModule,
+    PrimengModule,
+    DropdownModule,
     CommonModule,
     InputNumberModule,
-    CalendarModule],
+    CalendarModule,
+  ],
   templateUrl: './evento-rv-form.component.html',
-  styleUrl: './evento-rv-form.component.css'
+  styleUrl: './evento-rv-form.component.css',
 })
 export class EventoRvFormComponent implements OnInit {
-
   ativos: Ativo[] | undefined;
   tiposEvento: TipoEvento[] | undefined;
   eventoRendaVariavel: EventoRendaVariavel = new EventoRendaVariavel();
- 
-
 
   constructor(
-    public ativoService: AtivoService,               
-              public messageService: MessageService,
-              public dialogRef: DynamicDialogRef,
-              private dialogConfig: DynamicDialogConfig,
-              private cdr: ChangeDetectorRef , 
+    public ativoService: AtivoService,
+    public messageService: MessageService,
+    public dialogRef: DynamicDialogRef,
+    private dialogConfig: DynamicDialogConfig,
+    private cdr: ChangeDetectorRef,
 
-              private eventoRendaVariavelService: EventoRendaVariavelService
+    private eventoRendaVariavelService: EventoRendaVariavelService
   ) {}
 
   ngOnInit(): void {
-    const ativosObservable =  this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);   
-    const tipoEventosObservable = this.buscarTiposEventos();
-    
-    forkJoin([ativosObservable, tipoEventosObservable]).subscribe(() => {
-      if(this.dialogConfig.data.isEdit) {
-        this.eventoRendaVariavel = this.dialogConfig.data.rowData;  
-        this.setActiveValue();
-        this.cdr.detectChanges();
-        console.log(this.ativos)
-      }  
-    })
-   
-    
-  }  
+    this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
+    this.buscarTiposEventos();
+    this.setEvento();
+    this.setValoresSelecionados();
+  }
+
+  private setEvento() {
+    let dataCom = new Date(this.dialogConfig.data.rowData.dataCom);
+    let dataPagamento = new Date(this.dialogConfig.data.rowData.dataPagamento);
+    this.eventoRendaVariavel.valor = this.dialogConfig.data.rowData.valor;
+    this.eventoRendaVariavel.dataCom = dataCom;
+    this.eventoRendaVariavel.dataPagamento = dataPagamento;
+    this.eventoRendaVariavel.id = this.dialogConfig.data.rowData.id;
+    this.eventoRendaVariavel.ativo = this.dialogConfig.data.rowData.ativo;
+    this.eventoRendaVariavel.tipoEvento =
+      this.dialogConfig.data.rowData.tipoEvento;
+  }
 
   private isEdit() {
     return this.dialogConfig.data.isEdit;
   }
 
   private buscarAtivos(id: number) {
-    return this.ativoService.getAtivosPorClasse(id)    
-      .pipe(
-        tap(val => this.ativos = val)
-      );
-      
+    return this.ativoService
+      .getAtivosPorClasse(id)
+      .pipe(tap((val) => (this.ativos = val)))
+      .subscribe();
   }
 
   private buscarTiposEventos() {
-    return this.eventoRendaVariavelService.getTipoEventos()
-      .pipe(
-        tap(val => this.tiposEvento = val)
-      );      
-      
+    return this.eventoRendaVariavelService
+      .getTipoEventos()
+      .pipe(tap((val) => (this.tiposEvento = val)))
+      .subscribe();
   }
 
-  private setActiveValue(): void {
-    if(this.eventoRendaVariavel) {
-      const selectedAtivo = this.ativos?.find(a => a.id === this.eventoRendaVariavel.ativo.id)
-      console.log('teste',selectedAtivo)
-      if(selectedAtivo) {
+  private setValoresSelecionados(): void {
+    if (this.eventoRendaVariavel) {
+      const selectedAtivo = this.ativos?.find(
+        (a) => a.id === this.eventoRendaVariavel.ativo.id
+      );
+      if (selectedAtivo) {
         this.eventoRendaVariavel.ativo.id = selectedAtivo.id;
-        console.log(this.eventoRendaVariavel.ativo);
       }
     }
   }
 
-  save(operacao: any) {    
-    console.log(operacao)
+  save(evento: any) {    
     this.eventoRendaVariavelService
-      .save(operacao)
-        .pipe(
-          tap(() => {this.dialogRef.close(operacao)})
-          )
-        .subscribe();
+      .save(evento)
+      .pipe(
+        tap(() => {
+          this.dialogRef.close(evento);
+        })
+      )
+      .subscribe();
+  }
+
+  editar(evento: any) {    
+    this.eventoRendaVariavelService
+      .editar(evento)
+      .pipe(
+        tap(() => {
+          this.dialogRef.close(evento);
+        })
+      )
+      .subscribe();
   }
 }

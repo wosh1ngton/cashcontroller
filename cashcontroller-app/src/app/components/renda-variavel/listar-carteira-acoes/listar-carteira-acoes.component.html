@@ -1,29 +1,53 @@
-<span> Carteira </span>
-<p-table [value]="carteira" 
-[tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" class="tabela-irpf">
-<ng-template pTemplate="header">
-    <tr>
-        <th>Ativo</th>
-        <th>Custódia</th>
-        <th>Preço Médio</th>
-        <th>Cotação</th>
-        <th>Oscilação do dia</th>
-        <th>Valor de Mercado</th>
-        <th>Custo</th>
-    </tr>
-</ng-template>
-<ng-template pTemplate="body" locale="pt-BR" let-item>
-    <tr>
-        <td>{{ item.ativo.sigla }}</td>
-        <td>{{ item.custodia }}</td>
-        <td>{{ item.precoMedio | currency:'BRL' }}</td>        
-        <td>{{ item.cotacao | currency: 'BRL' }}</td>
-        <td>{{ item.oscilacaoDia | number: '1.0-2' }} %</td>
-        <td>{{ item.valorMercado | currency: 'BRL'  }} </td>
-        <td>{{ item.custo | currency: 'BRL'  }} </td>
-        
-    </tr>
-</ng-template>
+<p-table [value]="carteira" styleClass="p-datatable-sm"
+    [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" class="tabela-irpf">
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+            Carteira
+        </div>     
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th colspan="7" class="text-center">Totais: </th>            
+            <th>  {{ totalCusto | currency: 'BRL' }}</th>
+            <th> {{ totalValorMercado | currency: 'BRL' }}</th>
+        </tr>       
+           
+        <tr>
+            <th  pSortableColumn="ativo">Ativo <p-sortIcon field="ativo" /></th>
+            <th pSortableColumn="custodia">Custódia <p-sortIcon field="custodia" /></th>
+            <th>Preço Médio</th>
+            <th>Cotação</th>
+            <th>Oscilação do dia</th>
+            <th pSortableColumn="valorizacao">Valorização  <p-sortIcon field="valorizacao" /></th>
+            <th pSortableColumn="percentual">Percentual <p-sortIcon field="valorizacao" /></th>
+            <th pSortableColumn="custo">Custo <p-sortIcon field="custo" /></th>
+            <th pSortableColumn="valorMercado">Valor de Mercado <p-sortIcon field="valorMercado" /></th>
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" locale="pt-BR" let-item>
+        <tr>
+            <td class="middle-aligned">
+                <img [src]="item.ativo.logo" class="shadow-4" width="35px" height="35px" />
+                <span class="middle-text">{{ item.ativo.sigla }}</span>
+            </td>
+            <td>{{ item.custodia }}</td>
+            <td>{{ item.precoMedio | currency:'BRL' }}</td>
+            <td>{{ item.cotacao | currency: 'BRL' }}</td>
+            <td>{{ item.oscilacaoDia | number: '1.0-2' }} %</td>
+            <td>
+                <div [ngClass]="{'prejuizo': item.valorizacao < 0, 'lucro': item.valorizacao > 0 }">
+                    {{ item.valorizacao | number: '1.0-2' }}
+                </div>
+            </td>
+            <td>
+                
+               {{ item.valorMercado / totalValorMercado | percent : '1.0-2'}}
+            </td>
+            <td>{{ item.custo | currency: 'BRL' }} </td>
+            <td>{{ item.valorMercado | currency: 'BRL' }} </td>
+
+
+        </tr>
+    </ng-template>
 </p-table>
-
-

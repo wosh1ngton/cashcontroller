@@ -18,8 +18,13 @@ public class AtivoCarteiraDTO {
     private double oscilacaoDia;
     private double custo;
     private double valorMercado;
+    private double valorizacao;
     private double percentual;
     private double precoMedio;
+
+    public double getValorizacao() {
+        return valorMercado - custo;
+    }
 
     public AtivoCarteiraDTO(Ativo ativo, double custodia, double precoMedio) {
         this.ativo = ativo;

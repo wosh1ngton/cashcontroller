@@ -7,7 +7,9 @@ export class AtivoCarteira {
     cotacao: number = 0;    
     oscilacaoDia: string = "";
     custo: number = 0;
+    valorizacao: number = 0;
     valorMercado: number = 0;
     percentual: number = 0;    
+    
 
 }

@@ -1,33 +1,32 @@
 <div class="grid">
-  <div class="col-12 header">
-    
-        <p-menubar [model]="items">
-          <ng-template  pTemplate="start">
-          <a routerLink="/"  >
-          <span class="p-menuitem-text"> 
-                    <h3> Ca$hController </h3>
-                    </span>
-                </a>   
-          </ng-template>
-          <ng-template let-item pTemplate="item" class="p-menuitem">                       
-            
-                <a [routerLink]="item.routerLink" class="p-menuitem-link"  [ngClass]="selectedMenu == item.id ? 'p-menuitem-link-active' : ''"                
-                (click)="item.command($event)">
-                  <span class="p-menuitem-icon {{item.icon}}"></span>
-                  <span class="p-menuitem-text">
-                    {{ item.label }}
-                  </span>
-                </a>          
-            
-            </ng-template>
+  <div class="header">
 
-   
-        </p-menubar>
- 
-<!-- {{selectedMenu}} -->
+    <p-menubar [model]="items">
+      <ng-template pTemplate="start">
+        <a routerLink="/" style="text-decoration: none; font-size: 1.2rem;">         
+            <h3 style="display: inline-flex; flex-wrap: wrap; color: #333;"> Ca$hController </h3>
+            <span style="font-size: 2.8rem; font-weight: 100; vertical-align: middle;"> | </span> 
+        </a>
+      </ng-template>
+      <ng-template let-item pTemplate="item" class="p-menuitem">
+
+        <a [routerLink]="item.routerLink" class="p-menuitem-link"
+          [ngClass]="selectedMenu == item.id ? 'p-menuitem-link-active' : ''" (click)="item.command($event)">
+          <span class="p-menuitem-icon {{item.icon}}"></span>
+          <span class="p-menuitem-text">
+            {{ item.label }}
+          </span>
+        </a>
+
+      </ng-template>
+
+
+    </p-menubar>
+
+    <!-- {{selectedMenu}} -->
 
   </div>
-  <div class="col-10 col-offset-1 content">
+  <div class="col-12 content">
     <router-outlet></router-outlet>
   </div>
 
