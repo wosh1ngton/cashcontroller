@@ -1,0 +1,21 @@
+.middle-aligned {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.middle-aligned img,
+.middle-aligned .middle-text {
+  vertical-align: middle;
+}
+
+.middle-text {
+    margin-left: 4px;
+}
+
+.prejuizo {
+    color: red;
+}
+
+.lucro {
+    color: blue;
+}
