@@ -49,6 +49,10 @@ export class OperacaoRendaVariavelService {
         return this.http.get<any[]>(this.baseUrl + '/operacoes/carteira-acoes');
     }
 
+    carteiraFiis() {
+        return this.http.get<any[]>(this.baseUrl + '/operacoes/carteira-fiis');
+    }
+
     getAnosComOperacoes(): Observable<any> {    
         return this.http.get(this.baseUrl + '/operacoes/anos-com-operacoes');
     }
@@ -57,9 +61,12 @@ export class OperacaoRendaVariavelService {
         return this.http.get(this.baseUrl + '/operacoes/MesesComOperacoesPorAno/' + ano)
     }
 
-    posicoesEncerradas() {
-        console.log('oi')
+    posicoesEncerradas() {        
         return this.http.get<any[]>(this.baseUrl + '/operacoes/posicoes-encerradas');
+    }
+
+    getOperacoesPorAtivo(idAtivo: number): Observable<any> {
+        return this.http.get<any[]>(this.baseUrl + '/operacoes/por-ativo/' + idAtivo);
     }
 	
 }

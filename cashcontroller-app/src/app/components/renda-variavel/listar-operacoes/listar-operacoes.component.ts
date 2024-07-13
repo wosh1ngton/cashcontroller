@@ -38,8 +38,9 @@ import { Mes } from 'src/app/models/dto/mes';
 import { FiltroSuperiorComponent } from '../../filtro-superior/filtro-superior.component';
 import { DateUtil } from 'src/app/shared/util/date-util';
 import { EventoRendaVariavel } from 'src/app/models/evento-renda-variavel.model';
-import { EventoRvFormComponent } from 'src/app/src/app/components/renda-variavel/evento-rv-form/evento-rv-form.component';
+import { EventoRvFormComponent } from '../evento-rv-form/evento-rv-form.component';
 import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variavel.service';
+import { NumerosDoMesComponent } from '../../numeros-do-mes/numeros-do-mes.component';
 
 @Component({
   selector: 'app-listar-renda-variavel',
@@ -57,6 +58,7 @@ import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variav
     InputNumberModule,
     IrpfMesComponent,
     FiltroSuperiorComponent,
+    NumerosDoMesComponent
   ],
 
   templateUrl: './listar-operacoes.component.html',
@@ -96,7 +98,7 @@ export class ListarOperacoesComponent {
   ) {}
 
   colsEventos = [
-    { field: 'ativo', header: 'Ativo', type: 'objeto' },
+    { field: 'ativo', header: 'Ativo', type: 'ativo' },
     { field: 'dataCom', header: 'Data Com', type: 'date' },
     { field: 'dataPagamento', header: 'Data do Pagamento', type: 'date' },
     { field: 'tipoEvento', header: 'Evento', type: 'objeto' },
@@ -112,15 +114,18 @@ export class ListarOperacoesComponent {
     this.filterData();
     this.filterEventos();
 
+
+    
+
     this.cols = [
       { field: 'ativoDto', header: 'Ativo' },
       { field: 'quantidadeNegociada', header: 'Quantidade' },
       { field: 'dataOperacao', header: 'Data' },
       { field: 'valorUnitario', header: 'Valor Unitário' },
       { field: 'tipoOperacaoDto', header: 'Operação' },
+      { field: 'subclasseAtivoDto', header: 'Classe' },
       { field: 'valorCorretagem', header: 'Corretagem' },
-      { field: 'valorTotal', header: 'Total' },
-      { field: 'custoTotal', header: 'Custo' },
+      { field: 'valorTotal', header: 'Total' }      
     ];
   }
 
@@ -144,16 +149,19 @@ export class ListarOperacoesComponent {
           this.filter.mes = DateUtil.getMonthNumber(val.dataOperacao);
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
+            summary: 'Successo',
             detail: 'Operação Cadastrada',
           });
         })
       )
-      .subscribe((val) => this.filterData());
+      .subscribe((val) => {
+        this.filterData();
+        this.filterEventos();
+      });
   }
 
   showEventoDialog(dados?: any) {
-    console.log('dados', dados);
+    
     this.ref = this.dialogService.open(EventoRvFormComponent, {
       header: 'Cadastro de Evento - Renda Variável',
       width: '50vw',
@@ -168,7 +176,26 @@ export class ListarOperacoesComponent {
       },
     });
 
-    this.ref.onClose.subscribe((val) => this.filterEventos());
+    this.ref.onClose
+    .pipe(
+      filter((val) => !!val),
+      tap((val) => {
+        this.filter.startDate = null;
+        this.filter.ano = val.dataPagamento.getFullYear();
+        this.filter.mes = DateUtil.getMonthNumber(val.dataPagamento);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successo',
+          detail: 'Evento Cadastrado',
+        });
+      })
+    ).subscribe(
+      (val) => {
+        this.filterEventos();
+        this.filterData();
+      }
+      
+    );
   }
 
   filtrarPorDataEspecifica(): void {
@@ -291,7 +318,7 @@ export class ListarOperacoesComponent {
           detail: 'Confirmada a exclusão',
         });
       },
-      reject: (close: any) => {
+      reject: () => {
         this.filterData();
         this.messageService.add({
           severity: 'error',
@@ -299,7 +326,7 @@ export class ListarOperacoesComponent {
           detail: 'Cancelada a exclusão',
           life: 3000,
         });
-        console.log(close);
+        
       },
     });
   }
@@ -324,16 +351,15 @@ export class ListarOperacoesComponent {
           detail: 'Confirmada a exclusão',
         });
       },
-      reject: (close:any) => {
+      reject: () => {
         this.filterEventos();
         this.messageService.add({
           severity: 'error',
           summary: 'Rejeitado',
           detail: 'Cancelada a exclusão',
           life: 3000,
-        });
+        });       
         
-        console.log(close);
       },
     });
   }
@@ -362,8 +388,7 @@ export class ListarOperacoesComponent {
     return this.eventoRendaVariavelService
       .filter(this.filter)
       .subscribe((res: any) => {
-        (this.eventos = res), console.log('ano ', this.filter.ano);
-        console.log('meses: ', this.filter.mes);
+        (this.eventos = res);        
         this.filtroChange = !this.filtroChange;
       });
   }

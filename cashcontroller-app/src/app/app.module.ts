@@ -18,6 +18,8 @@ import localePt from '@angular/common/locales/pt';
 import localePtExtra from '@angular/common/locales/extra/pt';
 import { PosicoesEncerradasComponent } from './components/renda-variavel/posicoes-encerradas/posicoes-encerradas.component';
 import { FiltroSuperiorComponent } from './components/filtro-superior/filtro-superior.component';
+import { DetalharAtivoComponent } from './components/renda-variavel/detalhar-ativo/detalhar-ativo.component';
+import { ListarFiisComponent } from './components/renda-variavel/fiis/listar-fiis/listar-fiis.component';
 
 
 registerLocaleData(localePt, 'pt-BR', localePtExtra);
@@ -28,7 +30,7 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     HomeComponent,
     ListarCarteiraAcoesComponent,
     PosicoesEncerradasComponent,
-    
+    ListarFiisComponent    
   ],
   imports: [
     BrowserModule,    
@@ -36,6 +38,7 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     PrimengModule,
     BrowserAnimationsModule,
     FormsModule,    
+    DetalharAtivoComponent
   ],  
   exports: [
     

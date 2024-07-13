@@ -1,10 +1,10 @@
 
-    <p-card header="Cálculo de Imposto">
+    <p-card header="Cálculo de Imposto em Ações">
         <p class="m-1">
            <span style="color: #2542e6; font-weight: bold;">  {{ irpfMes.mes }} </span> / imposto a pagar: {{ irpfMes.valorAPagar | currency: 'BRL' }}
         </p>       
         <p-table [value]="irpfMes.ativosVendidos" 
-            [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" class="tabela-irpf">
+            [tableStyle]="{ 'border': '1px solid #ccc' }" class="tabela-irpf">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Ativo</th>

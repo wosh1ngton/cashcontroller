@@ -4,6 +4,7 @@ import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.entity.OperacaoRendaFixa;
 import br.com.cashcontroller.entity.OperacaoRendaVariavel;
 import br.com.cashcontroller.entity.TipoOperacao;
+import br.com.cashcontroller.mapper.EventoRendaVariavelMapper;
 import br.com.cashcontroller.mapper.OperacaoRendaFixaMapper;
 import br.com.cashcontroller.mapper.OperacaoRendaVariavelMapper;
 import br.com.cashcontroller.mapper.TipoOperacaoMapper;
@@ -34,6 +35,9 @@ public class OperacaoService {
 
     @Autowired
     TipoOperacaoRepository tipoOperacaoRepository;
+
+    @Autowired
+    EventoService eventoService;
 
     public List<OperacaoRendaVariavelDTO> listarOperacoesRendaVariavel() {
         List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findAll();
@@ -210,11 +214,39 @@ public class OperacaoService {
     }
 
     public List<AtivoCarteiraDTO> listarCarteiraDeAcoes() {
-        return  this.operacaoRendaVariavelRepository.listarCarteiraDeAcoes();
+        var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeAcoes();
+        carteira
+                .forEach(ativoCarteira -> {
+                        ativoCarteira.setTotalEmProventos(this.eventoService.getTotalProventosPorAtivo(ativoCarteira.getAtivo().getId()));
+                        ativoCarteira.setGanhoDeCapital(this.calcularGanhoDeCapital(ativoCarteira.getAtivo().getId()));
+                    }
+                );
+
+        return  carteira;
+    }
+
+    public List<AtivoCarteiraDTO> listarCarteiraDeFiis() {
+        var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeFiis();
+        carteira
+                .forEach(ativoCarteira -> {
+                            ativoCarteira.setTotalEmProventos(this.eventoService.getTotalProventosPorAtivo(ativoCarteira.getAtivo().getId()));
+                            ativoCarteira.setGanhoDeCapital(this.calcularGanhoDeCapital(ativoCarteira.getAtivo().getId()));
+                        }
+                );
+
+        return  carteira;
     }
 
     public List<PosicaoEncerradaDTO> listarPosicoesEncerradas() {
         return this.operacaoRendaVariavelRepository.listarAtivosComOperacoesFechadas();
+    }
+
+    private double calcularGanhoDeCapital(int idAtivo) {
+        var operacoes = operacaoRendaVariavelRepository.listarOperacoesPorAtivo(idAtivo);
+        var operacoesDto = OperacaoRendaVariavelMapper.INSTANCE.toListDTO(operacoes);
+        return operacoesDto.stream()
+                .mapToDouble(op -> op.getValorTotal() -  op.getCustoTotal())
+                .sum();
     }
 
     public List<Integer> listarAnosComOperacoes() {
@@ -223,6 +255,12 @@ public class OperacaoService {
 
 
     public List<MesDTO> listarMesesComOperacoes(@PathVariable(value = "ano") Integer ano) {
-        return this.operacaoRendaVariavelRepository.listarMesesComOperacoesPorAno(ano);
+        return this.operacaoRendaVariavelRepository.listarMesesComOperacoesOuEventosPorAno(ano);
+    }
+
+    public List<OperacaoRendaVariavelDTO> listarOperacoesPorAtivo(int idAtivo) {
+        var operacoes = this.operacaoRendaVariavelRepository.listarOperacoesPorAtivo(idAtivo);
+        return operacoes.stream().map(OperacaoRendaVariavelMapper.INSTANCE::toDTO).collect(Collectors.toList());
+
     }
 }

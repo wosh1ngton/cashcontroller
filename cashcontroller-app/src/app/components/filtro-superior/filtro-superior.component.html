@@ -1,7 +1,7 @@
 <div class="grid container-filtros-superiores">          
     <div class="col-12 flex align-items-center gap-2 flex-wrap meses">
         <p-chip [styleClass]="mes.mesInteiro === selectedMonth ? 'mesSelecionado' : '' "
-        (click)="selecionarMes(mes)" 
+        (click)="selecionarMes(mes)" class="item-mes"
         *ngFor="let mes of filtroMes$ | async" [label]="mes.mesString" />                              
     </div>
 

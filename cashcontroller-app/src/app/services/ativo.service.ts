@@ -25,8 +25,12 @@ export class AtivoService {
         return this.http.get<Ativo[]>(this.baseUrl + '/ativos/por-classe/' + id);
     }
 
-    getAtivosBrapi(): Observable<any> {
+    getAcoesBrapi(): Observable<any> {
         return this.http.get(this.baseBrapiUrl + '/quote/list?type=stock&token=hQTbQHiTVUDV9ohDHfCErU');
+    }
+
+    getFiisBrapi(): Observable<any> {
+        return this.http.get(this.baseBrapiUrl + '/quote/list?type=fund&token=hQTbQHiTVUDV9ohDHfCErU');
     }
 
     getSubclasseAtivos() : Observable<SubclasseAtivo[]> {

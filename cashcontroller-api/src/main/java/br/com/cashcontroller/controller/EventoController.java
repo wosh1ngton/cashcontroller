@@ -16,8 +16,9 @@ public class EventoController {
 	@Autowired
 	private EventoService eventoService;
 	@PostMapping
-	ResponseEntity<EventoAddRendaVariavelDTO> cadastrarEvento(@RequestBody EventoAddRendaVariavelDTO eventoDTO) {
-		return ResponseEntity.ok(this.eventoService.cadastrarEvento(eventoDTO));
+	ResponseEntity<?> cadastrarEvento(@RequestBody EventoAddRendaVariavelDTO eventoDTO, @RequestParam String periodosDeRecorrencia) {
+		this.eventoService.cadastrarEvento(eventoDTO,periodosDeRecorrencia);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping
@@ -57,5 +58,9 @@ public class EventoController {
 		List<EventoListRendaVariavelDTO> operacoes = eventoService.listarEventosRendaVariavelPorData(filter);
 		return ResponseEntity.ok(operacoes);
 	}
-	
+
+	@PostMapping("/parametro-fii")
+	ResponseEntity<ParametroEventoFIIAddDTO> cadastrarParametroFII(@RequestBody ParametroEventoFIIAddDTO parametroDto) {
+		return ResponseEntity.ok(this.eventoService.cadastrarParametro(parametroDto));
+	}
 }

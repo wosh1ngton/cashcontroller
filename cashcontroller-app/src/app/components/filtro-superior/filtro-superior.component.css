@@ -1,0 +1,4 @@
+::ng-deep .item-mes .p-chip {
+    display: inline-flex;
+    min-width: 40px;
+}

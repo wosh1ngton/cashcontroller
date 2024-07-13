@@ -29,4 +29,16 @@ public interface EventoRepository extends JpaRepository<EventoRendaVariavel, Int
 
 
 
+    @Query("SELECT " +
+            "ev " +
+            "FROM EventoRendaVariavel ev " +
+            "INNER JOIN ev.ativo a " +
+            "INNER JOIN a.subclasseAtivo sub " +
+            "INNER JOIN ev.tipoEvento te " +
+            "WHERE " +
+            "a.id = :ativoId")
+    List<EventoRendaVariavel> findEventosByAtivo(@Param("ativoId") Integer ativoId);
+
+
+
 }

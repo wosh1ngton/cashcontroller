@@ -1,7 +1,5 @@
 <div>
     <div class="col-12">
-
-
         <div class="grid">
             <div class="p-2 col-2">
                 <p-card header="Filtros">
@@ -44,16 +42,24 @@
 
             </div>
             <div class="col-10">
+                <div class="grid">
+                <div class="col-6">
+                    <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
 
-                <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
+                    </app-irpf-mes>
+                </div>
+                <div class="col-6">
+                    <app-numeros-do-mes [eventos]="eventos" [operacoes]="operacoes" [filtro]="filter">
 
-                </app-irpf-mes>
-                <div class="painel-de-botoes">                    
+                    </app-numeros-do-mes>
+                </div>
+            </div>
+                <div class="painel-de-botoes">
                     <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
                     <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
                 </div>
-                
-                
+
+
                 <p-tabView [(activeIndex)]="activeIndex">
                     <p-tabPanel header="Operações">
                         <p-confirmDialog key="deleteOperacao" />
@@ -84,7 +90,7 @@
                                                 </p-dropdown>
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{operacao.ativoDto.nome }}
+                                              <strong>   {{operacao.ativoDto.sigla }}</strong>
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
@@ -144,6 +150,12 @@
                                         </p-cellEditor>
                                     </td>
                                     <td>
+                                        
+                                            {{operacao.ativoDto.subclasseAtivoDto.nome }}
+                                        
+                                    </td>
+                                 
+                                    <td>
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <p-inputNumber locale="pt-BR" mode="currency" currency="BRL"
@@ -160,21 +172,17 @@
                                     <td>
                                         {{ operacao.valorTotal | currency:'BRL'}}
                                     </td>
-                                    <td>
-                                        <span *ngIf="operacao.tipoOperacaoDto.id == 2">
-                                            {{ operacao.custoTotal | currency:'BRL'}}
-                                        </span>
-                                    </td>
+                                   
 
                                     <td>
                                         <div class="flex align-items-center justify-content-center gap-2">
                                             <p-toast></p-toast>
-                                            
+
                                             <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
                                                 icon="pi pi-pencil" (click)="onRowEditInit(operacao)"
                                                 class="p-button-rounded p-button-text"></button>
-                                            
-                                            
+
+
                                             <p-button *ngIf="!editing" icon="pi pi-trash"
                                                 (onClick)="validarExclusao(operacao, $event, 'deleteOperacao')"
                                                 styleClass="p-button-danger p-button-text"></p-button>
@@ -216,19 +224,23 @@
                                         <ng-container *ngIf="col.type === 'objeto'">
                                             {{ rowData[col.field].nome }}
                                         </ng-container>
+                                        <ng-container *ngIf="col.type === 'ativo'">
+                                           <strong> {{ rowData[col.field].sigla }} </strong> 
+                                        </ng-container>
                                         <ng-container *ngIf="col.type === 'date'">
                                             {{ rowData[col.field] | date: 'dd/MM/yyyy'}}
-                                            
+
                                         </ng-container>
                                     </td>
                                     <td>
                                         <button pButton pRipple type="button" icon="pi pi-pencil"
                                             (click)="showEventoDialog(rowData)"
                                             class="p-button-rounded p-button-text p-button-primary mr-2"></button>
-                                       
-                                        <p-button icon="pi pi-trash" (click)="validarExclusaoEvento(rowData, $event, 'deleteEvento')"
-                                                styleClass="p-button-danger p-button-text"></p-button>
-                                        
+
+                                        <p-button icon="pi pi-trash"
+                                            (click)="validarExclusaoEvento(rowData, $event, 'deleteEvento')"
+                                            styleClass="p-button-danger p-button-text"></p-button>
+
                                     </td>
                                 </tr>
                             </ng-template>

@@ -20,7 +20,8 @@ public interface AtivoMapper {
 	
 	@Mapping(source = "subclasseAtivoDto", target = "subclasseAtivo")
     Ativo toEntity(AtivoDTO ativoDto);
-    
+
+    @Mapping(source = "subclasseAtivo", target = "subclasseAtivoDto")
     List<AtivoDTO> toListDTO(List<Ativo> ativos);
 
 }

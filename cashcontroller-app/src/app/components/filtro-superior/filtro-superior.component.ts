@@ -29,8 +29,7 @@ export class FiltroSuperiorComponent implements OnInit, OnChanges {
     this.getMeses(anoAtual);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('oi')
+  ngOnChanges(changes: SimpleChanges): void {    
     this.getMeses(this.selectedAno);
     this.filter.ano = this.selectedAno;
   }
@@ -62,7 +61,7 @@ export class FiltroSuperiorComponent implements OnInit, OnChanges {
 
     this.selecaoMes.emit($event);
     this.selectedMonth = $event.mesString;
-    console.log(this.selectedMonth)
+    
   }
 
 

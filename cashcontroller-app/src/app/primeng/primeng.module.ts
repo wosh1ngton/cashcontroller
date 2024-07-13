@@ -6,6 +6,8 @@ import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { DropdownModule } from 'primeng/dropdown';
 import { TabViewModule } from 'primeng/tabview';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 
 @NgModule({
@@ -17,7 +19,9 @@ import { TabViewModule } from 'primeng/tabview';
     CardModule,
     ChipModule,
     DropdownModule,
-    TabViewModule
+    TabViewModule,
+    CheckboxModule,
+    InputNumberModule
   ]
 })
 export class PrimengModule { }

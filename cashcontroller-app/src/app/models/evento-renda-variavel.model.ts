@@ -9,4 +9,5 @@ export class EventoRendaVariavel {
     valorTotal: number = 0;
     ativo: Ativo = new Ativo();
     tipoEvento: TipoEvento = new TipoEvento();
+    
 }

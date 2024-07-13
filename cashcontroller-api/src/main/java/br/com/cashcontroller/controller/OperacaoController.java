@@ -92,6 +92,13 @@ public class OperacaoController {
         return ResponseEntity.ok(carteira);
     }
 
+    @GetMapping(value = "/carteira-fiis")
+    ResponseEntity<List<AtivoCarteiraDTO>> listarCarteiraFiis() {
+        var carteira = this.operacaoService.listarCarteiraDeFiis();
+        return ResponseEntity.ok(carteira);
+    }
+
+
     @GetMapping(value = "/posicoes-encerradas")
     ResponseEntity<List<PosicaoEncerradaDTO>> listarPosicoesEncerradas() {
         var encerradaDTOS = this.operacaoService.listarPosicoesEncerradas();
@@ -106,5 +113,10 @@ public class OperacaoController {
     @GetMapping("/MesesComOperacoesPorAno/{ano}")
     ResponseEntity<List<MesDTO>> listarMesesComDespesas(@PathVariable(value = "ano") Integer ano) {
         return ResponseEntity.ok(this.operacaoService.listarMesesComOperacoes(ano));
+    }
+
+    @GetMapping("/por-ativo/{idAtivo}")
+    ResponseEntity<List<OperacaoRendaVariavelDTO>> listarOperacoesPorAtivo(@PathVariable(value = "idAtivo") Integer idAtivo) {
+        return ResponseEntity.ok(this.operacaoService.listarOperacoesPorAtivo(idAtivo));
     }
 }

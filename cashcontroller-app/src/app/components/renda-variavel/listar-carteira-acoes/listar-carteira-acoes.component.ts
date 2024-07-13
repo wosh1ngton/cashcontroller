@@ -4,11 +4,12 @@ import { AtivoBrapi } from 'src/app/models/ativo-brapi.model';
 import { AtivoCarteira } from 'src/app/models/ativo-carteira.model';
 import { AtivoService } from 'src/app/services/ativo.service';
 import { OperacaoRendaVariavelService } from 'src/app/services/operacao-renda-variavel.service';
+import { DetalharAtivoComponent } from '../detalhar-ativo/detalhar-ativo.component';
 
 @Component({
   selector: 'app-carteira-acoes',
   templateUrl: './listar-carteira-acoes.component.html',
-  styleUrl: './listar-carteira-acoes.component.css',
+  styleUrl: './listar-carteira-acoes.component.css',  
 })
 export class ListarCarteiraAcoesComponent implements OnInit {
   constructor(
@@ -20,13 +21,18 @@ export class ListarCarteiraAcoesComponent implements OnInit {
   totalValorMercado: number = 0;
   totalCusto: number = 0;
   totalValorizacao: number = 0;
+  ativoSelecionado: number = 0;
 
   ngOnInit(): void {
     this.listarCarteira();   
   }
 
+  selecionarAtivo(id: any) {
+    console.log('id', id)
+    this.ativoSelecionado = id.data;
+  }
   listarCarteira() {
-    const ativosBrapi$ = this.ativoService.getAtivosBrapi();
+    const ativosBrapi$ = this.ativoService.getAcoesBrapi();
     const carteira$ = this.operacaoRendaVariavelService.carteiraAcoes();
 
     forkJoin([ativosBrapi$, carteira$])
@@ -39,7 +45,7 @@ export class ListarCarteiraAcoesComponent implements OnInit {
             return {
               ...c,
               cotacao: ativo.close,
-              oscilacaoDia: ativo.change,
+              oscilacaoDia: ativo.change,              
               valorMercado: ativo.close * c.custodia,
               custo: c.custodia * c.precoMedio,
               valorizacao: ativo.close * c.custodia - c.custodia * c.precoMedio,

@@ -21,6 +21,8 @@ public class AtivoCarteiraDTO {
     private double valorizacao;
     private double percentual;
     private double precoMedio;
+    private double totalEmProventos;
+    private double ganhoDeCapital;
 
     public double getValorizacao() {
         return valorMercado - custo;

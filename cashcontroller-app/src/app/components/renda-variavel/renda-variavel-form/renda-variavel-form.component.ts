@@ -52,6 +52,7 @@ export class RendaVariavelFormComponent {
   ngOnInit(): void {
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);    
     this.buscarTiposOperacao();
+   // this.buscarAtivosBrapi()
   }  
 
   private buscarAtivos(id: number) {
@@ -60,17 +61,18 @@ export class RendaVariavelFormComponent {
     );
   }
 
-  // private buscarAtivosBrapi() {
-  //   this.ativoService.getAtivosBrapi().subscribe(
-  //       ativos => {
-  //         this.ativosBrapi = ativos.stocks.map((a:any) => { 
-  //           return {sigla: a.stock,  nome: a.name, logo: a.logo}
-  //         }) ; 
+  private buscarAtivosBrapi() {
+    this.ativoService.getAcoesBrapi().subscribe(
+        ativos => {
+          this.ativosBrapi = ativos.stocks.filter((a:any) => a.name.startsWith('FII')).map((a:any) => { 
+            return {sigla: a.stock,  nome: a.name, logo: a.logo}
+          }) ; 
           
-  //         console.log('teste', this.ativosBrapi)
-  //       }
-  //   );
-  // }
+          
+          console.log('teste', this.ativosBrapi)
+        }
+    );
+  }
 
   private buscarTiposOperacao() {
     this.operacaoRendaVariavelService.getTipoOperacoes().subscribe(  

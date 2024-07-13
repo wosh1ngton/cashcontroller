@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { TipoOperacao } from "src/app/models/tipo-operacao.model";
 import { Observable } from "rxjs";
@@ -22,8 +22,13 @@ export class EventoRendaVariavelService {
         return this.http.get<TipoEvento[]>(this.baseUrl + '/eventos/tipo-eventos');
     }
 
-    save(evento: any) {
-        return this.http.post(this.baseUrl + '/eventos', evento);
+    save(evento: any, periodosDeRecorrencia?: number) {
+        
+        let params = new HttpParams();
+        if (periodosDeRecorrencia !== undefined && periodosDeRecorrencia !== null) {
+            params = params.set('periodosDeRecorrencia', periodosDeRecorrencia.toString());
+        }
+        return this.http.post(this.baseUrl + '/eventos', evento, { params });
     }
 
     editar(operacao: any) {
