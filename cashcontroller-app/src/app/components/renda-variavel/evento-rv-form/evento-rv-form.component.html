@@ -1,0 +1,54 @@
+<div class="dialog-content">
+    <form #f="ngForm">
+        <input type="hidden" name="id" [(ngModel)]="eventoRendaVariavel.id">
+        <div class="field p-fluid">
+            <label for="ativo"> Ativo Negociado </label>
+            <p-dropdown [options]="ativos" [filter]="true" filterBy="sigla" [(ngModel)]="eventoRendaVariavel.ativo.id"
+                [showClear]="true" placeholder="Selecione um ativo" name="ativo" optionValue="id" optionLabel="sigla">
+            </p-dropdown>
+        </div>
+        <div class="field p-fluid">
+            <label for="tipo-evento"> Tipo do Evento </label>
+            <p-dropdown [options]="tiposEvento" [(ngModel)]="eventoRendaVariavel.tipoEvento.id" [showClear]="true"
+                placeholder="Tipo do Evento" name="tipoEvento" optionValue="id" optionLabel="nome">
+            </p-dropdown>
+        </div>
+        <div class="field p-fluid">
+            <label for="icondisplay"> Data Com </label>
+            <p-calendar [(ngModel)]="eventoRendaVariavel.dataCom" [iconDisplay]="'input'" [showIcon]="true"
+                inputId="icondisplay" dateFormat="dd/mm/yy" name="dataCom"></p-calendar>
+        </div>
+
+        <div class="field p-fluid">
+            <label for="icondisplay"> Data Pagamento </label>
+            <p-calendar [(ngModel)]="eventoRendaVariavel.dataPagamento" [iconDisplay]="'input'" [showIcon]="true"
+                inputId="icondisplay" dateFormat="dd/mm/yy" name="dataPagamento"></p-calendar>
+        </div>
+
+        <div class="field p-fluid">
+            {{ checked | json}}
+            {{showPeriodosRecorrencia | json}}
+            <label for="valor"> Valor a Receber </label>
+            <p-inputNumber inputId="valor" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
+                inputId="currency-brazil" [(ngModel)]="eventoRendaVariavel.valor" [minFractionDigits]="2"
+                [maxFractionDigits]="4" name="valor">
+            </p-inputNumber>
+        </div>
+       
+        <div class="field p-fluid">
+            <p-checkbox [(ngModel)]="checked" [binary]="true" name="isRecorrente" (onChange)="setPeriodos($event)" inputId="isRecorrente" />
+            <label for="isRecorrente" style="margin-left: 4px;">Evento Recorrente</label>
+        </div>
+        <div class="field p-fluid" *ngIf="checked">
+            <label for="periodos"> Períodos de Recorrência </label>
+            <p-inputNumber [(ngModel)]="periodosDeRecorrencia" name="periodos" inputId="periodos"> </p-inputNumber>
+        </div>
+
+        <div class="field p-fluid" *ngIf="eventoRendaVariavel?.id == 0">
+            <p-button label="Cadastrar" class="cor-btn" (onClick)="save(f.value)"></p-button>
+        </div>
+        <div class="field p-fluid" *ngIf="eventoRendaVariavel?.id != 0">
+            <p-button label="Editar" class="cor-btn" (onClick)="editar(f.value)"></p-button>
+        </div>
+    </form>
+</div>

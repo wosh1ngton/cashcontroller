@@ -1,0 +1,28 @@
+<p-table 
+[value]="operacoes" 
+styleClass="p-datatable-sm" 
+[tableStyle]="{ 'border': '1px solid #ccc' }" 
+>
+   
+    <ng-template pTemplate="header">
+        <tr *ngIf="operacoes">
+            <th colspan="5">Operações {{ operacoes[0]?.ativoDto?.nome }} </th>
+        </tr>
+        <tr>            
+            <th>Qt negociada</th>
+            <th>Valor Total</th>
+            <th>Custo</th>
+            <th>Data </th>
+            <th>Operação </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-op>
+        <tr>          
+            <td>{{ op.quantidadeNegociada }}</td>
+            <td>{{ op.valorTotal | currency: 'BRL' }}</td>
+            <td>{{ op.custoTotal | currency: 'BRL' }}</td>
+            <td> {{ op.dataOperacao | date: 'dd/MM/yyyy'}}</td>
+            <td> {{ op.tipoOperacaoDto.nome}}</td>
+        </tr>
+    </ng-template>
+</p-table>

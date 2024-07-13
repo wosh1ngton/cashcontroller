@@ -1,0 +1,26 @@
+
+<p-card header="Números do Mês" class="painel-numeros-mes">
+   <div class="grid">
+      <div class="col-4 md:col-6 lg:col-4">
+         <h4> Proventos </h4>
+         <h2 class="subtitulo-numero-mes"> {{totalEmProventosMes | currency:'BRL'}}</h2>
+      </div>
+      <div class="col-4 md:col-6 lg:col-4">
+         <h4> Rendimentos </h4>
+         <h2 class="subtitulo-numero-mes"> {{totalEmRendimentosMes | currency:'BRL'}}</h2>
+      </div>
+      <div class="col-4 md:col-6 lg:col-4">
+         <h4> Total Recebido </h4>
+         <h2 class="subtitulo-numero-mes"> {{rendimentosMaisProventos | currency:'BRL'}}</h2>
+      </div>
+      <div class="col-4 md:col-6 lg:col-4">
+         <h4> Saldo FIIs </h4>
+         <h2 class="subtitulo-numero-mes"> {{investimentoEmFiisMes | currency:'BRL'}}</h2>
+      </div>
+      <div class="col-4 md:col-6 lg:col-4">         
+         <h4> Saldo Ações </h4>
+         <h2 class="subtitulo-numero-mes"> {{investimentoEmAcoesMes | currency:'BRL'}}</h2>
+      </div>     
+      
+   </div>
+</p-card>
