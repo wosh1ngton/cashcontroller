@@ -22,16 +22,16 @@ body {
 }
 
 
-.title > h3 {
+h3 {
     color: #000;   
     float: left;
 }
-.title > span {    
+/* span {    
     font-size: 3.5rem;    
     color: #333;
     font-weight: 100;    
     margin-left: 4px;
-}
+} */
 .p-inputnumber-input {    
     width: 100px; 
  }

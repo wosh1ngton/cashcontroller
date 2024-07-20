@@ -1,0 +1,48 @@
+<div class="dialog-content mr-3 ml-3">
+    <form #formAtivo="ngForm">       
+        <div class="field grid">         
+          
+            <label for="nome" class="col-12 lg:col-2 md:col-2 sm:col-12  sm:justify-content-end">Nome</label>
+            
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <input pInputText name="nome" id="nome" [(ngModel)]="ativo.nome"
+                    class="text-base text-color surface-overlay border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary">
+            </div>
+        </div>
+        <div class="field grid">
+            
+            <label for="sigla" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Sigla</label>
+            
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <input pInputText name="sigla" id="sigla" [(ngModel)]="ativo.sigla"
+                    class="text-base text-color surface-overlay border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary">
+            </div>
+        </div>
+        <div class="field grid">
+           
+                <label for="logo" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Logo</label>
+         
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <input pInputText name="logo" id="logo" [(ngModel)]="ativo.logo"
+                    class="text-base text-color surface-overlay border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary">
+            </div>
+        </div>
+        <div class="field grid">
+        
+                <label for="logo" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Subclasse</label>
+           
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-dropdown [options]="subclasses" optionValue="id" optionLabel="nome" [(ngModel)]="ativo.subclasseAtivo"
+                    placeholder="Selecione uma subclasse" name="subclasseAtivo" id="subclasseAtivo" appendTo="body" />
+            </div>
+        </div>
+        <div class="grid mt-3">
+            <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-2 p-fluid">
+                <p-button label="Cancelar" severity="danger" size="small" (onClick)="close()"></p-button>
+            </div>
+            <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-4 p-fluid">
+                <p-button label="Salvar" class="cor-btn" size="small" (onClick)="save(formAtivo.value)"></p-button>
+            </div>
+        </div>
+    </form>
+</div>

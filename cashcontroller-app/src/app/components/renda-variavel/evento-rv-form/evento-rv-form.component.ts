@@ -19,7 +19,11 @@ import { TipoEvento } from 'src/app/models/tipo-evento.model';
 import { PrimengModule } from 'src/app/primeng/primeng.module';
 import { AtivoService } from 'src/app/services/ativo.service';
 import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variavel.service';
+import { LoadingService } from 'src/app/services/loading.service';
 import { DateUtil } from 'src/app/shared/util/date-util';
+import { LoadingComponent } from '../../shared/loading/loading.component';
+import { AppModule } from 'src/app/app.module';
+import { SharedModule } from 'src/app/shared-modules/shared.module';
 
 @Component({
   selector: 'app-evento-rv-form',
@@ -30,10 +34,13 @@ import { DateUtil } from 'src/app/shared/util/date-util';
     DropdownModule,
     CommonModule,
     InputNumberModule,
-    CalendarModule,
+    CalendarModule, 
+    SharedModule   
+      
   ],
   templateUrl: './evento-rv-form.component.html',
   styleUrl: './evento-rv-form.component.css',
+  providers: []
 })
 export class EventoRvFormComponent implements OnInit {
   ativos: Ativo[] | undefined;
@@ -49,7 +56,7 @@ export class EventoRvFormComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     private dialogConfig: DynamicDialogConfig,
     private cdr: ChangeDetectorRef,
-
+    private loading: LoadingService,
     private eventoRendaVariavelService: EventoRendaVariavelService
   ) {}
 
@@ -63,15 +70,18 @@ export class EventoRvFormComponent implements OnInit {
   }
 
   private setEvento() {
-    let dataCom = DateUtil.dateConstructor(this.dialogConfig.data.rowData.dataCom);
-    let dataPagamento = DateUtil.dateConstructor(this.dialogConfig.data.rowData.dataPagamento);
+    let dataCom = DateUtil.dateConstructor(
+      this.dialogConfig.data.rowData.dataCom
+    );
+    let dataPagamento = DateUtil.dateConstructor(
+      this.dialogConfig.data.rowData.dataPagamento
+    );
     this.eventoRendaVariavel.valor = this.dialogConfig.data.rowData.valor;
     this.eventoRendaVariavel.dataCom = dataCom;
     this.eventoRendaVariavel.dataPagamento = dataPagamento;
     this.eventoRendaVariavel.id = this.dialogConfig.data.rowData.id;
     this.eventoRendaVariavel.ativo = this.dialogConfig.data.rowData.ativo;
-    this.eventoRendaVariavel.tipoEvento =
-      this.dialogConfig.data.rowData.tipoEvento;
+    this.eventoRendaVariavel.tipoEvento = this.dialogConfig.data.rowData.tipoEvento;
   }
 
   private isEdit() {
@@ -108,14 +118,24 @@ export class EventoRvFormComponent implements OnInit {
   }
 
   save(evento: any) {
-    this.eventoRendaVariavelService
-      .save(evento, this.periodosDeRecorrencia)
-      .pipe(
-        tap(() => {
-          this.dialogRef.close(evento);
-        })
-      )
-      .subscribe();
+   
+    this.loading
+      .showLoaderUntilCompleted(
+        this.eventoRendaVariavelService.save(evento, this.periodosDeRecorrencia).pipe(
+          tap(() => {
+            this.dialogRef.close(evento);
+          })
+        )
+      ).subscribe({
+        next: (val) => console.log(val),
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Tente novamente',
+          });
+        },
+      });
   }
 
   editar(evento: any) {

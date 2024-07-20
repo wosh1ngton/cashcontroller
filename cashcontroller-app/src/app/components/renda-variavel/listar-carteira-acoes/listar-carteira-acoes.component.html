@@ -10,7 +10,9 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th colspan="9" class="text-center">Totais: </th>
+                    <th colspan="6" class="text-center">Totais: </th>
+                    <th> {{totalProventos | currency : 'BRL'}}</th>
+                    <th colspan="2"></th>
                     <th> {{ totalCusto | currency: 'BRL' }}</th>
                     <th> {{ totalValorMercado | currency: 'BRL' }}</th>
                 </tr>

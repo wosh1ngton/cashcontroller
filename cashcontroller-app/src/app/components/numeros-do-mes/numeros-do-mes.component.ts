@@ -15,6 +15,7 @@ import { PrimengModule } from 'src/app/primeng/primeng.module';
   styleUrl: './numeros-do-mes.component.css',
 })
 export class NumerosDoMesComponent implements OnInit, OnChanges {
+
   @Input() eventos: any[] = [];
   @Input() operacoes: any[] = [];
   @Input() filtro: any;
@@ -30,8 +31,7 @@ export class NumerosDoMesComponent implements OnInit, OnChanges {
     this.calculaTotalInvestidoAcoes();
     this.calculaTotalInvestidoFiis();
     this.calculaTotalGeralRendimentos();
-  }
-  
+  }  
 
   private calculaTotalInvestidoFiis() {
     this.investimentoEmFiisMes = this.operacoes

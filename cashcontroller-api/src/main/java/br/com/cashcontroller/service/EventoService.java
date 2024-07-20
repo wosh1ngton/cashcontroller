@@ -100,6 +100,7 @@ public class EventoService {
 
 	public List<EventoListRendaVariavelDTO> listarEventos() {
 		List<EventoRendaVariavel> eventos =  eventoRepository.findAll();
+
 		var eventosDTO = eventos.stream().map(EventoRendaVariavelMapper.INSTANCE::toListDTO).collect(Collectors.toList());
 		return eventosDTO;
 	}

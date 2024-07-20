@@ -41,7 +41,7 @@ public class OperacaoRendaFixa {
 	private LocalDate dataOperacao;	
 	
 	@Column(name = "QT_ATIVO")
-	private int quantidadeNegociada;
+	private double quantidadeNegociada;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_OPERACAO", nullable = false)

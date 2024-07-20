@@ -22,7 +22,7 @@ export class EventoRendaVariavelService {
         return this.http.get<TipoEvento[]>(this.baseUrl + '/eventos/tipo-eventos');
     }
 
-    save(evento: any, periodosDeRecorrencia?: number) {
+    save(evento: any, periodosDeRecorrencia?: number): Observable<any> {
         
         let params = new HttpParams();
         if (periodosDeRecorrencia !== undefined && periodosDeRecorrencia !== null) {

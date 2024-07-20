@@ -12,13 +12,22 @@ export class PosicoesEncerradasComponent implements OnInit {
     private operacaoService: OperacaoRendaVariavelService
   ) {}
 
+  resultadoAcumulado: number = 0;
   posicoes : any[] = [];
 
-  ngOnInit(): void {
-    console.log('oi')
+  ngOnInit(): void {    
     this.operacaoService.posicoesEncerradas().subscribe(
-        res => this.posicoes = res
+        res => {this.posicoes = res,
+
+          console.log(this.posicoes)
+        }
   )}
+
+  getResultadoPosicoesEncerradas(): number {
+    return this.posicoes.reduce((total, posicao ) => total + posicao.resultadoAtivo, 0)
+  }
+
+  
 
 
 }

@@ -18,11 +18,14 @@ public interface OperacaoRendaFixaMapper {
 	@Mapping(source = "ativo", target = "ativoDto")	
 	@Mapping(source = "tipoOperacao", target = "tipoOperacaoDto")
 	@Mapping(source = "indexador", target = "indexadorDto")
+	@Mapping(target = "ativoDto.subclasseAtivo", ignore = true)
 	OperacaoRendaFixaDTO toDTO(OperacaoRendaFixa operacaoRendaFixa);
 	
 	@Mapping(source = "ativoDto", target = "ativo")
 	@Mapping(source = "tipoOperacaoDto", target = "tipoOperacao")
 	@Mapping(source = "indexadorDto", target = "indexador")
+	@Mapping(target = "ativoDto.subclasseAtivo", ignore = true)
+	@Mapping(target = "ativo.subclasseAtivo", source = "ativoDto.subclasseAtivoDto")
 	OperacaoRendaFixa toEntity(OperacaoRendaFixaDTO operacaoRendaFixaDto);
 	
 	List<OperacaoRendaFixaDTO> toListDTO(List<OperacaoRendaFixa> operacoesEntity);

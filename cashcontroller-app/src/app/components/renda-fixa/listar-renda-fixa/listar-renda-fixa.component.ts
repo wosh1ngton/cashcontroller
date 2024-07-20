@@ -21,6 +21,8 @@ import { RendaFixaFormComponent } from '../renda-fixa-form/renda-fixa-form.compo
 import { Indexador } from 'src/app/models/indexador.model';
 import { IndexadorService } from 'src/app/services/indexador.service';
 import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
+import { FiltroSuperiorComponent } from '../../filtro-superior/filtro-superior.component';
+import { FilterOperacao } from 'src/app/models/filter-operacao.model';
 
 @Component({
   selector: 'app-listar-renda-fixa',
@@ -35,7 +37,8 @@ import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
     CalendarModule,
     ConfirmDialogModule,
     InputTextModule,
-    InputNumberModule
+    InputNumberModule,
+    FiltroSuperiorComponent
   ],
   templateUrl: './listar-renda-fixa.component.html',
   styleUrl: './listar-renda-fixa.component.css',
@@ -52,7 +55,8 @@ export class ListarRendaFixaComponent {
   operacoes: any[] = [];
   tiposOperacao: TipoOperacao[] = [];
   clonedOperacoes: { [s: string]: OperacaoRendaFixa } = {};
-
+  filter: FilterOperacao = new FilterOperacao();
+  
   constructor(public dialogService: DialogService,
     public ativoService: AtivoService,
     public indexadorService: IndexadorService,
@@ -126,7 +130,9 @@ export class ListarRendaFixaComponent {
     this.operacaoRendaFixaService.getOperacoesRendaFixa()
       .subscribe(
         (ops: any[]) => {
-          this.operacoes = ops
+          this.operacoes = ops;
+          console.log(ops)
+
         }
       );
   }

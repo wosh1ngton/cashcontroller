@@ -2,6 +2,7 @@ package br.com.cashcontroller.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,8 @@ public class AtivoService {
 	private SubclasseRepository subclasseRepository;	
 
 	public AtivoDTO cadastrarAtivo(AtivoDTO ativoDto) {		
-		Ativo ativo = AtivoMapper.INSTANCE.toEntity(ativoDto);
-		return AtivoMapper.INSTANCE.toDTO(ativoRepository.save(ativo));
+		Ativo ativo = AtivoMapper.INSTANCE.toAddEntity(ativoDto);
+		return AtivoMapper.INSTANCE.toAddDTO(ativoRepository.save(ativo));
 	}
 	
 	public AtivoDTO atualizarAtivo(AtivoDTO ativoDto) {
@@ -48,12 +49,12 @@ public class AtivoService {
 	
 	public List<AtivoDTO> listarAtivos() {
 		List<Ativo> ativos =  ativoRepository.findAll();
-		return AtivoMapper.INSTANCE.toListDTO(ativos);
+		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
 	}
 
 	public List<AtivoDTO> listarAtivosPorClasse(int id) {
 		List<Ativo> ativos =  ativoRepository.findByClasseAtivo(id);
-		return AtivoMapper.INSTANCE.toListDTO(ativos);
+		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
 	}
 	
 	public List<SubclasseAtivoDTO> listarSubclasseAtivos() {

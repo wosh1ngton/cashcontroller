@@ -23,6 +23,7 @@ public interface EventoRendaVariavelMapper {
     EventoRendaVariavel toEntity(EventoAddRendaVariavelDTO eventoDto);
 
 
+    @Mapping(target = "ativo.subclasseAtivo", ignore = true)
     @Mapping(source = "ativo.subclasseAtivo", target = "ativo.subclasseAtivoDto")
     EventoListRendaVariavelDTO toListDTO(EventoRendaVariavel evento);
 

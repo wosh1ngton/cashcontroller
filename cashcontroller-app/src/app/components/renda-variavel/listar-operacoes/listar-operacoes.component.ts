@@ -1,11 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  NgModule,
-  OnChanges,
-  Output,
-  SimpleChanges,
+import {  Component,
+  
 } from '@angular/core';
 import { PrimengModule } from 'src/app/primeng/primeng.module';
 import { ButtonModule } from 'primeng/button';
@@ -26,7 +20,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { TipoOperacao } from 'src/app/models/tipo-operacao.model';
-import { Observable, filter, map, of, tap } from 'rxjs';
+import { Observable, delay, filter, map, of, tap } from 'rxjs';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -41,6 +35,7 @@ import { EventoRendaVariavel } from 'src/app/models/evento-renda-variavel.model'
 import { EventoRvFormComponent } from '../evento-rv-form/evento-rv-form.component';
 import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variavel.service';
 import { NumerosDoMesComponent } from '../../numeros-do-mes/numeros-do-mes.component';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-listar-renda-variavel',
@@ -94,7 +89,8 @@ export class ListarOperacoesComponent {
     public operacaoRendaVariavelService: OperacaoRendaVariavelService,
     private eventoRendaVariavelService: EventoRendaVariavelService,
     public messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private loadingService: LoadingService
   ) {}
 
   colsEventos = [
@@ -102,19 +98,21 @@ export class ListarOperacoesComponent {
     { field: 'dataCom', header: 'Data Com', type: 'date' },
     { field: 'dataPagamento', header: 'Data do Pagamento', type: 'date' },
     { field: 'tipoEvento', header: 'Evento', type: 'objeto' },
-    { field: 'valor', header: 'Valor Unitário' },
-    { field: 'valorTotal', header: 'Valor a ser Pago' },
+    { field: 'valor', header: 'Valor Unitário', type: 'number' },
+    { field: 'valorTotal', header: 'Valor a ser Pago', type: 'number' },
   ];
 
-  ngOnInit() {
+  ngOnInit() {   
+    
+
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
     this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.listarEventos();
     this.filterData();
     this.filterEventos();
-
-
+    
+    
     
 
     this.cols = [

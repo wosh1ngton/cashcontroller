@@ -16,11 +16,28 @@ public class AtivoDTO {
 	private String sigla;
 	private String logo;
 	private SubclasseAtivoDTO subclasseAtivoDto;
+	private int subclasseAtivo;
 	private double precoMedio;
 
 	public AtivoDTO(int id, String nome, double precoMedio) {
 		this.id = id;
 		this.nome = nome;
 		this.precoMedio = precoMedio;
+	}
+
+	public AtivoDTO(int id, String logo, String nome, String sigla, int subclasseAtivo) {
+		this.id = id;
+		this.logo = logo;
+		this.nome = nome;
+		this.sigla = sigla;
+		this.subclasseAtivo = subclasseAtivo;
+	}
+
+	public AtivoDTO(int id, String logo, String nome, String sigla, SubclasseAtivoDTO subclasseAtivoDto) {
+		this.id = id;
+		this.logo = logo;
+		this.nome = nome;
+		this.sigla = sigla;
+		this.subclasseAtivoDto = subclasseAtivoDto;
 	}
 }

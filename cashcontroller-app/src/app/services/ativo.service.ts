@@ -36,4 +36,8 @@ export class AtivoService {
     getSubclasseAtivos() : Observable<SubclasseAtivo[]> {
         return this.http.get<SubclasseAtivo[]>(this.baseUrl + '/ativos/subclasses');
     }
+
+    save(ativo: any) {
+        return this.http.post(this.baseUrl + '/ativos', ativo);
+    }
 }

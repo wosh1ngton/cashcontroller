@@ -203,7 +203,7 @@
                     </p-tabPanel>
                     <p-tabPanel header="Eventos">
                         <p-confirmDialog key="deleteEvento" />
-                        <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }">
+                        <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-sm">
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
                                     <th *ngFor="let col of columns">
@@ -214,11 +214,11 @@
                                     </th>
                                 </tr>
                             </ng-template>
-                            <ng-template pTemplate="body" let-rowData let-columns="columns">
-                                <tr>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">                                
+                                <tr  [ngClass]="{'fii': rowData.ativo.subclasseAtivoDto.id == 1, 'acao': rowData.ativo.subclasseAtivoDto.id == 2}">
 
                                     <td *ngFor="let col of columns">
-                                        <ng-container *ngIf="col.type !== 'objeto' && col.type !== 'date' ">
+                                        <ng-container *ngIf="col.type === 'number'">
                                             {{ rowData[col.field] | currency: 'BRL' }}
                                         </ng-container>
                                         <ng-container *ngIf="col.type === 'objeto'">

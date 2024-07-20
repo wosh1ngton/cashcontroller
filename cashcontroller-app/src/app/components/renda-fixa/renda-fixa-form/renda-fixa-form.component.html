@@ -22,7 +22,9 @@
         <p-inputNumber inputId="quantidade" 
         [(ngModel)]="operacaoRendaFixa.quantidadeNegociada" 
         name="quantidadeNegociada" [useGrouping]="false"
-            [min]="0" mode="decimal"> </p-inputNumber>
+        mode="decimal" 
+        [minFractionDigits]="0" 
+        [maxFractionDigits]="2"  [min]="0" > </p-inputNumber>
     </div>
     <div class="field p-fluid">
         <label for="valorAtivo"> Valor do Ativo </label>

@@ -8,20 +8,29 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TabViewModule } from 'primeng/tabview';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MenuModule } from 'primeng/menu';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FieldsetModule } from 'primeng/fieldset';
 
 @NgModule({
   declarations: [],
   exports: [
     CommonModule,
     TableModule,
+    MenuModule,
     MenubarModule,
+    ButtonModule,
     CardModule,
     ChipModule,
     DropdownModule,
     TabViewModule,
     CheckboxModule,
-    InputNumberModule
+    InputNumberModule,
+    ProgressSpinnerModule,
+    InputTextModule,
+    FieldsetModule
   ]
 })
 export class PrimengModule { }
