@@ -2,6 +2,7 @@ package br.com.cashcontroller.controller;
 
 import java.util.List;
 
+import br.com.cashcontroller.dto.AtivoAddDTO;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +21,18 @@ public class AtivoController {
 	private AtivoService ativoService;
 
 	@PostMapping("/em-lote")
-	ResponseEntity<List<AtivoDTO>> cadastrarAtivos(@RequestBody List<AtivoDTO> ativosDto) {
+	ResponseEntity<List<AtivoAddDTO>> cadastrarAtivos(@RequestBody List<AtivoAddDTO> ativosDto) {
 		ativosDto.forEach(ativoDto -> this.ativoService.cadastrarAtivo(ativoDto));
 		return ResponseEntity.ok(ativosDto);
 	}
 	@PostMapping
-	ResponseEntity<AtivoDTO> cadastrarAtivo(@RequestBody AtivoDTO ativoDto) {		
-		return ResponseEntity.ok(this.ativoService.cadastrarAtivo(ativoDto));
+	ResponseEntity<AtivoAddDTO> cadastrarAtivo(@RequestBody AtivoAddDTO ativoAddDto) {
+		return ResponseEntity.ok(this.ativoService.cadastrarAtivo(ativoAddDto));
 	}
 	
 	@PutMapping
-	ResponseEntity<AtivoDTO> editarAtivo(@RequestBody AtivoDTO ativoDto) {		
-		return ResponseEntity.ok(this.ativoService.atualizarAtivo(ativoDto));
+	ResponseEntity<AtivoAddDTO> editarAtivo(@RequestBody AtivoAddDTO ativoAddDto) {
+		return ResponseEntity.ok(this.ativoService.atualizarAtivo(ativoAddDto));
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -51,6 +52,12 @@ public class AtivoController {
 	ResponseEntity<List<AtivoDTO>> getAtivos() {
 		List<AtivoDTO> ativos = this.ativoService.listarAtivos();		
 		return ResponseEntity.ok(ativos);
+	}
+
+	@GetMapping(value = "/{id}")
+	ResponseEntity<AtivoDTO> findById(@PathVariable(value="id") Integer id) {
+		AtivoDTO ativo = this.ativoService.findById(id);
+		return ResponseEntity.ok(ativo);
 	}
 
 	@GetMapping(value = "/por-classe/{id}")

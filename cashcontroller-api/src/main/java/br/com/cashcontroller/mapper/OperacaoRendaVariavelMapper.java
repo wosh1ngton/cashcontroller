@@ -1,20 +1,14 @@
 package br.com.cashcontroller.mapper;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import br.com.cashcontroller.dto.OperacaoRendaVariavelDTO;
 import br.com.cashcontroller.dto.OperacaoRendaVariavelSaveDTO;
-import br.com.cashcontroller.entity.Ativo;
-import br.com.cashcontroller.entity.TipoOperacao;
+import br.com.cashcontroller.entity.OperacaoRendaVariavel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import br.com.cashcontroller.dto.OperacaoRendaVariavelDTO;
-import br.com.cashcontroller.entity.OperacaoRendaVariavel;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Mapper
 @Component
@@ -33,14 +27,12 @@ public interface OperacaoRendaVariavelMapper {
 
 	@Mapping(target = "ativoDto", source = "ativo")
 	@Mapping(target = "ativoDto.subclasseAtivoDto", source = "ativo.subclasseAtivo")
-	@Mapping(target = "ativoDto.subclasseAtivo", ignore = true)
 	@Mapping(target = "tipoOperacaoDto", source = "tipoOperacao")
 	OperacaoRendaVariavelDTO toDTO(OperacaoRendaVariavel operacaoRendaVariavel);
 
 	@Mapping(target = "ativo", source = "ativoDto")
 	@Mapping(target = "tipoOperacao", source = "tipoOperacaoDto")
 	@Mapping(target = "ativo.subclasseAtivo", source = "ativoDto.subclasseAtivoDto")
-	@Mapping(target = "ativoDto.subclasseAtivo", ignore = true)
 	OperacaoRendaVariavel toEntity(OperacaoRendaVariavelDTO operacaoRendaVariavelDTO);
 
 	@Mapping(source = "ativoDto.id", target = "ativoDto")

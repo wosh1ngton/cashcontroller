@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import br.com.cashcontroller.dto.AtivoAddDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,23 +28,35 @@ public class AtivoService {
 	@Autowired
 	private SubclasseRepository subclasseRepository;	
 
-	public AtivoDTO cadastrarAtivo(AtivoDTO ativoDto) {		
-		Ativo ativo = AtivoMapper.INSTANCE.toAddEntity(ativoDto);
-		return AtivoMapper.INSTANCE.toAddDTO(ativoRepository.save(ativo));
+	public AtivoAddDTO cadastrarAtivo(AtivoAddDTO ativoAddDto) {
+
+		Ativo ativo = AtivoMapper.INSTANCE.toAddEntity(ativoAddDto);
+		if (ativo.getParametroRendaFixa() != null) {
+			ativo.getParametroRendaFixa().setAtivo(ativo);
+		}
+		var entitySaved = ativoRepository.saveAndFlush(ativo);
+		return AtivoMapper.INSTANCE.toAddDTO(entitySaved);
 	}
 	
-	public AtivoDTO atualizarAtivo(AtivoDTO ativoDto) {
+	public AtivoAddDTO atualizarAtivo(AtivoAddDTO ativoAddDto) {
 		Ativo ativo = new Ativo();
-		if(ativoDto.getId() != 0) {
-			ativo = AtivoMapper.INSTANCE.toEntity(ativoDto);
+		if(ativoAddDto.getId() != 0) {
+			ativo = AtivoMapper.INSTANCE.toAddEntity(ativoAddDto);
 		}
-		return AtivoMapper.INSTANCE.toDTO(ativoRepository.save(ativo));
+		return AtivoMapper.INSTANCE.toAddDTO(ativoRepository.save(ativo));
 	}
 
 	public void excluirAtivo(int id) {
 
 		Optional<Ativo> ativo = ativoRepository.findById(id);
         ativo.ifPresent(value -> this.ativoRepository.delete(value));
+
+	}
+
+	public AtivoDTO findById(int id) {
+
+		Optional<Ativo> ativo = ativoRepository.findById(id);
+		return AtivoMapper.INSTANCE.toDTO(ativo.get());
 
 	}
 	

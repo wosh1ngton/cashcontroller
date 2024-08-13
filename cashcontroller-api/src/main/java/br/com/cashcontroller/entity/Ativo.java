@@ -31,6 +31,9 @@ public class Ativo {
 	@JoinColumn(name = "ID_SUBCLASSE_ATIVO", nullable = false)
 	private SubclasseAtivo subclasseAtivo;
 
+	@OneToOne(mappedBy = "ativo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private ParametroRendaFixa parametroRendaFixa;
+
 	@Transient
 	private double precoMedio;
 	

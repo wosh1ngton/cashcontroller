@@ -14,6 +14,7 @@ public interface AtivoRepository extends JpaRepository<Ativo, Integer> {
 
     @Query("SELECT a FROM Ativo a INNER JOIN a.subclasseAtivo sa " +
             "INNER JOIN sa.classeAtivo ca " +
+            "LEFT JOIN a.parametroRendaFixa prf " +
             "WHERE ca.id = :id")
     List<Ativo> findByClasseAtivo(@Param("id") Integer id);
 }

@@ -47,14 +47,13 @@ public class OperacaoRendaFixa {
 	@JoinColumn(name = "ID_TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
 	
-	@ManyToOne
-	@JoinColumn(name = "ID_INDEXADOR", nullable = false)
-	private Indexador indexador;
-	
 	@Column(name = "QT_TAXA_CONTRATADA")
 	private double taxaContratada;
-	
-	@Column(name = "DT_VENCIMENTO")	
-	private LocalDate dataVencimento;	
+
+	@Column(name = "QT_CUSTO_TOTAL", nullable = true)
+	private double custoTotal;
+
+	@Column(name = "QT_VALOR_TOTAL", nullable = true)
+	private double valorTotal;
 	
 }

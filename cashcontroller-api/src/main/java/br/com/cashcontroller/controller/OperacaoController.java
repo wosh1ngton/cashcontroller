@@ -1,6 +1,8 @@
 package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.*;
+import br.com.cashcontroller.entity.IpcaMes;
+import br.com.cashcontroller.entity.SelicMes;
 import br.com.cashcontroller.service.OperacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -92,6 +95,12 @@ public class OperacaoController {
         return ResponseEntity.ok(carteira);
     }
 
+    @GetMapping(value = "/carteira-renda-fixa")
+    ResponseEntity<List<AtivoCarteiraRFDTO>> listarCarteiraRendaFixa() {
+        var carteira = this.operacaoService.listarCarteiraRendaFixa();
+        return ResponseEntity.ok(carteira);
+    }
+
     @GetMapping(value = "/carteira-fiis")
     ResponseEntity<List<AtivoCarteiraDTO>> listarCarteiraFiis() {
         var carteira = this.operacaoService.listarCarteiraDeFiis();
@@ -110,13 +119,41 @@ public class OperacaoController {
         var anosOrdenados = this.operacaoService.listarAnosComOperacoes().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         return ResponseEntity.ok(anosOrdenados);
     }
+
+    @GetMapping("/anos-com-operacoes-rf")
+    ResponseEntity<List<Integer>> listarAnosComOperacoesRF() {
+        var anosOrdenados = this.operacaoService.listarAnosComOperacoes(Optional.of(true)).stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        return ResponseEntity.ok(anosOrdenados);
+    }
     @GetMapping("/MesesComOperacoesPorAno/{ano}")
     ResponseEntity<List<MesDTO>> listarMesesComDespesas(@PathVariable(value = "ano") Integer ano) {
         return ResponseEntity.ok(this.operacaoService.listarMesesComOperacoes(ano));
     }
 
+    @GetMapping("/meses-com-operacoes-rf/{ano}")
+    ResponseEntity<List<MesDTO>> listarMesesComDespesasRF(@PathVariable(value = "ano") Integer ano) {
+        return ResponseEntity.ok(this.operacaoService.listarMesesComOperacoesRF(ano));
+    }
+
     @GetMapping("/por-ativo/{idAtivo}")
     ResponseEntity<List<OperacaoRendaVariavelDTO>> listarOperacoesPorAtivo(@PathVariable(value = "idAtivo") Integer idAtivo) {
         return ResponseEntity.ok(this.operacaoService.listarOperacoesPorAtivo(idAtivo));
+    }
+
+    @PostMapping("/renda-fixa/filter")
+    public ResponseEntity<List<OperacaoRendaFixaDTO>> filterRF(@RequestBody Filter filter) {
+
+        List<OperacaoRendaFixaDTO> operacoes = operacaoService.listarOperacoesRendaFixaPorData(filter);
+        return ResponseEntity.ok(operacoes);
+    }
+
+    @PostMapping("/ipca-mes")
+    public ResponseEntity<List<IpcaMes>> ipcaMes(@RequestBody List<IpcaMes> ipcaMes) {
+        return ResponseEntity.ok(operacaoService.cadastrarIpcaMesEmLote(ipcaMes));
+    }
+
+    @PostMapping("/selic-mes")
+    public ResponseEntity<List<SelicMes>> selicMes(@RequestBody List<SelicMes> selicMes) {
+        return ResponseEntity.ok(operacaoService.cadastrarSelicMesEmLote(selicMes));
     }
 }

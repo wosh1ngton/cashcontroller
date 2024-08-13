@@ -19,9 +19,9 @@ public class OperacaoRendaFixaDTO {
 	private double valorCorretagem;
 	private LocalDate dataOperacao;
 	private double quantidadeNegociada;
-	private IndexadorDTO indexadorDto;
 	private TipoOperacaoDTO tipoOperacaoDto;
 	private double taxaContratada;
-	private LocalDate dataVencimento;
+	private Double custoTotal;
+	private Double valorTotal;
 
 }

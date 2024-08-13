@@ -5,11 +5,23 @@ import br.com.cashcontroller.external.dto.FeriadoDTO;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 
 public class DataUtil {
 
     private static boolean isFeriado(LocalDate date, FeriadoDTO[] feriados) {
+        for (FeriadoDTO feriado : feriados) {
+            if (date.equals(feriado.getDate())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isFeriado(LocalDate date, List<FeriadoDTO> feriados) {
         for (FeriadoDTO feriado : feriados) {
             if (date.equals(feriado.getDate())) {
                 return true;
@@ -80,5 +92,52 @@ public class DataUtil {
         }
 
         return firstDay;
+    }
+
+    public static int calculateWorkdays(LocalDate startDate, LocalDate endDate, List<FeriadoDTO> feriados) {
+        int workdays = 0;
+        LocalDate date = startDate;
+
+        while (!date.isAfter(endDate)) {
+            if (!isWeekend(date) && !isFeriado(date, feriados)) {
+                workdays++;
+            }
+            date = date.plusDays(1);
+        }
+
+        return workdays;
+    }
+
+    public static int calculateWorkdays(LocalDate startDate, LocalDate endDate) {
+        int workdays = 0;
+        LocalDate date = startDate;
+
+        while (!date.isAfter(endDate)) {
+            if (!isWeekend(date)) {
+                workdays++;
+            }
+            date = date.plusDays(1);
+        }
+
+        return workdays;
+    }
+
+    private static boolean isWeekend(LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
+    }
+
+
+    public static YearMonth stringToYearMonth (String dateString) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        try {
+            LocalDate date = LocalDate.parse(dateString, formatter);
+            YearMonth yearMonth = YearMonth.from(date);
+            return yearMonth;
+        } catch (DateTimeParseException e) {
+            System.out.println("Error parsing date: " + e.getMessage());
+        }
+        return null;
     }
 }
