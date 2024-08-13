@@ -10,8 +10,6 @@ export class OperacaoRendaFixa {
     valorCorretagem: number = 0;
     quantidadeNegociada: number = 0;
     tipoOperacaoDto: TipoOperacao = new TipoOperacao();
-    dataOperacao: Date = new Date();
-    dataVencimento: Date = new Date();
-    taxaContratada: number = 0;
-    indexadorDto: Indexador = new Indexador();
+    dataOperacao: Date = new Date();    
+    taxaContratada: number = 0;    
 }

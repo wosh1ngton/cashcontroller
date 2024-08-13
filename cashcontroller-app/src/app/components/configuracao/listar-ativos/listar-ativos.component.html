@@ -1,2 +1,73 @@
-<p>listar-ativos works!</p>
-<p-button (click)="showAtivoDialog()" label="Operação" class="cor-btn"></p-button>
+
+<p-confirmDialog key="deleteAtivo" />
+<p-table [value]="ativos" [columns]="colsAtivos" styleClass="p-datatable-sm">
+
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th colspan="7" class="text-right">
+                <p-button (click)="showAtivoDialog()" label="Ativo" class="cor-btn" size="small"></p-button>
+            </th>
+        </tr>
+        <tr>
+            <th pSortableColumn="nome">                
+                Nome <p-sortIcon field="nome"> </p-sortIcon>
+            </th>
+            <th>
+                Sigla
+            </th>
+            <th>
+                Data de Vencimento
+            </th>
+            <th>
+                Classe
+            </th>
+            <th>
+                Índice
+            </th>
+            <th>
+                Isento
+            </th>
+            <th> </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <td *ngFor="let col of columns">
+                <ng-container *ngIf="col.type === 'string'">
+                    {{ rowData[col.field] }}
+                </ng-container>
+                <ng-container *ngIf="col.type === 'objeto'">
+                    {{ rowData[col.field].nome }}
+                </ng-container>
+                <ng-container *ngIf="col.type === 'data'">
+                    {{ rowData.parametroRendaFixaDto?.dataVencimento | date: 'dd/MM/yyyy' }}
+                </ng-container>
+                <ng-container *ngIf="col.type === 'indexador'">
+                    {{ rowData.parametroRendaFixaDto?.indexador?.nome }}
+                </ng-container>
+                <ng-container *ngIf="col.type === 'boolean'">
+                    <p-checkbox
+                    [(ngModel)]="rowData.parametroRendaFixaDto.isIsento"
+                    [binary]="true"
+                    [disabled]="!rowData.parametroRendaFixaDto?.isIsento">
+                </p-checkbox>
+                
+                    
+                </ng-container>
+
+            </td>
+
+            <td>
+                <div class="flex">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editarAtivo(rowData.id)"
+                        class="p-button-rounded p-button-text p-button-primary"></button>
+
+                    <p-button icon="pi pi-trash" (click)="validarExclusaoAtivo(rowData, $event, 'deleteAtivo')"
+                        styleClass="p-button-danger p-button-text"></p-button>
+                </div>
+
+            </td>
+        </tr>
+
+    </ng-template>
+</p-table>

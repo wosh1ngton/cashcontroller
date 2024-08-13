@@ -10,6 +10,7 @@ export class AtivoCarteira {
     custo: number = 0;
     valorizacao: number = 0;
     valorMercado: number = 0;
+    valorContratado: number =0;
     percentual: number = 0;    
     totalEmProventos: number = 0;
     ganhoDeCapital: number = 0;

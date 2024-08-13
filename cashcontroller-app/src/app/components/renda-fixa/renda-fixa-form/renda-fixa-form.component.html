@@ -1,7 +1,7 @@
 <form #f="ngForm">    
     <div class="field p-fluid">
         <label for="tipo-operacao"> Ativo Negociado </label> 
-        <p-dropdown [options]="ativos" 
+        <p-dropdown [options]="ativos" appendTo="body"
                 [filter]="true" filterBy="sigla"
                 [(ngModel)]="operacaoRendaFixa.ativoDto"             
                 optionLabel="sigla" [showClear]="true"
@@ -11,7 +11,7 @@
     </div> 
     <div class="field p-fluid">
         <label for="tipo-operacao"> Tipo da Operação </label>
-        <p-dropdown [options]="tiposOperacao" 
+        <p-dropdown [options]="tiposOperacao" appendTo="body"
             [(ngModel)]="operacaoRendaFixa.tipoOperacaoDto" optionLabel="nome"
             [showClear]="true" placeholder="Tipo da Operação" 
             name="tipoOperacaoDto">
@@ -42,29 +42,15 @@
         <label for="icondisplay"> Data da Operação </label>
         <p-calendar [(ngModel)]="operacaoRendaFixa.dataOperacao" 
             [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
-            dateFormat="dd/mm/yy"
+            dateFormat="dd/mm/yy" appendTo="body"
             name="dataOperacao"></p-calendar>
     </div>
-    <div class="field p-fluid">
-        <label for="icondisplay"> Data do Vencimento </label>
-        <p-calendar [(ngModel)]="operacaoRendaFixa.dataVencimento" 
-            [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
-            dateFormat="dd/mm/yy"
-            name="dataVencimento"></p-calendar>
-    </div>
-    <div class="field p-fluid">
-        <label for="indexadorDto"> Índice </label>
-        <p-dropdown [options]="indices" 
-            [(ngModel)]="operacaoRendaFixa.indexadorDto" optionLabel="nome"
-            [showClear]="true" placeholder="Índice" 
-            name="indexadorDto">
-        </p-dropdown>
-    </div>
+   
     <div class="field p-fluid">
         <label for="taxa"> Taxa Contratada </label>
         <p-inputNumber inputId="taxa" 
         [(ngModel)]="operacaoRendaFixa.taxaContratada" 
-        name="taxaContratada" 
+        name="taxaContratada" [minFractionDigits]="0" [maxFractionDigits]="2"
             [min]="0" mode="decimal"> </p-inputNumber>
     </div>
     <div class="field p-fluid">

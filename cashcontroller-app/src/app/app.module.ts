@@ -19,6 +19,7 @@ import { ListarFiisComponent } from './components/renda-variavel/fiis/listar-fii
 import { LoadingComponent } from './components/shared/loading/loading.component';
 import { LoadingService } from './services/loading.service';
 import { ConfiguracaoModule } from './components/configuracao/configuracao.module';
+import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar-carteira-renda-fixa/listar-carteira-renda-fixa.component';
 
 
 
@@ -29,6 +30,7 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     AppComponent,
     HomeComponent,
     ListarCarteiraAcoesComponent,
+    ListarCarteiraRendaFixaComponent,
     PosicoesEncerradasComponent,
     ListarFiisComponent,    
     LoadingComponent,    

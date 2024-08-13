@@ -36,6 +36,7 @@ import { EventoRvFormComponent } from '../evento-rv-form/evento-rv-form.componen
 import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variavel.service';
 import { NumerosDoMesComponent } from '../../numeros-do-mes/numeros-do-mes.component';
 import { LoadingService } from 'src/app/services/loading.service';
+import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service';
 
 @Component({
   selector: 'app-listar-renda-variavel',
@@ -90,7 +91,8 @@ export class ListarOperacoesComponent {
     private eventoRendaVariavelService: EventoRendaVariavelService,
     public messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private filterService: FiltroOperacaoService
   ) {}
 
   colsEventos = [
@@ -196,27 +198,15 @@ export class ListarOperacoesComponent {
     );
   }
 
-  filtrarPorDataEspecifica(): void {
-    if (this.filter.startDate != null && this.filter.endDate != null) {
-      this.filter.ano = 0;
-      this.filter.mes = 0;
-    }
-  }
-
   private buscarAtivos(id: number) {
     this.ativoService.getAtivosPorClasse(id).subscribe((ativos) => {
       this.ativos = ativos;
     });
   }
 
+  
   filtrarPorMes($event: any) {
-    this.filter.startDate = null;
-    this.filter.ano = $event.ano;
-    this.filter.mes = $event.mesInteiro;
-    this.filter.endDate = DateUtil.getLastDayOfMonthByYear(
-      this.filter.ano,
-      this.filter.mes
-    );
+    this.filterService.filtrarPorMes($event, this.filter);    
     this.filterData();
     this.filterEventos();
   }
@@ -371,7 +361,7 @@ export class ListarOperacoesComponent {
   }
 
   filterData() {
-    this.filtrarPorDataEspecifica();
+    this.filterService.filtrarPorDataEspecifica(this.filter);
     return this.operacaoRendaVariavelService
       .filter(this.filter)
       .subscribe((res: any) => {
@@ -382,7 +372,7 @@ export class ListarOperacoesComponent {
   }
 
   filterEventos() {
-    this.filtrarPorDataEspecifica();
+    this.filterService.filtrarPorDataEspecifica(this.filter);
     return this.eventoRendaVariavelService
       .filter(this.filter)
       .subscribe((res: any) => {

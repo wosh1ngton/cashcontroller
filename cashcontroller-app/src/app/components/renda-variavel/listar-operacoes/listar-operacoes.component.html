@@ -4,9 +4,13 @@
             <div class="p-2 col-2">
                 <p-card header="Filtros">
                     <div class="p-2">
-                        <app-filtro-superior [selectedMonth]="filter.mes" [selectedAno]="filter.ano"
+                        <app-filtro-superior 
+                            [selectedMonth]="filter.mes" 
+                            [selectedAno]="filter.ano"
+                            [tipoDeOperacao]="operacaoRendaVariavelService" 
                             (selecaoMes)="filtrarPorMes($event)">
                         </app-filtro-superior>
+
                         <p-toast></p-toast>
                     </div>
                     <div class="p-2">
@@ -43,17 +47,17 @@
             </div>
             <div class="col-10">
                 <div class="grid">
-                <div class="col-6">
-                    <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
+                    <div class="col-6">
+                        <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
 
-                    </app-irpf-mes>
-                </div>
-                <div class="col-6">
-                    <app-numeros-do-mes [eventos]="eventos" [operacoes]="operacoes" [filtro]="filter">
+                        </app-irpf-mes>
+                    </div>
+                    <div class="col-6">
+                        <app-numeros-do-mes [eventos]="eventos" [operacoes]="operacoes" [filtro]="filter">
 
-                    </app-numeros-do-mes>
+                        </app-numeros-do-mes>
+                    </div>
                 </div>
-            </div>
                 <div class="painel-de-botoes">
                     <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
                     <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
@@ -90,7 +94,7 @@
                                                 </p-dropdown>
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                              <strong>   {{operacao.ativoDto.sigla }}</strong>
+                                                <strong> {{operacao.ativoDto.sigla }}</strong>
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
@@ -150,11 +154,11 @@
                                         </p-cellEditor>
                                     </td>
                                     <td>
-                                        
-                                            {{operacao.ativoDto.subclasseAtivoDto.nome }}
-                                        
+
+                                        {{operacao.ativoDto.subclasseAtivoDto.nome }}
+
                                     </td>
-                                 
+
                                     <td>
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
@@ -172,7 +176,7 @@
                                     <td>
                                         {{ operacao.valorTotal | currency:'BRL'}}
                                     </td>
-                                   
+
 
                                     <td>
                                         <div class="flex align-items-center justify-content-center gap-2">
@@ -203,7 +207,9 @@
                     </p-tabPanel>
                     <p-tabPanel header="Eventos">
                         <p-confirmDialog key="deleteEvento" />
-                        <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-sm">
+                        <p-table [columns]="colsEventos" 
+                            [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }"
+                            styleClass="p-datatable-sm">
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
                                     <th *ngFor="let col of columns">
@@ -214,8 +220,9 @@
                                     </th>
                                 </tr>
                             </ng-template>
-                            <ng-template pTemplate="body" let-rowData let-columns="columns">                                
-                                <tr  [ngClass]="{'fii': rowData.ativo.subclasseAtivoDto.id == 1, 'acao': rowData.ativo.subclasseAtivoDto.id == 2}">
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr
+                                    [ngClass]="{'fii': rowData.ativo.subclasseAtivoDto.id == 1, 'acao': rowData.ativo.subclasseAtivoDto.id == 2}">
 
                                     <td *ngFor="let col of columns">
                                         <ng-container *ngIf="col.type === 'number'">
@@ -225,7 +232,7 @@
                                             {{ rowData[col.field].nome }}
                                         </ng-container>
                                         <ng-container *ngIf="col.type === 'ativo'">
-                                           <strong> {{ rowData[col.field].sigla }} </strong> 
+                                            <strong> {{ rowData[col.field].sigla }} </strong>
                                         </ng-container>
                                         <ng-container *ngIf="col.type === 'date'">
                                             {{ rowData[col.field] | date: 'dd/MM/yyyy'}}

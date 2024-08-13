@@ -23,6 +23,7 @@ import { IndexadorService } from 'src/app/services/indexador.service';
 import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
 import { FiltroSuperiorComponent } from '../../filtro-superior/filtro-superior.component';
 import { FilterOperacao } from 'src/app/models/filter-operacao.model';
+import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service';
 
 @Component({
   selector: 'app-listar-renda-fixa',
@@ -56,13 +57,15 @@ export class ListarRendaFixaComponent {
   tiposOperacao: TipoOperacao[] = [];
   clonedOperacoes: { [s: string]: OperacaoRendaFixa } = {};
   filter: FilterOperacao = new FilterOperacao();
-  
+  filtroChange: boolean = false;
+
   constructor(public dialogService: DialogService,
     public ativoService: AtivoService,
     public indexadorService: IndexadorService,
     public operacaoRendaFixaService: OperacaoRendaFixaService,
     public messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private filterService: FiltroOperacaoService
   ) { }
 
   ngOnInit() {
@@ -78,12 +81,53 @@ export class ListarRendaFixaComponent {
       { field: 'dataOperacao', header: 'Data' },
       { field: 'valorUnitario', header: 'Valor Unitário' },
       { field: 'tipoOperacaoDto', header: 'Operação' },
-      { field: 'valorCorretagem', header: 'Corretagem' },
-      { field: 'dataVencimento', header: 'Vencimento' },
+      { field: 'valorCorretagem', header: 'Corretagem' },      
       { field: 'taxaContratada', header: 'Taxa' },
-      { field: 'indexadorDto', header: 'Índice' }
+      { field: 'custoTotal', header: 'Custo' },
+      { field: 'valorTotal', header: 'Valor' },
+      
     ];
   }
+
+  showEventoDialog(dados?: any) {
+    
+    // this.ref = this.dialogService.open(EventoRvFormComponent, {
+    //   header: 'Cadastro de Evento - Renda Variável',
+    //   width: '50vw',
+    //   modal: true,
+    //   breakpoints: {
+    //     '960px': '75vw',
+    //     '640px': '90vw',
+    //   },
+    //   data: {
+    //     isEdit: dados === undefined ? false : true,
+    //     rowData: dados,
+    //   },
+    // });
+
+    // this.ref.onClose
+    // .pipe(
+    //   filter((val) => !!val),
+    //   tap((val) => {
+    //     this.filter.startDate = null;
+    //     this.filter.ano = val.dataPagamento.getFullYear();
+    //     this.filter.mes = DateUtil.getMonthNumber(val.dataPagamento);
+    //     this.messageService.add({
+    //       severity: 'success',
+    //       summary: 'Successo',
+    //       detail: 'Evento Cadastrado',
+    //     });
+    //   })
+    // ).subscribe(
+    //   (val) => {
+    //     this.filterEventos();
+    //     this.filterData();
+    //   }
+      
+    // );
+  }
+
+
 
   showDialog() {
     this.ref = this.dialogService.open(RendaFixaFormComponent, {
@@ -141,10 +185,8 @@ export class ListarRendaFixaComponent {
    
      this.clonedOperacoes[operacao.id as string] = { ...operacao };
      const selectedAtivo = this.ativos.find(ativo => ativo.id === operacao.ativoDto.id)!;
-     operacao.dataOperacao = new Date(operacao.dataOperacao);
-     operacao.dataVencimento = new Date(operacao.dataVencimento);
-     operacao.ativoDto = selectedAtivo;
-  
+     operacao.dataOperacao = new Date(operacao.dataOperacao);     
+     operacao.ativoDto = selectedAtivo;  
 
   }
 
@@ -153,14 +195,18 @@ export class ListarRendaFixaComponent {
       delete this.clonedOperacoes[operacao.id as string];
   }
 
+  
+
   onRowEditSave(operacao: any) {
     if (operacao.valorUnitario > 0) {     
-
+      
+      
       delete this.clonedOperacoes[operacao.id as string];
 
       this.operacaoRendaFixaService.editar(operacao)        
           .subscribe({
-              next: () => {             
+              next: () => {   
+                this.listarOperacoes();          
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Operação Atualizada' })
               },
               error: err => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Valor inválido' + err })
@@ -192,6 +238,21 @@ export class ListarRendaFixaComponent {
 
   excluirOperacao(id: string) {
     return this.operacaoRendaFixaService.excluir(id);
+  }
+
+  filtrarPorMes($event: any) {
+    this.filterService.filtrarPorMes($event, this.filter);    
+    this.filterData();    
+  }
+
+  filterData() {
+    this.filterService.filtrarPorDataEspecifica(this.filter);
+    return this.operacaoRendaFixaService
+      .filter(this.filter)
+      .subscribe((res: any) => {
+        (this.operacoes = res), console.log('ano ', this.filter.ano);       
+        this.filtroChange = !this.filtroChange;
+      });
   }
 
 

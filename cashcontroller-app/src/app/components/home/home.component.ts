@@ -59,6 +59,13 @@ export class HomeComponent implements OnInit {
             routerLink: 'listar-fiis',
             id: '4',
             command: (event) => this.getMenuSelecionado(event)
+          },
+          {
+            label: 'Renda Fixa',
+            icon: PrimeIcons.INFO,
+            routerLink: 'carteira-renda-fixa',
+            id: '10',
+            command: (event) => this.getMenuSelecionado(event)
           }
 
         ]

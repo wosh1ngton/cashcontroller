@@ -40,4 +40,16 @@ export class AtivoService {
     save(ativo: any) {
         return this.http.post(this.baseUrl + '/ativos', ativo);
     }
+
+    update(ativo: any) {
+        return this.http.put(this.baseUrl + '/ativos', ativo);
+    }
+
+    excluir(id: string) {
+        return this.http.delete(this.baseUrl + '/ativos/' + id);
+    }
+
+    findById(id: number) {
+        return this.http.get(this.baseUrl + '/ativos/' + id)
+    }
 }

@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Observable, map } from 'rxjs';
 import { FilterOperacao } from 'src/app/models/filter-operacao.model';
 import { PrimengModule } from 'src/app/primeng/primeng.module';
+import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service';
+import { FiltrarOperacao } from 'src/app/services/interfaces/filtrar-operacao';
 import { OperacaoRendaVariavelService } from 'src/app/services/operacao-renda-variavel.service';
 import { DateUtil } from 'src/app/shared/util/date-util';
 
@@ -16,10 +18,9 @@ import { DateUtil } from 'src/app/shared/util/date-util';
 export class FiltroSuperiorComponent implements OnInit, OnChanges {
 
   constructor(
-    private operacaoRendaVariavelService: OperacaoRendaVariavelService
-  ) {
-
-  }
+    public operacaoRendaVariavelService: OperacaoRendaVariavelService,
+    private filterService: FiltroOperacaoService
+  ) { }
 
   ngOnInit(): void {
     const hoje = new Date();
@@ -34,40 +35,28 @@ export class FiltroSuperiorComponent implements OnInit, OnChanges {
     this.filter.ano = this.selectedAno;
   }
 
-  filtroMes$: Observable<any[]> | undefined;
-  //selectedMonth: any;
+  meses$: Observable<any[]> | undefined;  
   filter: FilterOperacao = new FilterOperacao();
-  anos: [] = [];
+  anos: number[] = [];  
   @Output() selecaoMes = new EventEmitter<string>();
   @Input() selectedMonth: number = 0;
   @Input() selectedAno: number = 2024;
-
+  @Input('tipoDeOperacao') tipoDeOperacao!: FiltrarOperacao;
+  
   getMeses(ano?: number) {
     this.selectedAno = ano!;
-    this.filtroMes$ = this.operacaoRendaVariavelService.getMesesComOperacoesPorAno(ano).pipe(
-      map((meses) => {
-        if (meses) {
-          meses.forEach(
-            (element: any) => {
-              element.mesString = element.mesString.slice(0, 3);
-            });
-        }
-        return meses;
-      }
-      ))
+    this.meses$ = this.filterService.getMeses(this.tipoDeOperacao, ano);
   }
 
   selecionarMes($event: any) {
-
+    console.log('tt',$event)
     this.selecaoMes.emit($event);
-    this.selectedMonth = $event.mesString;
-    
+    this.selectedMonth = $event.mesString;    
   }
 
 
   buscarAnosComDespesas() {
-    this.operacaoRendaVariavelService.getAnosComOperacoes().subscribe((res) => {
-      this.anos = res;
-    });
+    this.filterService.getAnos(this.tipoDeOperacao)
+      .subscribe(res => this.anos = res);    
   }
 }

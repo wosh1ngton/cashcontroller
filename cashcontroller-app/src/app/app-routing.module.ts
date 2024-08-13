@@ -7,6 +7,7 @@ import { PosicoesEncerradasComponent } from './components/renda-variavel/posicoe
 import { ListarFiisComponent } from './components/renda-variavel/fiis/listar-fiis/listar-fiis.component';
 import { ConfiguracaoComponent } from './components/configuracao/configuracao/configuracao.component';
 import { ListarOperacoesComponent } from './components/renda-variavel/listar-operacoes/listar-operacoes.component';
+import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar-carteira-renda-fixa/listar-carteira-renda-fixa.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'listar-fiis',
         component: ListarFiisComponent,
+      },
+      {
+        path: 'carteira-renda-fixa',
+        component: ListarCarteiraRendaFixaComponent,
       },
       {
         path: 'posicoes-encerradas',

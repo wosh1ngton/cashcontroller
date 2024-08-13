@@ -4,11 +4,13 @@ import { TipoOperacao } from "src/app/models/tipo-operacao.model";
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { FilterOperacao } from "../models/filter-operacao.model";
+import { FiltrarOperacao } from "./interfaces/filtrar-operacao";
 
 @Injectable({
     providedIn: 'root'
 })
-export class OperacaoRendaVariavelService {
+export class OperacaoRendaVariavelService implements FiltrarOperacao {
+    
     private readonly baseUrl = environment.mainUrlAPI;
 
     constructor(private http: HttpClient) {}
