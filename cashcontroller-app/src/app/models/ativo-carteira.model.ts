@@ -1,6 +1,7 @@
 import { Ativo } from "./ativo.model";
 
 export class AtivoCarteira {
+    id: number = 0;
     ativo: Ativo = new Ativo();
     custodia: number = 0;    
     precoMedio: number = 0;
@@ -13,6 +14,7 @@ export class AtivoCarteira {
     valorContratado: number =0;
     percentual: number = 0;    
     totalEmProventos: number = 0;
+    proventos: number = 0;
     ganhoDeCapital: number = 0;
 
 }

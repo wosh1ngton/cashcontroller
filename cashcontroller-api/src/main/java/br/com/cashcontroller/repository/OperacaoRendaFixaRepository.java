@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OperacaoRendaFixaRepository extends JpaRepository<OperacaoRendaFixa, Integer> {
@@ -143,4 +144,12 @@ public interface OperacaoRendaFixaRepository extends JpaRepository<OperacaoRenda
 
     @Query("SELECT SUM(CASE WHEN top.id = 1 THEN op.quantidadeNegociada WHEN top.id = 2 THEN -op.quantidadeNegociada ELSE 0 END) AS quantidade FROM OperacaoRendaFixa op JOIN op.tipoOperacao top WHERE op.ativo.id = :idAtivo")
     double getCustodiaByIdAtivo(@Param("idAtivo") int idAtivo);
+
+    @Query("SELECT new br.com.cashcontroller.dto.AtivoCarteiraRFDTO(" +
+            "oprf.dataOperacao, " +
+            "prf.isIsento " +
+            ") FROM OperacaoRendaFixa oprf " +
+            "JOIN oprf.ativo a " +
+            "JOIN a.parametroRendaFixa prf WHERE a.id = :id")
+    Optional<AtivoCarteiraRFDTO> findAtivoCarteiraRendaFixaById(@Param("id") Integer id);
 }

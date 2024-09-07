@@ -20,6 +20,12 @@ import { LoadingComponent } from './components/shared/loading/loading.component'
 import { LoadingService } from './services/loading.service';
 import { ConfiguracaoModule } from './components/configuracao/configuracao.module';
 import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar-carteira-renda-fixa/listar-carteira-renda-fixa.component';
+import { ListarAtivosCarteiraPrincipalComponent } from './components/carteira-principal/listar-ativos-carteira-principal/listar-ativos-carteira-principal.component';
+import { CadastrarAtivoCarteiraComponent } from './components/carteira-principal/cadastrar-ativo-carteira/cadastrar-ativo-carteira.component';
+import { CalendarModule } from 'primeng/calendar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TableCarteiraPrincipalComponent } from './components/carteira-principal/table-carteira-principal/table-carteira-principal.component';
+import { TabViewModule } from 'primeng/tabview';
 
 
 
@@ -31,19 +37,24 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     HomeComponent,
     ListarCarteiraAcoesComponent,
     ListarCarteiraRendaFixaComponent,
+    ListarAtivosCarteiraPrincipalComponent,
+    CadastrarAtivoCarteiraComponent,
     PosicoesEncerradasComponent,
     ListarFiisComponent,    
     LoadingComponent,    
+    TableCarteiraPrincipalComponent
   ],
   imports: [    
     BrowserModule,    
     AppRoutingModule,
+    ConfirmDialogModule,
     PrimengModule,
     BrowserAnimationsModule,
     FormsModule,    
     DetalharAtivoComponent,  
     SharedModule,
-    ConfiguracaoModule    
+    CalendarModule,  
+    ConfiguracaoModule       
   ],  
   exports: [
     

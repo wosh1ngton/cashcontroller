@@ -69,6 +69,11 @@ public class AtivoService {
 		List<Ativo> ativos =  ativoRepository.findByClasseAtivo(id);
 		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
 	}
+
+	public List<AtivoDTO> listarAtivosPorSubClasse(int id) {
+		List<Ativo> ativos =  ativoRepository.findBySubClasseAtivo(id);
+		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
+	}
 	
 	public List<SubclasseAtivoDTO> listarSubclasseAtivos() {
 		List<SubclasseAtivo> subclasseAtivos =  subclasseRepository.findAll();

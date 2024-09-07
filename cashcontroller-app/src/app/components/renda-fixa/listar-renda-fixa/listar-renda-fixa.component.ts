@@ -24,6 +24,9 @@ import { EnumClasseAtivo } from 'src/app/enums/classe-ativo.enum';
 import { FiltroSuperiorComponent } from '../../filtro-superior/filtro-superior.component';
 import { FilterOperacao } from 'src/app/models/filter-operacao.model';
 import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service';
+import { EventoRendaFixaFormComponent } from '../evento-renda-fixa-form/evento-renda-fixa-form.component';
+import { DateUtil } from 'src/app/shared/util/date-util';
+import { EventoRendaFixaService } from 'src/app/services/evento-renda-fixa.service';
 
 @Component({
   selector: 'app-listar-renda-fixa',
@@ -58,22 +61,28 @@ export class ListarRendaFixaComponent {
   clonedOperacoes: { [s: string]: OperacaoRendaFixa } = {};
   filter: FilterOperacao = new FilterOperacao();
   filtroChange: boolean = false;
+  activeIndex: number = 0;
+  eventos: any[] = [];
 
   constructor(public dialogService: DialogService,
     public ativoService: AtivoService,
     public indexadorService: IndexadorService,
     public operacaoRendaFixaService: OperacaoRendaFixaService,
+    public eventoRendaFixaService: EventoRendaFixaService,
     public messageService: MessageService,
     private confirmationService: ConfirmationService,
     private filterService: FiltroOperacaoService
   ) { }
 
-  ngOnInit() {
+  ngOnInit() {   
     
     this.listarOperacoes();
+   // this.listarEventos();
     this.buscarAtivos(EnumClasseAtivo.RENDA_FIXA);
     this.buscarTiposOperacao();
     this.buscarIndexadores();
+    this.filterData();
+    this.filterEventos();
 
     this.cols = [
       { field: 'ativoDto', header: 'Ativo' },
@@ -89,42 +98,60 @@ export class ListarRendaFixaComponent {
     ];
   }
 
-  showEventoDialog(dados?: any) {
-    
-    // this.ref = this.dialogService.open(EventoRvFormComponent, {
-    //   header: 'Cadastro de Evento - Renda Variável',
-    //   width: '50vw',
-    //   modal: true,
-    //   breakpoints: {
-    //     '960px': '75vw',
-    //     '640px': '90vw',
-    //   },
-    //   data: {
-    //     isEdit: dados === undefined ? false : true,
-    //     rowData: dados,
-    //   },
-    // });
+  colsEventos = [
+    { field: 'ativo', header: 'Ativo', type: 'ativo' },  
+    { field: 'dataPagamento', header: 'Data do Pagamento', type: 'date' },
+    { field: 'tipoEvento', header: 'Evento', type: 'objeto' },
+    { field: 'valor', header: 'Valor Unitário', type: 'number' },
+    { field: 'valorTotal', header: 'Valor a ser Pago', type: 'number' },
+  ];
 
-    // this.ref.onClose
-    // .pipe(
-    //   filter((val) => !!val),
-    //   tap((val) => {
-    //     this.filter.startDate = null;
-    //     this.filter.ano = val.dataPagamento.getFullYear();
-    //     this.filter.mes = DateUtil.getMonthNumber(val.dataPagamento);
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Successo',
-    //       detail: 'Evento Cadastrado',
-    //     });
-    //   })
-    // ).subscribe(
-    //   (val) => {
-    //     this.filterEventos();
-    //     this.filterData();
-    //   }
+  showEventoDialog(dados?: any) {
+    console.log('tt ',dados)
+    this.ref = this.dialogService.open(EventoRendaFixaFormComponent, {
+      header: 'Cadastro de Evento - Renda Fixa',
+      width: '50vw',
+      modal: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        isEdit: dados === undefined ? false : true,
+        rowData: dados,
+      },
+    });
+
+    this.ref.onClose
+    .pipe(
+      filter((val) => !!val),
+      tap((val) => {
+        this.filter.startDate = null;
+        this.filter.ano = val.dataPagamento.getFullYear();
+        this.filter.mes = DateUtil.getMonthNumber(val.dataPagamento);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successo',
+          detail: 'Evento Cadastrado',
+        });
+      })
+    ).subscribe(
+      (val) => {
+        this.filterEventos();
+        this.filterData();
+      }
       
-    // );
+    );
+  }
+
+  filterEventos() {
+    this.filterService.filtrarPorDataEspecifica(this.filter);
+    return this.eventoRendaFixaService
+      .filter(this.filter)
+      .subscribe((res: any) => {
+        (this.eventos = res);        
+        this.filtroChange = !this.filtroChange;
+      });
   }
 
 
@@ -215,27 +242,75 @@ export class ListarRendaFixaComponent {
     };
   }
 
-  validarExclusao(operacao: any, event: Event) {
-
+  validarExclusaoOperacao(operacao: any, event: Event, key: string) {
     this.confirmationService.confirm({
+      key: key,
       target: event.target as EventTarget,
       message: 'Tem certeza que deseja excluir esta operação?',
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
-      acceptIcon: "none",
-      rejectIcon: "none",
-      rejectButtonStyleClass: "p-button-text",
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',      
+      acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.excluirOperacao(operacao.id).subscribe(() => this.listarOperacoes());
-        this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Confirmada a exclusão' });
+        this.excluirOperacao(operacao.id).subscribe(() => this.filterData());
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Confirmada a exclusão',
+        });
       },
       reject: () => {
-        this.listarOperacoes();
-        this.messageService.add({ severity: 'error', summary: 'Rejeitado', detail: 'Cancelada a exclusão', life: 3000 });
-      }
+        this.filterData();
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Rejeitado',
+          detail: 'Cancelada a exclusão',
+          life: 3000,
+        });
+        
+      },
     });
   }
 
+  validarExclusaoEvento(evento: any, event: Event, key: string) {
+    this.confirmationService.confirm({
+      key: key,
+      target: event.target as EventTarget,
+      message: 'Tem certeza que deseja excluir este evento?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',      
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.excluirEvento(evento.id).subscribe(() => this.filterEventos());
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Confirmada a exclusão',
+        });
+      },
+      reject: () => {
+        this.filterEventos();
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Rejeitado',
+          detail: 'Cancelada a exclusão',
+          life: 3000,
+        });       
+        
+      },
+    });
+  }
+
+  excluirEvento(id: string) {
+    return this.eventoRendaFixaService.excluir(id);
+  }
   excluirOperacao(id: string) {
     return this.operacaoRendaFixaService.excluir(id);
   }

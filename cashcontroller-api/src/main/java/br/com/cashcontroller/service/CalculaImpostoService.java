@@ -36,4 +36,12 @@ public class CalculaImpostoService {
         }
         return valor;
     }
+
+    public double getValorLiquidoImpostoEvento(double valorBruto, boolean isIsento, LocalDate dataInvestimento) {
+        var valorLiquido = valorBruto;
+        if (!isIsento) {
+            valorLiquido = calculaIRPFRendaFixa(dataInvestimento, valorBruto);
+        }
+        return valorLiquido;
+    }
 }

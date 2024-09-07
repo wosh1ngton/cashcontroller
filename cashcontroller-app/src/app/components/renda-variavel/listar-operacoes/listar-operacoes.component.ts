@@ -286,6 +286,41 @@ export class ListarOperacoesComponent {
     }
   }
 
+  // onRowEditSavePartial(operacaoId: string, changes: Partial<any>) {
+
+    
+  //   this.operacaoRendaVariavelService.findById(operacaoId).subscribe((operacao:any) => {
+  //     const updatedFields: Partial<any> = {};
+
+  //     for(const key in changes) {
+  //       if(changes.hasOwnProperty(key) && changes[key] !== operacao[key]) {
+  //         updatedFields[key] = changes[key];        
+  //     }
+  //   }   
+    
+  //   if (Object.keys(updatedFields).length > 0) {
+      
+  //     delete this.clonedOperacoes[operacaoId as string];
+  //     console.log(operacaoId);
+  //     this.operacaoRendaVariavelService.editar(operacaoId, updatedFields).subscribe({
+  //       next: () => {
+  //         this.filterData();
+  //         this.messageService.add({
+  //           severity: 'success',
+  //           summary: 'Success',
+  //           detail: 'Operação Atualizada',
+  //         });
+  //       },
+  //       error: (err) =>
+  //         this.messageService.add({
+  //           severity: 'error',
+  //           summary: 'Error',
+  //           detail: 'Valor inválido' + err,
+  //         }),
+  //     });
+  //   }
+  // })}
+
   validarExclusao(operacao: any, event: Event, key: string) {
     this.confirmationService.confirm({
       key: key,

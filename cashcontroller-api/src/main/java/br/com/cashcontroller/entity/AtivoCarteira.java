@@ -26,7 +26,7 @@ public class AtivoCarteira {
     @JoinColumn(name = "ID_ATIVO")
     private Ativo ativo;
 
-    @Column(name = "QT_PERCENTUAL")
+    @Column(name = "QT_PERCENTUAL_DESEJADO")
     private double percentual;
 
     @Column(name = "DT_INICIO")
@@ -34,5 +34,17 @@ public class AtivoCarteira {
 
     @Column(name = "DT_FIM")
     private LocalDate dataFim;
+
+    @Column(name = "QT_CUSTODIA")
+    private double custodia;
+
+    @Column(name = "QT_CUSTO")
+    private double custo;
+
+    @Column(name = "QT_VALOR_MERCADO")
+    private double valorMercado;
+
+    @Column(name = "QT_PROVENTOS")
+    private double proventos;
 
 }

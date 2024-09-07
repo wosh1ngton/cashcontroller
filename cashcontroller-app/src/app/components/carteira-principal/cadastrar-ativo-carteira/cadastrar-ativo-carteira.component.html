@@ -1,0 +1,80 @@
+<div class="dialog-content mr-3 ml-3">
+    <form #formAtivo="ngForm">
+
+        <div class="field grid">
+            <label for="logo" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Ativo</label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-dropdown [options]="ativos" 
+                   optionLabel="sigla" [(ngModel)]="ativoCarteira.ativo"
+                    placeholder="Selecione um ativo" name="ativo" id="ativo" 
+                    [filter]="true"
+                    appendTo="body" />
+            </div>
+        </div>
+
+        <div class="field grid">
+            <label for="percentual"
+                class="col-12 lg:col-2 md:col-2 sm:col-12  sm:justify-content-end">Percentual</label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR"                     
+                [(ngModel)]="ativoCarteira.percentual" [minFractionDigits]="2"
+                [maxFractionDigits]="4" name="percentual">
+            </p-inputNumber>                
+            </div>
+        </div>       
+
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> 
+                Custódia </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR"                     
+                    [(ngModel)]="ativoCarteira.custodia" [minFractionDigits]="2"
+                    [maxFractionDigits]="4" name="custodia">
+                </p-inputNumber>
+            </div>
+        </div>
+
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> 
+                Custo de Aquisição </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
+                    inputId="currency-brazil" [(ngModel)]="ativoCarteira.custo" [minFractionDigits]="2"
+                    [maxFractionDigits]="4" name="custo">
+                </p-inputNumber>
+            </div>
+        </div>
+
+
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">
+                Valor de Mercado </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
+                    inputId="currency-brazil" [(ngModel)]="ativoCarteira.valorMercado" [minFractionDigits]="2"
+                    [maxFractionDigits]="4" name="valorMercado">
+                </p-inputNumber>
+            </div>
+        </div>
+
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> 
+                Proventos Recebidos </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
+                    inputId="currency-brazil" [(ngModel)]="ativoCarteira.proventos" [minFractionDigits]="2"
+                    [maxFractionDigits]="4" name="proventos">
+                </p-inputNumber>
+            </div>
+        </div>
+
+        <div class="grid mt-3">
+            <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-6 p-fluid">
+                <p-button label="Cancelar" severity="danger" size="small" (onClick)="close()"></p-button>
+            </div>
+            <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-0 p-fluid">
+                <p-button label="Salvar" class="cor-btn" size="small" (onClick)="save(formAtivo.value)"></p-button>
+            </div>
+        </div>
+    </form>
+</div>

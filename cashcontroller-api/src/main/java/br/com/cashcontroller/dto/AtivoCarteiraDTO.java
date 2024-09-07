@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AtivoCarteiraDTO {
-
+    private int id;
     private Ativo ativo;
     private double custodia;
     private double cotacao;

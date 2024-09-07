@@ -1,0 +1,45 @@
+<p-table [columns]="colsCarteiraAtivo" [value]="ativosCarteira" 
+styleClass="p-datatable-sm">
+    <ng-template pTemplate="header" let-col>
+        <tr>
+            <th colspan="7" style="text-align: right;">                   
+            
+            <p-button label="Cadastrar" (click)="showAtivoCarteiraDialog()"> </p-button>
+        </th>
+        
+       
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align: center;"> 
+                {{ totalValorMercado }}
+            </td>
+        </tr>
+        <tr>
+            <th *ngFor="let item of col"> {{ item.header }} </th>
+            <th> </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        
+        <tr>
+            <td *ngFor="let col of columns">
+                <ng-container *ngIf="col.type === 'object'">
+                    {{ rowData[col.field].nome }}
+                </ng-container>
+                <ng-container *ngIf="col.type === 'number'">
+                    {{ rowData[col.field] }}
+                </ng-container>
+            </td>
+           
+            <td>
+                <div class="flex">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editarAtivoCarteira(rowData.id)"
+                        class="p-button-rounded p-button-text p-button-primary"></button>
+
+                    <p-button icon="pi pi-trash" (click)="validarExclusaoAtivoCarteira(rowData, $event, 'deleteAtivoCarteira')"
+                        styleClass="p-button-danger p-button-text"></p-button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

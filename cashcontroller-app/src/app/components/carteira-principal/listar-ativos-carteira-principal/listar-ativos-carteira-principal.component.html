@@ -1,0 +1,41 @@
+<p-confirmDialog key="deleteAtivoCarteira" />
+<div class="grid">
+    <h3 class="p-3 m-0">
+        Carteira Principal!
+    </h3>
+</div>
+<div class="grid"> 
+    <div class="col-12">
+    <p-tabView [(activeIndex)]="activeIndex"> 
+    <p-tabPanel header="Ações">
+       <app-table-carteira-principal [subclasseAtivo]="2" 
+       (updateAtivosCarteira)="buscarCarteiraAcoes()"
+       [ativosCarteira]="carteiraAcoes">
+
+       </app-table-carteira-principal>
+    </p-tabPanel>
+
+    <p-tabPanel header="Fundos Imobiliários">
+        <app-table-carteira-principal [subclasseAtivo]="1" 
+        (updateAtivosCarteira)="buscarCarteiraFiis()"
+        [ativosCarteira]="carteiraFiis">
+ 
+        </app-table-carteira-principal>
+    </p-tabPanel>
+
+    <p-tabPanel header="Renda Fixa">
+        <app-table-carteira-principal [subclasseAtivo]="3" 
+        (updateAtivosCarteira)="buscarCarteiraRendaFixa()"
+        [ativosCarteira]="carteiraRendaFixa">
+ 
+        </app-table-carteira-principal>
+     </p-tabPanel>   
+
+    <p-tabPanel header="Consolidado">
+        <app-table-carteira-principal [subclasseAtivo]="3">
+ 
+        </app-table-carteira-principal>
+     </p-tabPanel>
+    </p-tabView>
+</div>
+</div>

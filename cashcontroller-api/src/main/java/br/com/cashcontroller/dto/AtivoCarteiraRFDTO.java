@@ -39,6 +39,12 @@ public class AtivoCarteiraRFDTO {
         return valorContratado - custo;
     }
 
+
+    public AtivoCarteiraRFDTO(LocalDate dataOperacao, boolean isIsento) {
+        this.dataOperacao = dataOperacao;
+        this.isIsento = isIsento;
+    }
+
     public AtivoCarteiraRFDTO(
 
             int id,

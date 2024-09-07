@@ -1,4 +1,3 @@
-import { Ativo } from "src/app/models/ativo.model";
 
 interface MyObject {
     [key: string]: any;

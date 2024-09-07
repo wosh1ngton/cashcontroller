@@ -1,5 +1,6 @@
 package br.com.cashcontroller.service;
 
+import br.com.cashcontroller.dto.AtivoCarteiraDTO;
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
 import br.com.cashcontroller.external.dto.selic.SelicMesDTO;
 import br.com.cashcontroller.external.service.IndicesService;
@@ -24,6 +25,8 @@ public class CalcularRentabilidadeService {
 
         return strategy.calcularRentabilidade(ativoCarteiraRFDTO);
     }
+
+
 
 
 }

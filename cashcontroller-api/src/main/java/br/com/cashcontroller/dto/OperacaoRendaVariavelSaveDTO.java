@@ -14,7 +14,7 @@ public class OperacaoRendaVariavelSaveDTO {
     private double valorCorretagem;
     private LocalDate dataOperacao;
     private Long quantidadeNegociada;
-    private Long tipoOperacaoDto;
+    private int tipoOperacaoDto;
     private double custoTotal;
     private double valorTotal;
 

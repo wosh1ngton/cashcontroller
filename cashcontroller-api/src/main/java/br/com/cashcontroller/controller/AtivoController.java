@@ -65,5 +65,11 @@ public class AtivoController {
 		List<AtivoDTO> ativos = this.ativoService.listarAtivosPorClasse(id);
 		return ResponseEntity.ok(ativos);
 	}
+
+	@GetMapping(value = "/por-subclasse/{id}")
+	ResponseEntity<List<AtivoDTO>> getAtivosPorSubClasse(@PathVariable(value="id")  Integer id) {
+		List<AtivoDTO> ativos = this.ativoService.listarAtivosPorSubClasse(id);
+		return ResponseEntity.ok(ativos);
+	}
 	
 }

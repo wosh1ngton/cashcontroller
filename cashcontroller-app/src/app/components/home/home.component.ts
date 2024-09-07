@@ -47,6 +47,13 @@ export class HomeComponent implements OnInit {
         icon: PrimeIcons.WALLET,
         items: [
           {
+            label: 'Principal',
+            icon: PrimeIcons.WALLET,
+            routerLink: 'carteira-principal',
+            id: '12',
+            command: (event) => this.getMenuSelecionado(event)
+          },
+          {
             label: 'Ações',
             icon: PrimeIcons.CALENDAR_PLUS,
             routerLink: 'carteira-acoes',

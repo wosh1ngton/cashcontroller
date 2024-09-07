@@ -1,17 +1,13 @@
 package br.com.cashcontroller.service;
 
 import br.com.cashcontroller.dto.*;
-import br.com.cashcontroller.entity.EventoRendaVariavel;
-import br.com.cashcontroller.entity.ParametroEventoFII;
-import br.com.cashcontroller.entity.TipoEvento;
+import br.com.cashcontroller.entity.*;
 import br.com.cashcontroller.external.dto.FeriadoDTO;
 import br.com.cashcontroller.external.service.FeriadosService;
+import br.com.cashcontroller.mapper.EventoRendaFixaMapper;
 import br.com.cashcontroller.mapper.EventoRendaVariavelMapper;
 import br.com.cashcontroller.mapper.ParametroEventoFIIMapper;
-import br.com.cashcontroller.repository.EventoRepository;
-import br.com.cashcontroller.repository.OperacaoRendaVariavelRepository;
-import br.com.cashcontroller.repository.ParametroEventoFIIRepository;
-import br.com.cashcontroller.repository.TipoEventoRepository;
+import br.com.cashcontroller.repository.*;
 import br.com.cashcontroller.utils.DataUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +25,11 @@ import java.util.stream.Collectors;
 public class EventoService {
 	@Autowired
 	private EventoRepository eventoRepository;
+
+	@Autowired
+	private CalculaImpostoService calculaImpostoService;
+	@Autowired
+	private EventoRendaFixaRepository eventoRendaFixaRepository;
 	@Autowired
 	private FeriadosService feriadosService;
 	@Autowired
@@ -37,6 +38,21 @@ public class EventoService {
 	private OperacaoRendaVariavelRepository operacaoRendaVariavelRepository;
 	@Autowired
 	private TipoEventoRepository tipoEventoRepository;
+
+	@Autowired
+	private OperacaoRendaFixaRepository operacaoRendaFixaRepository;
+
+	@Autowired
+	private AtivoRepository ativoRepository;
+
+	public void cadastrarEvento(EventoAddRendaFixaDTO eventoDTO) {
+
+
+			EventoRendaFixa evento = EventoRendaFixaMapper.INSTANCE.toEntity(eventoDTO);
+
+			eventoRendaFixaRepository.save(evento);
+
+	}
 	public void cadastrarEvento(EventoAddRendaVariavelDTO eventoDTO, String periodosDeRecorrencia) {
 
 		if(Objects.equals(periodosDeRecorrencia, "0")) {
@@ -91,10 +107,26 @@ public class EventoService {
 		return EventoRendaVariavelMapper.INSTANCE.toDTO(eventoRepository.save(evento));
 	}
 
+	public EventoAddRendaFixaDTO atualizarEventoRendaFixa(EventoAddRendaFixaDTO eventoDTO) {
+		EventoRendaFixa evento = new EventoRendaFixa();
+		if(eventoDTO.getId() != 0) {
+			evento = EventoRendaFixaMapper.INSTANCE.toEntity(eventoDTO);
+		}
+		return EventoRendaFixaMapper.INSTANCE.toDTO(eventoRendaFixaRepository.save(evento));
+	}
+
 	public void excluirEvento(int id) {
 
 		Optional<EventoRendaVariavel> evento = eventoRepository.findById(id);
 		evento.ifPresent(value -> this.eventoRepository.delete(value));
+
+	}
+
+
+	public void excluirEventoRendaFixa(int id) {
+
+		Optional<EventoRendaFixa> evento = eventoRendaFixaRepository.findById(id);
+		evento.ifPresent(value -> this.eventoRendaFixaRepository.delete(value));
 
 	}
 
@@ -123,11 +155,45 @@ public class EventoService {
 
 	}
 
+	public List<EventoListRendaFixaDTO> listarEventosRendaFixaPorData(Filter filter) {
+		List<EventoRendaFixa> eventos = eventoRendaFixaRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes());
+
+		var eventosDto = eventos.stream().map(EventoRendaFixaMapper.INSTANCE::toListDTO).toList();
+
+		eventosDto.stream().peek(eventoDto -> {
+					Optional<AtivoCarteiraRFDTO> ativo = operacaoRendaFixaRepository.findAtivoCarteiraRendaFixaById(eventoDto.getAtivo().getId());
+					if(ativo.isPresent()) {
+						eventoDto.setValorTotal(calculaImpostoService.getValorLiquidoImpostoEvento(eventoDto.getValor(), ativo.get().getIsIsento(), ativo.get().getDataOperacao()));
+					}
+
+
+				}
+		).collect(Collectors.toList());
+
+		return eventosDto;
+
+	}
+
+
+
 	public double getTotalProventosPorAtivo(int ativoId) {
 		var eventos = eventoRepository.findEventosByAtivo(ativoId);
 		var eventosDto = eventos.stream().map(EventoRendaVariavelMapper.INSTANCE::toListDTO).toList();
 		return eventosDto.stream()
 				.mapToDouble(this::getValorTotalEvento)
+				.sum();
+	}
+
+	public double getTotalProventosPorAtivoRendaFixa(int ativoId) {
+		var eventos = eventoRendaFixaRepository.findEventosByAtivo(ativoId);
+		var eventosDto = eventos.stream().map(EventoRendaFixaMapper.INSTANCE::toListDTO).toList();
+		return eventosDto.stream()
+
+				.mapToDouble(evento -> {
+					Optional<AtivoCarteiraRFDTO> ativo = operacaoRendaFixaRepository.findAtivoCarteiraRendaFixaById(evento.getAtivo().getId());
+					evento.setValorTotal(this.calculaImpostoService.getValorLiquidoImpostoEvento(evento.getValor(), ativo.get().getIsIsento(), ativo.get().getDataOperacao()));
+					return evento.getValorTotal();
+				})
 				.sum();
 	}
 

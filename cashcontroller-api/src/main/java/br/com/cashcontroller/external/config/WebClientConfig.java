@@ -22,4 +22,9 @@ public class WebClientConfig {
     public WebClient webClientBacen() {
         return WebClient.builder().baseUrl("https://api.bcb.gov.br").build();
     }
+
+    @Bean("brapiClient")
+    public WebClient webClientBrapi() {
+        return WebClient.builder().baseUrl("https://brapi.dev/api").build();
+    }
 }
