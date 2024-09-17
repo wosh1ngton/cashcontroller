@@ -94,6 +94,8 @@ public class EventoService {
 		eventoRepository.saveAll(eventos);
 	}
 
+
+
 	private long getCustodiaPorData(int idAtivo, LocalDate dataCom) {
 		var custodia = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo, dataCom);
 		return  custodia;

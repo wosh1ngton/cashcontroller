@@ -2,7 +2,8 @@
     <div  [ngClass]="{'col-8': ativoSelecionado, 'col-12': !ativoSelecionado}">
         <p-table [value]="carteira" styleClass="p-datatable-sm"            
             [(selection)]="ativoSelecionado" selectionMode="single"           
-            [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" class="tabela-irpf">
+            [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" 
+            class="tabela-irpf">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
                     Carteira

@@ -1,0 +1,84 @@
+<div class="grid">
+    <div class="col-6">
+        <p-table [columns]="colsPatrimonio" [value]="patrimonio">
+            <ng-template pTemplate="header" let-col>
+                <tr>
+                    <th *ngFor="let item of col"> {{ item.header }} </th>
+                </tr>
+
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+
+                        <ng-container *ngIf="col.type === 'number'">
+                            {{ rowData[col.field] | currency:'BRL' }}
+                        </ng-container>
+
+                        <ng-container *ngIf="col.field === 'percentual'">
+                            {{ rowData.percentual /100 | percent : '1.0-2' }}
+                        </ng-container>
+
+                        <ng-container *ngIf="col.field === 'percentualAtual'">
+                            {{ rowData.valor / valorTotal | percent : '1.0-2' }}
+                        </ng-container>
+
+                        <ng-container *ngIf="col.type === 'string'">
+                            {{ rowData[col.field] }}
+                        </ng-container>
+
+                        <ng-container *ngIf="col.field === 'investimento'">
+                            {{ valorTotal * (rowData.percentual/100) - rowData.valor | currency:'BRL' }}
+                        </ng-container>
+
+
+                    </td>
+                </tr>
+
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="col-3">
+        <p-card header="Patrimônio Acumulado" [style]="{'height': '182px'}">
+
+
+            <h2>
+                {{valorTotal | currency:'BRL'}}
+            </h2>
+        </p-card>
+    </div>
+    <div class="col-3">
+        <p-card header="Dinheiros!">
+            <h2 style="font-size: medium;">
+                Total: {{totalProventosRendimentos | currency:'BRL'}} <br /> 
+                Proventos: {{totalProventos | currency:'BRL'}} <br /> 
+                Rendimentos: {{totalRendimentos | currency:'BRL' }}
+            </h2>
+        </p-card>
+    </div>
+</div>
+
+
+
+<div class="grid" *ngIf="dataTopPagadoras.length > 0" style="background-color: #f4f4f4;">    
+    <div>
+        <div class="m-3 ml-0 text-center">
+            <p-button [text]="true" class="p-2" (onClick)="alterarVisualizacao()" label="Todos"> </p-button>
+            <p-button [text]="true" class="p-2" (onClick)="alterarVisualizacao('acao')" label="Ações"> </p-button>
+            <p-button [text]="true" class="p-2" (onClick)="alterarVisualizacao('fii')" label="Fiis"> </p-button>
+        </div>
+        <app-tree-map-chart [dados]="dataTopPagadoras">
+
+        </app-tree-map-chart>
+    </div>
+
+</div>
+
+
+
+
+<div class="card">
+    <p-chart type="bar" [data]="data" [options]="options" />
+
+
+</div>

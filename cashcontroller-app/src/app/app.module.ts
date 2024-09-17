@@ -26,6 +26,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableCarteiraPrincipalComponent } from './components/carteira-principal/table-carteira-principal/table-carteira-principal.component';
 import { TabViewModule } from 'primeng/tabview';
+import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
+import { TreeMapChartComponent } from './components/charts/tree-map-chart/tree-map-chart.component';
 
 
 
@@ -42,7 +44,9 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     PosicoesEncerradasComponent,
     ListarFiisComponent,    
     LoadingComponent,    
-    TableCarteiraPrincipalComponent
+    TableCarteiraPrincipalComponent,
+    ListarPatrimonioComponent,
+    TreeMapChartComponent
   ],
   imports: [    
     BrowserModule,    

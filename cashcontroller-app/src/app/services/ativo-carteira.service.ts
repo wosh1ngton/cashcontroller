@@ -51,4 +51,20 @@ export class AtivoCarteiraService {
     findById(id: number) {
         return this.http.get(this.baseUrl + '/ativo-carteira/' + id)
     }
+
+    getPatrimonio() {
+        return this.http.get(this.baseUrl + '/ativo-carteira/patrimonio')
+    }
+
+    getTopPagadoras() {
+        return this.http.get(this.baseUrl + '/ativo-carteira/top-pagadoras')
+    }
+
+    getProventos() {
+        return this.http.get(this.baseUrl + '/ativo-carteira/proventos')
+    }
+
+    updateCarteiraBySubclasse(id: number) {
+        return this.http.get(this.baseUrl + '/ativo-carteira/update-carteira/' + id)
+    }
 }

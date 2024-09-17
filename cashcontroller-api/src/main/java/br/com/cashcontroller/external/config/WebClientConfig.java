@@ -4,7 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.net.SocketException;
 
 @Configuration
 public class WebClientConfig {
@@ -13,6 +17,11 @@ public class WebClientConfig {
         return WebClient.builder().baseUrl("https://brasilapi.com.br").build();
     }
 
+    @Retryable(
+            value = { SocketException.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000)
+    )
     @Bean("tesouroApiClient")
     public WebClient webClientTesouro() {
         return WebClient.builder().baseUrl("https://www.tesourodireto.com.br").build();

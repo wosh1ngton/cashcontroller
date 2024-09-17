@@ -1,17 +1,19 @@
 <p-table [columns]="colsCarteiraAtivo" [value]="ativosCarteira" 
+dataKey="id" 
 styleClass="p-datatable-sm">
     <ng-template pTemplate="header" let-col>
         <tr>
-            <th colspan="7" style="text-align: right;">                   
-            
-            <p-button label="Cadastrar" (click)="showAtivoCarteiraDialog()"> </p-button>
-        </th>
-        
-       
+            <th colspan="8" style="text-align: right;">
+
+                <p-button label="Cadastrar" (click)="showAtivoCarteiraDialog()"> </p-button>
+                <p-button label="Atualizar Valores" class="p-2" (click)="updateCarteiraPorSubclasse()"> </p-button>
+            </th>
+
+
         </tr>
         <tr>
-            <td colspan="4" style="text-align: center;"> 
-                {{ totalValorMercado }}
+            <td colspan="4" style="text-align: center;">
+                {{totalValorMercado | currency:'BRL'}}
             </td>
         </tr>
         <tr>
@@ -19,24 +21,31 @@ styleClass="p-datatable-sm">
             <th> </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
-        
+    <ng-template pTemplate="body" let-rowData let-ri="rowIndex" let-columns="columns">
+
         <tr>
             <td *ngFor="let col of columns">
                 <ng-container *ngIf="col.type === 'object'">
                     {{ rowData[col.field].nome }}
                 </ng-container>
+                <ng-container *ngIf="col.type === 'percentual'">
+                    {{ rowData[col.field] /100 | percent : '1.0-2' }}
+                </ng-container>
                 <ng-container *ngIf="col.type === 'number'">
-                    {{ rowData[col.field] }}
+                    {{ rowData[col.field] | currency:'BRL' }}
+                </ng-container>
+                <ng-container *ngIf="col.field === 'percentualAtual'">
+                    {{ rowData.valorMercado / totalValorMercado | percent: '1.0-2' }}
                 </ng-container>
             </td>
-           
+
             <td>
                 <div class="flex">
                     <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editarAtivoCarteira(rowData.id)"
                         class="p-button-rounded p-button-text p-button-primary"></button>
 
-                    <p-button icon="pi pi-trash" (click)="validarExclusaoAtivoCarteira(rowData, $event, 'deleteAtivoCarteira')"
+                    <p-button icon="pi pi-trash"
+                        (click)="validarExclusaoAtivoCarteira(rowData, $event, 'deleteAtivoCarteira')"
                         styleClass="p-button-danger p-button-text"></p-button>
                 </div>
             </td>

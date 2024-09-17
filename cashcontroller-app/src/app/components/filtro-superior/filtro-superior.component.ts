@@ -43,12 +43,13 @@ export class FiltroSuperiorComponent implements OnInit, OnChanges {
   @Input() selectedAno: number = 2024;
   @Input('tipoDeOperacao') tipoDeOperacao!: FiltrarOperacao;
   
-  getMeses(ano?: number) {
+  getMeses(ano?: number) {    
     this.selectedAno = ano!;
     this.meses$ = this.filterService.getMeses(this.tipoDeOperacao, ano);
   }
 
   selecionarMes($event: any) {
+    
     console.log('tt',$event)
     this.selecaoMes.emit($event);
     this.selectedMonth = $event.mesString;    

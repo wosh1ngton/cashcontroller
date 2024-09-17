@@ -41,14 +41,19 @@ export class CadastrarAtivoCarteiraComponent {
       this.ativoCarteiraService
         .findById(this.configDialog.data.rowData)
         .subscribe((res: any) => {
-          this.ativoCarteira = res;
+          this.ativoCarteira = res;   
+          this.ativo.id = this.ativoCarteira.ativo.id;       
         });
     }
   }
 
+  
+
   private buscarAtivosPorSubclasse(): void {
     this.ativoService.getAtivosPorSubClasse(this.subclasseAtivo).subscribe({
-      next: (res) => (this.ativos = res),
+      next: (res) => (
+        this.ativos = res      
+      ),
       error: (err) => console.error('erro: ', err.message),
     });
   }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.cashcontroller.entity.Ativo;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AtivoRepository extends JpaRepository<Ativo, Integer> {
@@ -25,6 +26,9 @@ public interface AtivoRepository extends JpaRepository<Ativo, Integer> {
             "LEFT JOIN a.parametroRendaFixa prf " +
             "WHERE sa.id = :id OR (:id = 3 AND sa.id IN (4, 5))")
     List<Ativo> findBySubClasseAtivo(@Param("id") Integer id);
+
+    @Query("SELECT a.logo FROM Ativo a WHERE a.sigla = :sigla")
+    Optional<String> findUrlLogoBySigla(@Param("sigla") String sigla);
 
 
 }

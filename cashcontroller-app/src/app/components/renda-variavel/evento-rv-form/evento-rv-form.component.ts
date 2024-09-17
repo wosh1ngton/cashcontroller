@@ -148,4 +148,20 @@ export class EventoRvFormComponent implements OnInit {
       )
       .subscribe();
   }
+
+  setTipoEvento(event: any) {      
+      
+      this.ativoService.findById(event.value)
+        .subscribe((res:any) => {         
+          if(res.subclasseAtivoDto.id === 1) {
+            this.eventoRendaVariavel.tipoEvento.id = 3;
+          } else if(res.subclasseAtivoDto.id === 2) {
+            this.eventoRendaVariavel.tipoEvento.id = 2;
+          } else {
+            this.eventoRendaVariavel.tipoEvento.id = 4;
+          }
+    });     
+
+  }
+
 }

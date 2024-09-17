@@ -19,4 +19,10 @@ public class EventoAddRendaVariavelDTO {
     private double valor;
     private int tipoEvento;
 
+    public EventoAddRendaVariavelDTO(int id, LocalDate dataCom, LocalDate dataPagamento) {
+        this.id = id;
+        this.dataCom = dataCom;
+        this.dataPagamento = dataPagamento;
+    }
+
 }

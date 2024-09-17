@@ -71,5 +71,7 @@ public class AtivoController {
 		List<AtivoDTO> ativos = this.ativoService.listarAtivosPorSubClasse(id);
 		return ResponseEntity.ok(ativos);
 	}
+
+
 	
 }

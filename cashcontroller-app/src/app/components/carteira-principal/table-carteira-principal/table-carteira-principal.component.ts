@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AtivoCarteira } from 'src/app/models/ativo-carteira.model';
@@ -10,7 +10,7 @@ import { CadastrarAtivoCarteiraComponent } from '../cadastrar-ativo-carteira/cad
   templateUrl: './table-carteira-principal.component.html',
   styleUrl: './table-carteira-principal.component.css'
 })
-export class TableCarteiraPrincipalComponent {
+export class TableCarteiraPrincipalComponent implements OnChanges {
   
   dialogRef: DynamicDialogRef | undefined;
   @Input('subclasseAtivo') subclasseAtivo = new Input();
@@ -26,16 +26,20 @@ export class TableCarteiraPrincipalComponent {
     private messageService: MessageService) {
 
     }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['ativosCarteira']) {
+      this.getValorizacaoCarteira();
+    }
+  }
   
   carteira: AtivoCarteira[] = [];
 
   private getValorizacaoCarteira() : void {
-      this.totalValorMercado = this.carteira.reduce((acc, value) => acc + value.valorMercado, 0);
-      console.log(this.totalValorMercado)
+      this.totalValorMercado = this.ativosCarteira.reduce((acc: any, value: any) => acc + value.valorMercado, 0);      
   }
+
   ngOnInit(): void {
-  //  this.buscarCarteiraAcoes();
-   // this.buscarCarteiraFiis();
+    this.calcularRentabilidade();  
   }
 
   private calcularRentabilidade() {
@@ -47,7 +51,8 @@ export class TableCarteiraPrincipalComponent {
     { field: 'custodia', header: 'Custódia', type: 'number'},
     { field: 'custo', header: 'Custo', type: 'number'},
     { field: 'valorMercado', header: 'Valor de Mercado', type: 'number'},
-    { field: 'percentual', header: 'Percentual', type: 'number'},
+    { field: 'percentual', header: 'Percentual', type: 'percentual'},
+    { field: 'percentualAtual', header: 'Percentual Atual', type: 'percentual'},
     { field: 'precoMedio', header: 'Preço Médio', type: 'number'},
   ]
  
@@ -84,6 +89,7 @@ export class TableCarteiraPrincipalComponent {
       data: {
         isEdit: true,
         rowData: id,
+        subclasse: this.subclasseAtivo
       },
     });
 
@@ -106,7 +112,7 @@ export class TableCarteiraPrincipalComponent {
       rejectLabel: 'Não',      
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-       this.excluirAtivo(ativo.id).subscribe(() => {
+       this.excluirAtivo(ativo.id).subscribe((res) => {
           this.updateAtivosCarteira.emit();
       });
         this.messageService.add({
@@ -115,8 +121,7 @@ export class TableCarteiraPrincipalComponent {
           detail: 'Confirmada a exclusão',
         });
       },
-      reject: () => {
-        this.updateAtivosCarteira.emit();
+      reject: () => {        
         this.messageService.add({
           severity: 'error',
           summary: 'Rejeitado',
@@ -130,5 +135,13 @@ export class TableCarteiraPrincipalComponent {
 
   excluirAtivo(id: string) {
     return this.ativoCarteiraService.excluir(id);
+  }
+
+  updateCarteiraPorSubclasse() {
+    console.log('teste', this.subclasseAtivo);
+    this.ativoCarteiraService.updateCarteiraBySubclasse(this.subclasseAtivo)
+      .subscribe((res) => {
+        this.calcularRentabilidade();
+      });
   }
 }

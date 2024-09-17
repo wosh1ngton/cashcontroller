@@ -3,8 +3,10 @@
         <input type="hidden" name="id" [(ngModel)]="eventoRendaVariavel.id">
         <div class="field p-fluid">
             <label for="ativo"> Ativo Negociado </label>
-            <p-dropdown [options]="ativos" [filter]="true" filterBy="sigla" [(ngModel)]="eventoRendaVariavel.ativo.id"
-                [showClear]="true" placeholder="Selecione um ativo" name="ativo" optionValue="id" optionLabel="sigla">
+            <p-dropdown [options]="ativos" [filter]="true" (onChange)="setTipoEvento($event)"
+                filterBy="sigla" [(ngModel)]="eventoRendaVariavel.ativo.id"
+                [showClear]="true" placeholder="Selecione um ativo" name="ativo" 
+                optionValue="id" optionLabel="sigla">
             </p-dropdown>
         </div>
         <div class="field p-fluid">
@@ -25,9 +27,7 @@
                 inputId="icondisplay" dateFormat="dd/mm/yy" name="dataPagamento"></p-calendar>
         </div>
 
-        <div class="field p-fluid">
-            {{ checked | json}}
-            {{showPeriodosRecorrencia | json}}
+        <div class="field p-fluid">            
             <label for="valor"> Valor a Receber </label>
             <p-inputNumber inputId="valor" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
                 inputId="currency-brazil" [(ngModel)]="eventoRendaVariavel.valor" [minFractionDigits]="2"

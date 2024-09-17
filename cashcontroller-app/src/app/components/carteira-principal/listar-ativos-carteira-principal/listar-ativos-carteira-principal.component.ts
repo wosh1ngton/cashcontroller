@@ -65,7 +65,7 @@ export class ListarAtivosCarteiraPrincipalComponent implements OnInit {
   public buscarCarteiraFiis() {
     this.ativoCarteiraService.getAtivosCarteiraFiis().subscribe(
       (res) => {        
-        this.carteiraFiis = res;
+        this.carteiraFiis = res.filter(item => item.custodia > 0);
         //this.calcularRentabilidade();
       }
     );

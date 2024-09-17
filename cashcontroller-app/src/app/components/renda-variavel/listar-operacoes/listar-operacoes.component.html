@@ -62,16 +62,16 @@
                     <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
                     <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
                 </div>
-
-
+                
                 <p-tabView [(activeIndex)]="activeIndex">
                     <p-tabPanel header="Operações">
                         <p-confirmDialog key="deleteOperacao" />
-                        <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes"
+                        <p-table [columns]="cols" dataKey="id" 
+                        editMode="row" class="m-3 tabela-operacoes"
                             [value]="operacoes" styleClass="p-datatable-sm"
-                            [tableStyle]="{ 'min-width': '50rem', 'min-height': '20rem', 'border': '1px solid #e9e9e9' }">
+                            [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #e9e9e9' }">
                             <ng-template pTemplate="header" let-columns>
-                                <tr>
+                                <tr class="rowstyle">
                                     <th *ngFor="let col of columns">
                                         {{ col.header }}
                                     </th>
@@ -83,7 +83,8 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-editing="editing" let-ri="rowIndex" let-operacao
                                 let-columns="columns">
-                                <tr [pEditableRow]="operacao"
+                                <tr class="rowstyle"
+                                    [pEditableRow]="operacao"
                                     [ngClass]="{'venda': operacao.tipoOperacaoDto.id === 2, 'compra': operacao.tipoOperacaoDto.id === 1}">
                                     <td>
                                         <p-cellEditor>

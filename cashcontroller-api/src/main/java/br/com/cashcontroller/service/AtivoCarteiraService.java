@@ -1,24 +1,19 @@
 package br.com.cashcontroller.service;
 
-import br.com.cashcontroller.dto.AtivoCarteiraDTO;
-import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
+import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.entity.AtivoCarteira;
-import br.com.cashcontroller.entity.OperacaoRendaFixa;
 import br.com.cashcontroller.external.dto.stock.StocksDTO;
-import br.com.cashcontroller.external.dto.tesouro.TesouroDiretoDTO;
-import br.com.cashcontroller.external.dto.tesouro.TrsrBdTradgDTO;
 import br.com.cashcontroller.external.service.RendaVariavelService;
 import br.com.cashcontroller.external.service.TesouroService;
 import br.com.cashcontroller.mapper.AtivoCarteiraMapper;
 import br.com.cashcontroller.repository.AtivoCarteiraRepository;
+import br.com.cashcontroller.repository.AtivoRepository;
+import br.com.cashcontroller.repository.OperacaoRendaFixaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,6 +22,9 @@ public class AtivoCarteiraService {
     @Autowired
     AtivoCarteiraRepository repository;
     private AtivoCarteiraMapper mapper;
+
+    @Autowired
+    AtivoRepository ativoRepository;
 
     @Autowired
     CalcularRentabilidadeService calcularRentabilidadeService;
@@ -42,6 +40,9 @@ public class AtivoCarteiraService {
 
     @Autowired
     OperacaoService operacaoService;
+
+    @Autowired
+    OperacaoRendaFixaRepository operacaoRendaFixaRepository;
 
     public AtivoCarteiraDTO cadastrarAtivoCarteira(AtivoCarteiraDTO ativoCarteiraDTO) {
         var entity = this.repository.save(AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteiraDTO));
@@ -82,7 +83,7 @@ public class AtivoCarteiraService {
 
 
     private List<AtivoCarteiraDTO> getCarteira() {
-        var entities = this.repository.findAll();
+        var entities = this.repository.findAll().stream().filter(item -> item.getCustodia() > 0).toList();
         var ativosCarteiraDTO =  entities.stream().map(AtivoCarteiraMapper.INSTANCE::toListDTO).collect(Collectors.toList());
         return ativosCarteiraDTO;
     }
@@ -90,26 +91,24 @@ public class AtivoCarteiraService {
 
     public List<AtivoCarteiraDTO> listarAtivosCarteiraRendaFixa() {
 
-        TesouroDiretoDTO response = this.tesouroService.getTitulos();
-        var titulosTesouro = response.getResponse().getTrsrBdTradgList().stream().map(TrsrBdTradgDTO::getTrsrBd).collect(Collectors.toList());
+        List<AtivoCarteiraRFDTO> carteiraRendaFixa = operacaoService.listarCarteiraRendaFixa();
+        Map<String, AtivoCarteiraRFDTO> groupedBySiglaAtivo = agruparPorAtivo(carteiraRendaFixa);
+        List<AtivoCarteiraRFDTO> aggregatedList = new ArrayList<>(groupedBySiglaAtivo.values());
+
         var ativosCarteiraDTO = getCarteira();
         ativosCarteiraDTO = ativosCarteiraDTO.stream().filter(a -> a.getAtivo().getSubclasseAtivo().getId() > 2).toList();
-        //List<AtivoCarteiraRFDTO> carteira = this.operacaoRendaFixaRepository.listarCarteiraRendaFixa();
-
-//        carteira = carteira.stream().filter(ativoCarteira -> {
-//            List<OperacaoRendaFixa> operacoes = verificarVendaParcial(ativoCarteira);
-//            return operacoes.isEmpty() || operacoes.stream().anyMatch(operacao -> operacao.getId() == ativoCarteira.getIdOperacao());
-//
-//        }).collect(Collectors.toList());
 
         ativosCarteiraDTO.forEach(
                 ativoCarteiraRFDTO -> {
-                    var rfdto = AtivoCarteiraMapper.INSTANCE.toRFDTO(ativoCarteiraRFDTO);
-                    //ativoCarteiraRFDTO.setCusto(ativoCarteiraRFDTO.getCustodia() * ativoCarteiraRFDTO.getPrecoMedio());
-                    //ativoCarteiraRFDTO.setTotalEmProventos(eventoService.getTotalProventosPorAtivoRendaFixa(ativoCarteiraRFDTO.getIdAtivo()));
-                    if (ativoCarteiraRFDTO.getAtivo().getSubclasseAtivo().getId() == 3) {
-                        CalcularValorTesouroDireto.calcularValorDeMercadoTesouroDireto(ativoCarteiraRFDTO, titulosTesouro);
-                    }
+                    aggregatedList.stream().filter(item -> item.getIdAtivo() == ativoCarteiraRFDTO.getAtivo().getId())
+                            .findFirst().ifPresent(ativoAtualizado -> {
+                                        ativoCarteiraRFDTO.setCusto(ativoAtualizado.getCusto());
+                                        ativoCarteiraRFDTO.setValorMercado(ativoAtualizado.getValorMercado());
+                                        ativoCarteiraRFDTO.setCustodia(ativoAtualizado.getCustodia());
+                                        ativoCarteiraRFDTO.setPrecoMedio(ativoAtualizado.getPrecoMedio());
+                                    }
+                            );
+
 
                 }
         );
@@ -117,11 +116,37 @@ public class AtivoCarteiraService {
         return ativosCarteiraDTO;
     }
 
-//    public List<AtivoCarteiraDTO> listarAtivosCarteiraRendaFixa() {
-//        var ativosCarteiraDTO = getCarteira();
-//        ativosCarteiraDTO = ativosCarteiraDTO.stream().filter(a -> a.getAtivo().getSubclasseAtivo().getId() > 2).toList();
-//        return ativosCarteiraDTO;
-//    }
+    private static Map<String, AtivoCarteiraRFDTO> agruparPorAtivo(List<AtivoCarteiraRFDTO> carteiraRendaFixa) {
+        Map<String, AtivoCarteiraRFDTO> groupedBySiglaAtivo = carteiraRendaFixa.stream()
+                .collect(Collectors.groupingBy(
+                        AtivoCarteiraRFDTO::getSiglaAtivo,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                lista -> {
+                                    AtivoCarteiraRFDTO result = new AtivoCarteiraRFDTO();
+
+                                    result.setSiglaAtivo(lista.get(0).getSiglaAtivo());
+                                    result.setNomeAtivo(lista.get(0).getNomeAtivo());
+                                    result.setIdAtivo(lista.get(0).getIdAtivo());
+
+                                    double totalValorMercado = lista.stream().mapToDouble(AtivoCarteiraRFDTO::getValorMercado).sum();
+                                    double custodia = lista.stream().mapToDouble(AtivoCarteiraRFDTO::getCustodia).sum();
+                                    double custo = lista.stream().mapToDouble(AtivoCarteiraRFDTO::getCusto).sum();
+                                    double precoMedio = lista.stream().mapToDouble(AtivoCarteiraRFDTO::getPrecoMedio).sum();
+
+                                    result.setCusto(custo);
+                                    result.setCustodia(custodia);
+                                    result.setValorMercado(totalValorMercado);
+                                    result.setPrecoMedio(precoMedio);
+
+                                    return result;
+
+                                }
+                        )
+                ));
+        return groupedBySiglaAtivo;
+    }
+
 
     public AtivoCarteiraDTO getAtivoCarteiraById(int id) {
         Optional<AtivoCarteira> optionalAtivoCarteira = repository.findById(id);
@@ -131,6 +156,40 @@ public class AtivoCarteiraService {
             throw new NullPointerException("Nenhum ativo encontrado");
         }
 
+    }
+
+    public List<PatrimonioCategoriaDTO> getPatrimonioPorCategoria() {
+        var patrimonioPorCategoria = repository.getPatrimonioPorCategoria();
+
+        var rendaFixa = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() > 2)
+                .mapToDouble(PatrimonioCategoriaDTO::getValor).reduce(0.0, Double::sum);
+
+        var Acoes = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 2);
+        var Fiis = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 1);
+
+        List<PatrimonioCategoriaDTO> lista = Arrays.asList(
+                new PatrimonioCategoriaDTO(0, "Ações", 40.0, Acoes.mapToDouble(PatrimonioCategoriaDTO::getValor).sum()),
+                new PatrimonioCategoriaDTO(0, "Fiis", 30.0, Fiis.mapToDouble(PatrimonioCategoriaDTO::getValor).sum()),
+                new PatrimonioCategoriaDTO(0, "Renda Fixa", 30.0, rendaFixa)
+        );
+
+        return lista;
+
+    }
+
+    public List<ProventosMesDTO> listarProventos() {
+        var proventos = repository.listarProventosAnoMes();
+        return  proventos;
+    }
+
+    public List<TopPagadoraProventosDTO> listarPagadoras() {
+        var topPagadoras = repository.listarTopPagadoras();
+        topPagadoras = topPagadoras.stream().map(res -> {
+            var logo = ativoRepository.findUrlLogoBySigla(res.getAtivo());
+            logo.ifPresent(res::setLogo);
+            return res;
+        }).sorted(Comparator.comparingDouble(TopPagadoraProventosDTO::getValor).reversed()).collect(Collectors.toList());
+        return  topPagadoras;
     }
 
     public void excluirAtivoCarteira(int id) {
@@ -147,6 +206,30 @@ public class AtivoCarteiraService {
             throw new NullPointerException("Ativo não localizado");
         }
 
+    }
+
+    public void updateCarteira(Integer idSubclasse) {
+
+        List<AtivoCarteiraDTO> carteiraAlterada;
+
+        if(idSubclasse == 1) { carteiraAlterada = listarAtivosCarteiraFiis(); }
+        else if(idSubclasse == 2) { carteiraAlterada = listarCarteiraAcoes(); } else if(idSubclasse > 2) {
+            carteiraAlterada = listarAtivosCarteiraRendaFixa();
+        } else {
+            carteiraAlterada = new ArrayList<>();
+        }
+
+        var carteira = getCarteira().stream().filter(ativo -> idSubclasse > 2
+                ? ativo.getAtivo().getSubclasseAtivo().getId() > 2
+                : ativo.getAtivo().getSubclasseAtivo().getId() == idSubclasse).toList();
+        List<AtivoCarteira> updateCarteiraAcoes = carteira.stream()
+                .map(ativoCarteira -> {
+                    ativoCarteira.setValorMercado(carteiraAlterada.stream().filter(item -> item.getAtivo().getId() == ativoCarteira.getAtivo().getId()).mapToDouble(AtivoCarteiraDTO::getValorMercado).sum());
+                    return AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteira);
+                })
+                .collect(Collectors.toList());
+
+        repository.saveAll(updateCarteiraAcoes);
     }
 
 }

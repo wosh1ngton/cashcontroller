@@ -9,6 +9,7 @@ import { ConfiguracaoComponent } from './components/configuracao/configuracao/co
 import { ListarOperacoesComponent } from './components/renda-variavel/listar-operacoes/listar-operacoes.component';
 import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar-carteira-renda-fixa/listar-carteira-renda-fixa.component';
 import { ListarAtivosCarteiraPrincipalComponent } from './components/carteira-principal/listar-ativos-carteira-principal/listar-ativos-carteira-principal.component';
+import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,10 @@ const routes: Routes = [
       {
         path: 'carteira-principal',
         component: ListarAtivosCarteiraPrincipalComponent,
+      },
+      {
+        path: 'listar-patrimonio',
+        component: ListarPatrimonioComponent,
       },
       {
         path: 'listar-fiis',

@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
         icon: PrimeIcons.WALLET,
         items: [
           {
-            label: 'Principal',
+            label: 'Visão Geral',
             icon: PrimeIcons.WALLET,
             routerLink: 'carteira-principal',
             id: '12',
@@ -77,6 +77,13 @@ export class HomeComponent implements OnInit {
 
         ]
         
+      },
+      {
+        label: 'Patrimônio',
+        icon: PrimeIcons.MONEY_BILL,
+        routerLink: 'listar-patrimonio',
+        id: '15',
+        command: (event) => this.getMenuSelecionado(event)
       },
       
       {

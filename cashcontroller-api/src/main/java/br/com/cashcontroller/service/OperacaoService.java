@@ -2,7 +2,6 @@ package br.com.cashcontroller.service;
 
 import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.entity.*;
-import br.com.cashcontroller.event.AtivoCarteiraEvent;
 import br.com.cashcontroller.external.dto.FeriadoDTO;
 import br.com.cashcontroller.external.dto.tesouro.TesouroDiretoDTO;
 import br.com.cashcontroller.external.dto.tesouro.TituloTesouroDTO;
@@ -148,7 +147,9 @@ public class OperacaoService {
         operacaoRendaVariavelSaveDTO.setCustoTotal(custoTotalOperacao(operacaoRendaVariavelSaveDTO));
         operacaoRendaVariavelSaveDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelSaveDTO));
 
-        updateAtivoCarteira(operacaoRendaVariavelSaveDTO.getAtivoDto(), operacaoRendaVariavelSaveDTO.getQuantidadeNegociada(), operacaoRendaVariavelSaveDTO.getCustoTotal(), operacaoRendaVariavelSaveDTO.getTipoOperacaoDto());
+
+        updateOrCreateAtivoCarteira(operacaoRendaVariavelSaveDTO.getAtivoDto(), operacaoRendaVariavelSaveDTO.getQuantidadeNegociada(), operacaoRendaVariavelSaveDTO.getCustoTotal(), operacaoRendaVariavelSaveDTO.getTipoOperacaoDto());
+
         OperacaoRendaVariavel operacao = OperacaoRendaVariavelMapper.INSTANCE.toSaveEntity(operacaoRendaVariavelSaveDTO);
         return OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.save(operacao));
     }
@@ -178,27 +179,44 @@ public class OperacaoService {
         var operacao = this.operacaoRendaVariavelRepository.findById(operacaoRendaVariavelDTO.getId())
                 .orElseThrow(() -> new NullPointerException("registro.nao.encontrado"));
 
-        double quantidadeDiff = operacaoRendaVariavelDTO.getQuantidadeNegociada() - operacao.getQuantidadeNegociada();
-        double custoDiff = operacaoRendaVariavelDTO.getCustoTotal() - operacao.getCustoTotal();
-        operacao = OperacaoRendaVariavelMapper.INSTANCE.toEntity(operacaoRendaVariavelDTO);
-        updateAtivoCarteira(operacao.getAtivo().getId(), quantidadeDiff, custoDiff, operacaoRendaVariavelDTO.getTipoOperacaoDto().getId());
 
+            double quantidadeDiff = operacaoRendaVariavelDTO.getQuantidadeNegociada() - operacao.getQuantidadeNegociada();
+            double custoDiff = operacaoRendaVariavelDTO.getCustoTotal() - operacao.getCustoTotal();
+            operacao = OperacaoRendaVariavelMapper.INSTANCE.toEntity(operacaoRendaVariavelDTO);
+
+        if(!posicaoLiquidada(operacao.getAtivo().getId())) {
+            updateOrCreateAtivoCarteira(operacao.getAtivo().getId(), quantidadeDiff, custoDiff, operacaoRendaVariavelDTO.getTipoOperacaoDto().getId());
+        }
         var operacaoDto = OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.save(operacao));
         return operacaoDto;
     }
 
-    private void updateAtivoCarteira(int ativo, double quantidadeDiff, double custoDiff, int tipoOperacao) {
-        AtivoCarteira ativoCarteira = ativoCarteiraRepository.findByIdAtivo(ativo)
-                .orElseThrow(() -> new NullPointerException("AtivoCarteira não encontrada"));
 
-        if(tipoOperacao == 1) {
-            ativoCarteira.setCustodia(ativoCarteira.getCustodia() + quantidadeDiff);
-            ativoCarteira.setCusto(ativoCarteira.getCusto() + custoDiff);
-        } else if(tipoOperacao == 2) {
-            ativoCarteira.setCustodia(ativoCarteira.getCustodia() - quantidadeDiff);
-            ativoCarteira.setCusto(ativoCarteira.getCusto() - custoDiff);
+    private boolean posicaoLiquidada(int idAtivo) {
+        Long custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo);
+        return custodia == 0;
+    }
+    private void updateOrCreateAtivoCarteira(int ativo, double quantidadeDiff, double custoDiff, int tipoOperacao) {
+        Optional<AtivoCarteira> ativoCarteira = ativoCarteiraRepository.findByIdAtivo(ativo);
+
+        if(!ativoCarteira.isPresent()) {
+            AtivoCarteira novoAtivoCarteira = new AtivoCarteira();
+            novoAtivoCarteira.setAtivo(ativoRepository.findById(ativo).get());
+            novoAtivoCarteira.setCustodia(quantidadeDiff);
+            novoAtivoCarteira.setCusto(custoDiff);
+            ativoCarteiraRepository.save(novoAtivoCarteira);
+        } else {
+
+            if (tipoOperacao == 1) {
+                ativoCarteira.get().setCustodia(ativoCarteira.get().getCustodia() + quantidadeDiff);
+                ativoCarteira.get().setCusto(ativoCarteira.get().getCusto() + custoDiff);
+            } else if (tipoOperacao == 2) {
+                ativoCarteira.get().setCustodia(ativoCarteira.get().getCustodia() - quantidadeDiff);
+                ativoCarteira.get().setCusto(ativoCarteira.get().getCusto() - custoDiff);
+            }
+            ativoCarteiraRepository.save(ativoCarteira.get());
         }
-        ativoCarteiraRepository.save(ativoCarteira);
+
     }
 
     public OperacaoRendaFixaDTO cadastrarOperacaoRendaFixa(OperacaoRendaFixaDTO operacaoRendaFixaDto) {
@@ -263,7 +281,7 @@ public class OperacaoService {
 
         Optional<OperacaoRendaVariavel> operacao = operacaoRendaVariavelRepository.findById(id);
         operacao.ifPresent(value -> {
-            updateAtivoCarteira(value.getAtivo().getId(),value.getQuantidadeNegociada(),value.getCustoTotal(),2);
+            updateOrCreateAtivoCarteira(value.getAtivo().getId(),value.getQuantidadeNegociada(),value.getCustoTotal(),2);
             this.operacaoRendaVariavelRepository.delete(value);
         });
 
@@ -386,7 +404,7 @@ public class OperacaoService {
         return carteira;
     }
 
-    private List<OperacaoRendaFixa> verificarVendaParcial(AtivoCarteiraRFDTO ativoCarteiraRFDTO) {
+    public List<OperacaoRendaFixa> verificarVendaParcial(AtivoCarteiraRFDTO ativoCarteiraRFDTO) {
 
         List<OperacaoRendaFixa> operacoesAtivoVendaParcial = operacaoRendaFixaRepository.listarOperacoesAtivoVendaParcial(ativoCarteiraRFDTO.getIdAtivo());
 

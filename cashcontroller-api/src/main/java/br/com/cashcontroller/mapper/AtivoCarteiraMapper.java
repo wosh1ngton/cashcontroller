@@ -14,6 +14,7 @@ public interface AtivoCarteiraMapper  {
 
     AtivoCarteiraMapper INSTANCE = Mappers.getMapper(AtivoCarteiraMapper.class);
 
+    @Mapping(target = "ativo.parametroRendaFixa.ativo", ignore = true)
     @Mapping(target = "ativo.subclasseAtivo", ignore = true)
     AtivoCarteiraDTO toDTO(AtivoCarteira ativoCarteira);
 

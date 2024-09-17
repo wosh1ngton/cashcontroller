@@ -79,5 +79,7 @@ public class AtivoService {
 		List<SubclasseAtivo> subclasseAtivos =  subclasseRepository.findAll();
 		return SubclasseAtivoMapper.INSTANCE.toListDTO(subclasseAtivos);
 	}
+
+
 	
 }

@@ -1,6 +1,9 @@
 package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.AtivoCarteiraDTO;
+import br.com.cashcontroller.dto.PatrimonioCategoriaDTO;
+import br.com.cashcontroller.dto.ProventosMesDTO;
+import br.com.cashcontroller.dto.TopPagadoraProventosDTO;
 import br.com.cashcontroller.service.AtivoCarteiraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +68,26 @@ public class AtivoCarteiraController {
         return ResponseEntity.ok(service.atualizarAtivoCarteira(id, ativoCarteiraDTO));
     }
 
+    @GetMapping(value = "/patrimonio")
+    public ResponseEntity<List<PatrimonioCategoriaDTO>> getValorPatrimonial() {
+        return ResponseEntity.ok(service.getPatrimonioPorCategoria());
+    }
 
 
+    @GetMapping(value = "/proventos")
+    public ResponseEntity<List<ProventosMesDTO>> getProventosMes() {
+        return ResponseEntity.ok(service.listarProventos());
+    }
+
+    @GetMapping(value = "/top-pagadoras")
+    public ResponseEntity<List<TopPagadoraProventosDTO>> getTopPagadoras() {
+        return ResponseEntity.ok(service.listarPagadoras());
+    }
+
+    @GetMapping(value = "/update-carteira/{id}")
+    ResponseEntity<?> updateCarteiraBySubclasse(@PathVariable("id") Integer id) {
+        this.service.updateCarteira(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

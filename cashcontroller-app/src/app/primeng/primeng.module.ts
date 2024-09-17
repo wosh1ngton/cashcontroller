@@ -13,7 +13,7 @@ import { MenuModule } from 'primeng/menu';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FieldsetModule } from 'primeng/fieldset';
-
+import { ChartModule } from 'primeng/chart';
 @NgModule({
   declarations: [],
   exports: [
@@ -30,7 +30,8 @@ import { FieldsetModule } from 'primeng/fieldset';
     InputNumberModule,
     ProgressSpinnerModule,
     InputTextModule,
-    FieldsetModule
+    FieldsetModule,
+    ChartModule
   ]
 })
 export class PrimengModule { }
