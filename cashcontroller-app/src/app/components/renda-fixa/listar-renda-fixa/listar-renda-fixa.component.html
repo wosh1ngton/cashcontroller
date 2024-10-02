@@ -3,12 +3,46 @@
         <div class="col-2 lg:col-1- md:col-2">
             <p-card header="Filtros">
                 <div class="p-2">
-                    <app-filtro-superior [selectedMonth]="filter.mes" [selectedAno]="filter.ano"
-                        [tipoDeOperacao]="operacaoRendaFixaService" (selecaoMes)="filtrarPorMes($event)">
+                    <p class="mt-0">
+                        <strong>
+                            Filtrar por mês e ano
+                        </strong>
+                    </p>
+                    <app-filtro-superior [selectedMonth]="filter.mes" 
+                        [selectedAno]="filter.ano"
+                        [tipoDeOperacao]="operacaoRendaFixaService"                         
+                        (selecaoMes)="filtrarPorMes($event)">
                     </app-filtro-superior>
                     <p-toast></p-toast>
                 </div>
+
+                <div class="p-2">
+                    <p> 
+                        <strong>
+                            Filtrar por data específica 
+                        </strong> 
+                    </p>
+                    <label for="inicio">
+                        Início
+                    </label>
+                    <div class="ui-g ui-fluid  pt-2">
+                        <p-calendar [(ngModel)]="filter.startDate" [iconDisplay]="'input'" [showIcon]="true"
+                            inputId="icondisplay" dateFormat="dd/mm/yy" placeholder="dd/MM/yyyy" name="inicio"
+                            [style]="{'width': '100%'}"></p-calendar>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <label for="Periodo">
+                        Fim
+                    </label>
+                    <div class="g-12  pt-2">
+                        <p-calendar [(ngModel)]="filter.endDate" (ngModelChange)="filterData(); filterEventos()"
+                            [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd/mm/yy"
+                            name="fim" placeholder="dd/MM/yyyy" [style]="{'width': '100%'}"></p-calendar>
+                    </div>
+                </div>
             </p-card>
+
         </div>
         <p-toast></p-toast>
 

@@ -9,6 +9,8 @@ import br.com.cashcontroller.mapper.AtivoCarteiraMapper;
 import br.com.cashcontroller.repository.AtivoCarteiraRepository;
 import br.com.cashcontroller.repository.AtivoRepository;
 import br.com.cashcontroller.repository.OperacaoRendaFixaRepository;
+import br.com.cashcontroller.service.util.CalculaImpostoService;
+import br.com.cashcontroller.service.util.CalcularRentabilidade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public class AtivoCarteiraService {
     AtivoRepository ativoRepository;
 
     @Autowired
-    CalcularRentabilidadeService calcularRentabilidadeService;
+    CalcularRentabilidade calcularRentabilidade;
 
     @Autowired
     CalculaImpostoService calculaImpostoService;

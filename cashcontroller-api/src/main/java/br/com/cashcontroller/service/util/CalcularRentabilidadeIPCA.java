@@ -1,19 +1,15 @@
-package br.com.cashcontroller.service;
+package br.com.cashcontroller.service.util;
 
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
 import br.com.cashcontroller.entity.IpcaMes;
-import br.com.cashcontroller.external.dto.selic.SelicMesDTO;
-import br.com.cashcontroller.external.service.IndicesService;
 import br.com.cashcontroller.repository.IpcaMesRepository;
 import br.com.cashcontroller.service.interfaces.CalcularRentabilidadeStrategy;
-import br.com.cashcontroller.utils.DataUtil;
 import br.com.cashcontroller.utils.Taxa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,11 +37,11 @@ public class CalcularRentabilidadeIPCA implements CalcularRentabilidadeStrategy 
 
         var taxaMensal = Taxa.convertAnnualToMonthlyInterestRate(ativoCarteiraRFDTO.getTaxaContratada());
         List<IpcaMes> ipcas = ipcaMesRepository.findAll();
-        ipcas.stream().peek(indice -> indice.setDataYearMonth(YearMonth.of(indice.getData().getYear(), indice.getData().getMonthValue()))).collect(Collectors.toList());
+        ipcas.stream().peek(indice -> indice.setDataYearMonth(YearMonth.of(indice.getData().getYear(), indice.getData().getMonthValue()))).toList();
 
         LocalDate inicioInvestimento = ativoCarteiraRFDTO.getDataOperacao();
         LocalDate finalInicioInvestimento = inicioInvestimento;
-        List<IpcaMes> filteredList = ipcas.stream().filter(indice -> indice.getData().isAfter(finalInicioInvestimento) || indice.getData().isEqual(finalInicioInvestimento)).collect(Collectors.toList());
+        List<IpcaMes> filteredList = ipcas.stream().filter(indice -> indice.getData().isAfter(finalInicioInvestimento) || indice.getData().isEqual(finalInicioInvestimento)).toList();
         double valorContratado = ativoCarteiraRFDTO.getCusto();
         while (inicioInvestimento.isBefore(LocalDate.now())) {
             var dataRentabilizada = YearMonth.of(inicioInvestimento.getYear(), inicioInvestimento.getMonthValue());

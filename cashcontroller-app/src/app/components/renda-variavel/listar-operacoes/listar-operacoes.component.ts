@@ -78,6 +78,7 @@ export class ListarOperacoesComponent {
   clonedOperacoes: { [s: string]: OperacaoRendaVariavel } = {};
   filter: FilterOperacao = new FilterOperacao();
   filtroChange: boolean = false;
+  filtroEventoChange: boolean = false;
 
   meses: Mes[] = [];
   mesSelecionado: number = 0;
@@ -110,7 +111,7 @@ export class ListarOperacoesComponent {
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
     this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
-    this.listarEventos();
+   // this.listarEventos();
     this.filterData();
     this.filterEventos();    
 
@@ -376,7 +377,7 @@ export class ListarOperacoesComponent {
       .filter(this.filter)
       .subscribe((res: any) => {
         (this.eventos = res);        
-        this.filtroChange = !this.filtroChange;
+        this.filtroEventoChange = !this.filtroEventoChange;
       });
   }
 }

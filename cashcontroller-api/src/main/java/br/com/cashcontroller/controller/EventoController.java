@@ -16,7 +16,6 @@ public class EventoController {
 	@Autowired
 	private EventoService eventoService;
 
-
 	@PostMapping("/renda-fixa")
 	ResponseEntity<?> cadastrarEventoRendaFixa(@RequestBody EventoAddRendaFixaDTO eventoDTO) {
 		this.eventoService.cadastrarEvento(eventoDTO);
@@ -50,28 +49,17 @@ public class EventoController {
 		return ResponseEntity.noContent().build();
 	}
 
-
 	@GetMapping("/tipo-eventos")
 	ResponseEntity<List<TipoEventoDTO>> getTipoEventos() {
 		List<TipoEventoDTO> subclasses = this.eventoService.listarTipoEventos();
 		return ResponseEntity.ok(subclasses);
 	}
 
-
-
-
 	@GetMapping
 	ResponseEntity<List<EventoListRendaVariavelDTO>> getEventos() {
 		List<EventoListRendaVariavelDTO> ativos = this.eventoService.listarEventos();
 		return ResponseEntity.ok(ativos);
 	}
-//
-//	@GetMapping(value = "/por-classe/{id}")
-//	ResponseEntity<List<AtivoDTO>> getAtivosPorClasse(@PathVariable(value="id")  Integer id) {
-//		List<AtivoDTO> ativos = this.ativoService.listarAtivosPorClasse(id);
-//		return ResponseEntity.ok(ativos);
-//	}
-
 
 	@PostMapping("/filter")
 	public ResponseEntity<List<EventoListRendaVariavelDTO>> filter(@RequestBody Filter filter) {

@@ -4,6 +4,11 @@
             <div class="p-2 col-2">
                 <p-card header="Filtros">
                     <div class="p-2">
+                        <p class="mt-0">
+                            <strong>
+                                Filtrar por mês e ano
+                            </strong>
+                        </p>
                         <app-filtro-superior 
                             [selectedMonth]="filter.mes" 
                             [selectedAno]="filter.ano"
@@ -14,15 +19,20 @@
                         <p-toast></p-toast>
                     </div>
                     <div class="p-2">
-                        <label for="subclasse"> Filtrar por Classe</label>
+                        <label for="subclasse"> <strong>  Filtrar por Classe </strong> </label>
                         <div class="ui-g pt-2">
                             <p-dropdown [(ngModel)]="filter.subclasse" [options]="subclasses" appendTo="body"
-                                name="subclasse" (onChange)="filterData()" optionLabel="nome" [showClear]="true"
+                                name="subclasse" (onChange)="filterData(); filterEventos()" optionLabel="nome" [showClear]="true"
                                 placeholder="Subclasse" [style]="{'width': '100%'}" optionValue="id">
                             </p-dropdown>
                         </div>
                     </div>
                     <div class="p-2">
+                        <p> 
+                            <strong>
+                                Filtrar por data específica 
+                            </strong> 
+                        </p>
                         <label for="inicio">
                             Início
                         </label>
@@ -37,7 +47,7 @@
                             Fim
                         </label>
                         <div class="g-12  pt-2">
-                            <p-calendar [(ngModel)]="filter.endDate" (ngModelChange)="filterData()"
+                            <p-calendar [(ngModel)]="filter.endDate" (ngModelChange)="filterData(); filterEventos()"
                                 [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd/mm/yy"
                                 name="fim" placeholder="dd/MM/yyyy" [style]="{'width': '100%'}"></p-calendar>
                         </div>
@@ -53,7 +63,8 @@
                         </app-irpf-mes>
                     </div>
                     <div class="col-6">
-                        <app-numeros-do-mes [eventos]="eventos" [operacoes]="operacoes" [filtro]="filter">
+                        <app-numeros-do-mes [eventos]="eventos" 
+                        [operacoes]="operacoes" [filtro]="filter">
 
                         </app-numeros-do-mes>
                     </div>
@@ -212,7 +223,7 @@
                             [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }"
                             styleClass="p-datatable-sm">
                             <ng-template pTemplate="header" let-columns>
-                                <tr>
+                                <tr class="rowstyle">
                                     <th *ngFor="let col of columns">
                                         {{ col.header }}
                                     </th>
@@ -222,7 +233,7 @@
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                                <tr
+                                <tr class="rowstyle"
                                     [ngClass]="{'fii': rowData.ativo.subclasseAtivoDto.id == 1, 'acao': rowData.ativo.subclasseAtivoDto.id == 2}">
 
                                     <td *ngFor="let col of columns">

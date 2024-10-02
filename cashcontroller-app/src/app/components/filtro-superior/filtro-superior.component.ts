@@ -22,6 +22,14 @@ export class FiltroSuperiorComponent implements OnInit, OnChanges {
     private filterService: FiltroOperacaoService
   ) { }
 
+  meses$: Observable<any[]> | undefined;  
+  filter: FilterOperacao = new FilterOperacao();
+  anos: number[] = [];  
+  @Output() selecaoMes = new EventEmitter<string>();
+  @Input() selectedMonth: number = 0;
+  @Input() selectedAno: number = 2024;
+  @Input('tipoDeOperacao') tipoDeOperacao!: FiltrarOperacao;
+
   ngOnInit(): void {
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
@@ -35,13 +43,7 @@ export class FiltroSuperiorComponent implements OnInit, OnChanges {
     this.filter.ano = this.selectedAno;
   }
 
-  meses$: Observable<any[]> | undefined;  
-  filter: FilterOperacao = new FilterOperacao();
-  anos: number[] = [];  
-  @Output() selecaoMes = new EventEmitter<string>();
-  @Input() selectedMonth: number = 0;
-  @Input() selectedAno: number = 2024;
-  @Input('tipoDeOperacao') tipoDeOperacao!: FiltrarOperacao;
+ 
   
   getMeses(ano?: number) {    
     this.selectedAno = ano!;

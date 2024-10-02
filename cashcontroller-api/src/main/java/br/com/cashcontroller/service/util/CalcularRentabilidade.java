@@ -1,19 +1,14 @@
-package br.com.cashcontroller.service;
+package br.com.cashcontroller.service.util;
 
-import br.com.cashcontroller.dto.AtivoCarteiraDTO;
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
-import br.com.cashcontroller.external.dto.selic.SelicMesDTO;
-import br.com.cashcontroller.external.service.IndicesService;
 import br.com.cashcontroller.service.interfaces.CalcularRentabilidadeStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Service
-public class CalcularRentabilidadeService {
+@Component
+public class CalcularRentabilidade {
 
     @Autowired List<CalcularRentabilidadeStrategy> strategies;
 

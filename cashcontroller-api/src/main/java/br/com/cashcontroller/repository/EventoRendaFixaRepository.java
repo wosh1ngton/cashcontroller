@@ -1,5 +1,6 @@
 package br.com.cashcontroller.repository;
 
+import br.com.cashcontroller.entity.Ativo;
 import br.com.cashcontroller.entity.EventoRendaFixa;
 import br.com.cashcontroller.entity.EventoRendaVariavel;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,6 +40,8 @@ public interface EventoRendaFixaRepository extends JpaRepository<EventoRendaFixa
             "WHERE " +
             "a.id = :ativoId")
     List<EventoRendaFixa> findEventosByAtivo(@Param("ativoId") Integer ativoId);
+
+    List<EventoRendaFixa> findByAtivo(Ativo ativo);
 
 
 

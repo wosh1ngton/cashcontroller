@@ -1,9 +1,3 @@
-::ng-deep .mesSelecionado {
-    background-color:  var(--secondary-color-cc);
-    color: white;
-    border-color: var(--secondary-color-cc);
-}
-
 .venda {    
     color: #ff5252;   
 }

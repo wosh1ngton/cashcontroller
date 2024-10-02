@@ -1,38 +1,49 @@
 .header {
-   width: 100%;
+  width: 100%;
+}
+.barra-header {  
+  background-color: var(--secondary-color-cc);
+  height: 6px;  
 }
 
+
 .p-menuitem-text {
-    color: #000;
+  color: #000;
+  
 }
 .p-menuitem-icon {
-    color: #000;
+  color: #000;
 }
-.content {    
-    padding-top: 1rem;    
-    min-height: 80vh;
-    background-color: #ffffff;
+.content {
+  padding-top: 1rem;
+  min-height: 80vh;
+  background-color: #ffffff;
 }
 
 p-menuitem-link {
-    color: #000;
+  color: #000;
+  z-index: 10001 !important; 
+  position: relative;
 }
 
 .p-menuitem-link-active > span {
-    font-weight: bold;
-} 
-
-.footer {    
-    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgb(176, 177, 179) 200%); 
-    min-height: 4rem;
-    width: 100%;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 4px 2px 4px 2px #ccc;
+  font-weight: bold;
 }
 
+.footer {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgb(176, 177, 179) 200%
+  );
+  min-height: 4rem;
+  width: 100%;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 4px 2px 4px 2px #ccc;
+}
 
 /* ::ng-deep .p-menubar.p-component ul > li:last-child {
     background-color: #ccc;

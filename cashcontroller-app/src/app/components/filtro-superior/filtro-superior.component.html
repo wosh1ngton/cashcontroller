@@ -2,8 +2,9 @@
     <div class="col-12 flex align-items-center gap-2 flex-wrap meses">
         <p-chip [styleClass]="mes.mesInteiro === selectedMonth ? 'mesSelecionado' : '' "
         (click)="selecionarMes(mes)" class="item-mes"
-        *ngFor="let mes of meses$ | async" [label]="mes.mesString" />                              
+        *ngFor="let mes of meses$ | async" [label]="mes.mesString" />                                   
     </div>
+    
 
     <div class="p-2 col-12">
         <div>

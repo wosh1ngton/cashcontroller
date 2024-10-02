@@ -1,4 +1,4 @@
-package br.com.cashcontroller.service;
+package br.com.cashcontroller.service.util;
 
 import br.com.cashcontroller.dto.AtivoCarteiraDTO;
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;

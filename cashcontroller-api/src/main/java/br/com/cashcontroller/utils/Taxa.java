@@ -14,6 +14,7 @@ public final class Taxa {
 
     public static double LIMITE_IR = 20000;
     public static double ALIQUOTA_IR = 0.15;
+    public static double ALIQUOTA_JSCP = 0.15;
 
 
     public static double convertAnnualToMonthlyInterestRate(double annualRate) {

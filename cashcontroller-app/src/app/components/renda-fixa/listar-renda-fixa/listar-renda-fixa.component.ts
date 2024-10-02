@@ -76,8 +76,7 @@ export class ListarRendaFixaComponent {
 
   ngOnInit() {   
     
-    this.listarOperacoes();
-   // this.listarEventos();
+    //this.listarOperacoes();   
     this.buscarAtivos(EnumClasseAtivo.RENDA_FIXA);
     this.buscarTiposOperacao();
     this.buscarIndexadores();
@@ -318,6 +317,7 @@ export class ListarRendaFixaComponent {
   filtrarPorMes($event: any) {
     this.filterService.filtrarPorMes($event, this.filter);    
     this.filterData();    
+    this.filterEventos();
   }
 
   filterData() {

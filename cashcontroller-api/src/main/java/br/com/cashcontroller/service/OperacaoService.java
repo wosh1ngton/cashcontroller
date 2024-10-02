@@ -1,6 +1,7 @@
 package br.com.cashcontroller.service;
 
 import br.com.cashcontroller.dto.*;
+import br.com.cashcontroller.dto.enums.TipoOperacaoEnum;
 import br.com.cashcontroller.entity.*;
 import br.com.cashcontroller.external.dto.FeriadoDTO;
 import br.com.cashcontroller.external.dto.tesouro.TesouroDiretoDTO;
@@ -12,10 +13,11 @@ import br.com.cashcontroller.mapper.OperacaoRendaFixaMapper;
 import br.com.cashcontroller.mapper.OperacaoRendaVariavelMapper;
 import br.com.cashcontroller.mapper.TipoOperacaoMapper;
 import br.com.cashcontroller.repository.*;
+import br.com.cashcontroller.service.util.CalculaImpostoService;
+import br.com.cashcontroller.service.util.CalcularRentabilidade;
 import br.com.cashcontroller.utils.Taxa;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -34,47 +36,33 @@ public class OperacaoService {
 
     @Autowired
     IpcaMesRepository ipcaMesRepository;
-
-    @Autowired
-    ApplicationEventPublisher applicationEventPublisher;
-
     @Autowired
     CalculaImpostoService calculaImpostoService;
-
     @Autowired
     SelicMesRepository selicMesRepository;
     @Autowired
     OperacaoRendaVariavelRepository operacaoRendaVariavelRepository;
     @Autowired
     OperacaoRendaFixaRepository operacaoRendaFixaRepository;
-
     @Autowired
     TipoOperacaoRepository tipoOperacaoRepository;
-
     @Autowired
     EventoService eventoService;
-
     @Autowired
-    CalcularRentabilidadeService calcularRentabilidadeService;
-
+    CalcularRentabilidade calcularRentabilidade;
     @Autowired
     TesouroService tesouroService;
-
     @Autowired
     AtivoCarteiraRepository ativoCarteiraRepository;
-
     @Autowired
     AtivoRepository ativoRepository;
     private final FeriadosService feriadosService;
-
     private List<FeriadoDTO> listaFeriados;
 
 
     @Autowired
     public OperacaoService(FeriadosService feriadosService) {
         this.feriadosService = feriadosService;
-
-        //  listaFeriados = feriadosService.getFeriadosPorIntervalo(LocalDate.now());
     }
 
     public List<OperacaoRendaVariavelDTO> listarOperacoesRendaVariavel() {
@@ -94,31 +82,28 @@ public class OperacaoService {
     }
 
 
-    public double valorTotalOperacao(
-            OperacaoRendaVariavelSaveDTO operacaoDto) {
-
+    public double valorTotalOperacao(OperacaoRendaVariavelSaveDTO operacaoDto) {
         double valorBase = operacaoDto.getValorUnitario() * operacaoDto.getQuantidadeNegociada();
-        return calcularTaxas(operacaoDto, valorBase);
+        return calcularTaxaseImpostos(operacaoDto, valorBase);
     }
 
     public double custoTotalOperacao(OperacaoRendaVariavelSaveDTO operacaoDto) {
 
-        double valorBase = 0.0;
-        if (operacaoDto.getTipoOperacaoDto() == 2) {
-            double pmAtivo;
+        double valorBase = operacaoDto.getValorUnitario() * operacaoDto.getQuantidadeNegociada();
+        if (operacaoDto.getTipoOperacaoDto() == TipoOperacaoEnum.VENDA.getId()) {
             LocalDate startDate = LocalDate.of(2015, 1, 1);
-            pmAtivo = this.operacaoRendaVariavelRepository.calcularPrecoMedio(operacaoDto.getAtivoDto(), operacaoDto.getDataOperacao(), startDate).getPrecoMedio();
+            double pmAtivo = this.operacaoRendaVariavelRepository.calcularPrecoMedio(operacaoDto.getAtivoDto(), operacaoDto.getDataOperacao(), startDate).getPrecoMedio();
             valorBase = pmAtivo * operacaoDto.getQuantidadeNegociada();
-        } else {
-            valorBase = operacaoDto.getValorUnitario() * operacaoDto.getQuantidadeNegociada();
         }
-
-        return calcularTaxas(operacaoDto, valorBase);
+        return calcularTaxaseImpostos(operacaoDto, valorBase);
     }
 
-    private static double calcularTaxas(OperacaoRendaVariavelSaveDTO operacaoDto, double valorBase) {
+    private static double calcularTaxaseImpostos(OperacaoRendaVariavelSaveDTO operacaoDto, double valorBase) {
+        double impostos = 0d;
+        if(operacaoDto.getValorCorretagem() > 0){
+            impostos = (operacaoDto.getValorCorretagem() / Taxa.IMPOSTOS) - operacaoDto.getValorCorretagem();
+        }
         double taxas = Taxa.TAXA_LIQUIDACAO_B3 + Taxa.TAXA_EMOLUMENTOS;
-        double impostos = (operacaoDto.getValorCorretagem() / Taxa.IMPOSTOS) - operacaoDto.getValorCorretagem();
         double taxaCorretora = operacaoDto.getValorCorretagem() * Taxa.TAXA_OPERACIONAL_XP;
         double custos = impostos + (valorBase * (taxas / 100));
         return valorBase + custos + operacaoDto.getValorCorretagem() + taxaCorretora;
@@ -136,18 +121,16 @@ public class OperacaoService {
 
     public OperacaoRendaVariavelDTO cadastrarOperacaoRendaVariavel(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
 
-        if (operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == 3) {
+        if (operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == TipoOperacaoEnum.DESDOBRAMENTO.getId()) {
             operacaoRendaVariavelSaveDTO.setQuantidadeNegociada(desdobrarAtivo(operacaoRendaVariavelSaveDTO));
         }
 
-        if (operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == 5) {
+        if (operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == TipoOperacaoEnum.GRUPAMENTO.getId()) {
             operacaoRendaVariavelSaveDTO.setQuantidadeNegociada(agruparAtivo(operacaoRendaVariavelSaveDTO));
         }
 
         operacaoRendaVariavelSaveDTO.setCustoTotal(custoTotalOperacao(operacaoRendaVariavelSaveDTO));
         operacaoRendaVariavelSaveDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelSaveDTO));
-
-
         updateOrCreateAtivoCarteira(operacaoRendaVariavelSaveDTO.getAtivoDto(), operacaoRendaVariavelSaveDTO.getQuantidadeNegociada(), operacaoRendaVariavelSaveDTO.getCustoTotal(), operacaoRendaVariavelSaveDTO.getTipoOperacaoDto());
 
         OperacaoRendaVariavel operacao = OperacaoRendaVariavelMapper.INSTANCE.toSaveEntity(operacaoRendaVariavelSaveDTO);
@@ -156,14 +139,14 @@ public class OperacaoService {
 
 
     private Long desdobrarAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
-        Long fatorDeProporcao = (long) operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
+        Long fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
         Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
         Long totalDoAumento = (fatorDeProporcao * totalAtualDeAcoes) - totalAtualDeAcoes;
         return totalDoAumento;
     }
 
     private Long agruparAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
-        Long fatorDeProporcao = (long) operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
+        Long fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
         Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
         Long totalDecrescimo = totalAtualDeAcoes - (totalAtualDeAcoes / fatorDeProporcao);
         return totalDecrescimo;
@@ -190,7 +173,6 @@ public class OperacaoService {
         var operacaoDto = OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.save(operacao));
         return operacaoDto;
     }
-
 
     private boolean posicaoLiquidada(int idAtivo) {
         Long custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo);
@@ -230,7 +212,7 @@ public class OperacaoService {
 
     private Double cadastrarValorVendaOperacaoRendaFixa(OperacaoRendaFixaDTO operacaoRendaFixaDto) {
         var valorTotal = 0.0;
-        if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == 2) {
+        if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == TipoOperacaoEnum.VENDA.getId()) {
             valorTotal = operacaoRendaFixaDto.getQuantidadeNegociada() * operacaoRendaFixaDto.getValorUnitario()
                     - operacaoRendaFixaDto.getValorCorretagem();
             return valorTotal;
@@ -240,21 +222,18 @@ public class OperacaoService {
 
     private Double calcularCustoOperacaoRendaFixa(OperacaoRendaFixaDTO operacaoRendaFixaDto) {
         var custoTotal = 0.0;
-        if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == 1) {
+        if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == TipoOperacaoEnum.VENDA.getId()) {
             custoTotal = operacaoRendaFixaDto.getQuantidadeNegociada() * operacaoRendaFixaDto.getValorUnitario()
                     + operacaoRendaFixaDto.getValorCorretagem();
             return custoTotal;
-        } else if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == 2) {
+        } else if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == TipoOperacaoEnum.COMPRA.getId()) {
             double valorBase = 0.0;
-
-            double pmAtivo;
             LocalDate startDate = LocalDate.of(2015, 1, 1);
-            pmAtivo = this.operacaoRendaFixaRepository.calcularPrecoMedio(operacaoRendaFixaDto.getAtivoDto().getId(),
+            double pmAtivo = this.operacaoRendaFixaRepository.calcularPrecoMedio(operacaoRendaFixaDto.getAtivoDto().getId(),
                     operacaoRendaFixaDto.getDataOperacao(),
                     startDate).getPrecoMedio();
-            valorBase = pmAtivo * operacaoRendaFixaDto.getQuantidadeNegociada();
+            return  pmAtivo * operacaoRendaFixaDto.getQuantidadeNegociada();
 
-            return valorBase;
         }
         return custoTotal;
     }
@@ -377,7 +356,8 @@ public class OperacaoService {
     public List<AtivoCarteiraRFDTO> listarCarteiraRendaFixa() {
 
         TesouroDiretoDTO response = this.tesouroService.getTitulos();
-        var titulosTesouro = response.getResponse().getTrsrBdTradgList().stream().map(TrsrBdTradgDTO::getTrsrBd).collect(Collectors.toList());
+        var titulosTesouro = response.getResponse().getTrsrBdTradgList().stream()
+                .map(TrsrBdTradgDTO::getTrsrBd).toList();
 
         List<AtivoCarteiraRFDTO> carteira = this.operacaoRendaFixaRepository.listarCarteiraRendaFixa();
 
@@ -395,9 +375,9 @@ public class OperacaoService {
                         calcularValorDeMercadoTesouroDireto(ativoCarteiraRFDTO, titulosTesouro);
                         ativoCarteiraRFDTO.setValorMercado(this.calculaImpostoService.getValorLiquidoDeImposto(ativoCarteiraRFDTO, ativoCarteiraRFDTO.getValorMercado()));
                     } else {
-                        ativoCarteiraRFDTO.setValorMercado(calcularRentabilidadeService.calcularRentabilidade(ativoCarteiraRFDTO));
+                        ativoCarteiraRFDTO.setValorMercado(calcularRentabilidade.calcularRentabilidade(ativoCarteiraRFDTO));
                     }
-                    ativoCarteiraRFDTO.setValorContratado(calcularRentabilidadeService.calcularRentabilidade(ativoCarteiraRFDTO));
+                    ativoCarteiraRFDTO.setValorContratado(calcularRentabilidade.calcularRentabilidade(ativoCarteiraRFDTO));
                 }
         );
 

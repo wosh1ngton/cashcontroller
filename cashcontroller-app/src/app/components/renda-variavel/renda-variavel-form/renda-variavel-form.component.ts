@@ -67,9 +67,7 @@ export class RendaVariavelFormComponent {
           this.ativosBrapi = ativos.stocks.filter((a:any) => a.name.startsWith('FII')).map((a:any) => { 
             return {sigla: a.stock,  nome: a.name, logo: a.logo}
           }) ; 
-          
-          
-          console.log('teste', this.ativosBrapi)
+       
         }
     );
   }

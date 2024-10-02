@@ -3,6 +3,7 @@ package br.com.cashcontroller.external.client;
 import br.com.cashcontroller.external.dto.stock.BrapiDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -10,7 +11,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class BrapiApiClient {
 
-    final String TOKEN_BRAPI = "hQTbQHiTVUDV9ohDHfCErU";
+    @Value("${B_TOKEN}")
+    private String TOKEN_BRAPI;
 
     private final WebClient webClientBrapi;
     @Autowired
