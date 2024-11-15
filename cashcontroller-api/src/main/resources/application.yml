@@ -1,6 +1,20 @@
 server:
-  port: 8080
+  port: 8083
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: spring-security-keycloak
+            client-secret: MQDBNKbTSO6T7BCeflmsSa8PgluFq9pm
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/cash_controller
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/cash_controller
   jackson:
     time-zone: America/Sao_Paulo
   datasource:    

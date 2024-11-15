@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { CalendarModule } from 'primeng/calendar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SharedExtendedModule } from "../../shared-modules/shared.module";
 
 @NgModule({
   declarations: [
@@ -20,10 +21,11 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
   imports: [
     CommonModule,
     ConfirmDialogModule,
-    PrimengModule,    
-    FormsModule,   
-    CalendarModule,     
-    ConfiguracaoRoutingModule
-  ]
+    PrimengModule,
+    FormsModule,
+    CalendarModule,
+    ConfiguracaoRoutingModule,
+    SharedExtendedModule
+]
 })
 export class ConfiguracaoModule { }

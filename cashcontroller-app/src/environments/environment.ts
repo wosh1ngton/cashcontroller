@@ -4,9 +4,14 @@
 
 export const environment = {
   production: false,
-  mainUrlAPI: 'http://localhost:8080/api',
+  mainUrlAPI: 'http://localhost:8083/api',
   brapiURL: 'https://brapi.dev/api',
-  tokenBrapi: 'hQTbQHiTVUDV9ohDHfCErU'
+  tokenBrapi: 'hQTbQHiTVUDV9ohDHfCErU',
+  keycloak: {
+    issuer: 'http://localhost:8083',
+    realm: 'cash_controller',
+    clientId: 'spring-security-keycloak'
+  }
 };
 
 /*

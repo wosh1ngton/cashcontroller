@@ -1,8 +1,9 @@
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { PrimengModule } from './primeng/primeng.module';
+import { SharedExtendedModule } from './shared-modules/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +29,10 @@ import { TableCarteiraPrincipalComponent } from './components/carteira-principal
 import { TabViewModule } from 'primeng/tabview';
 import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
 import { TreeMapChartComponent } from './components/charts/tree-map-chart/tree-map-chart.component';
-
+import { CadastrarAporteComponent } from './components/aporte/cadastrar-aporte/cadastrar-aporte.component';
+import { ListarAportesComponent } from './components/aporte/listar-aportes/listar-aportes.component';
+import { initializer } from './app-init';
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 
 
 registerLocaleData(localePt, 'pt-BR', localePtExtra);
@@ -46,7 +50,10 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     LoadingComponent,    
     TableCarteiraPrincipalComponent,
     ListarPatrimonioComponent,
-    TreeMapChartComponent
+    TreeMapChartComponent,
+    CadastrarAporteComponent,
+    ListarAportesComponent   
+    
   ],
   imports: [    
     BrowserModule,    
@@ -57,11 +64,13 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     FormsModule,    
     DetalharAtivoComponent,  
     SharedModule,
+    SharedExtendedModule,
     CalendarModule,  
-    ConfiguracaoModule       
+    ConfiguracaoModule      ,
+    KeycloakAngularModule
   ],  
   exports: [
-    
+    ConfirmDialogModule
   ],
   providers: [
     provideHttpClient(),
@@ -69,7 +78,13 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     LoadingService,
     OperacaoRendaVariavelService,
     { provide: LOCALE_ID, useValue: 'pt-BR' },
-    
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: initializer,
+    //   deps: [KeycloakService],
+    //   multi: true,
+    // },
+     
   ],
   bootstrap: [AppComponent],
   

@@ -1,12 +1,12 @@
 package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.IndexadorDTO;
+import br.com.cashcontroller.entity.IpcaMes;
+import br.com.cashcontroller.entity.SelicMes;
 import br.com.cashcontroller.service.IndexadorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,8 +16,20 @@ public class IndexadorController {
 
     @Autowired
     IndexadorService service;
+
+
     @GetMapping
     public ResponseEntity<List<IndexadorDTO>> listarIndexadores() {
         return  ResponseEntity.ok(service.listarIndexadores());
     }
+    @PostMapping("/ipca-mes")
+    public ResponseEntity<List<IpcaMes>> ipcaMes(@RequestBody List<IpcaMes> ipcaMes) {
+        return ResponseEntity.ok(service.cadastrarIpcaMesEmLote(ipcaMes));
+    }
+
+    @PostMapping("/selic-mes")
+    public ResponseEntity<List<SelicMes>> selicMes(@RequestBody List<SelicMes> selicMes) {
+        return ResponseEntity.ok(service.cadastrarSelicMesEmLote(selicMes));
+    }
+
 }

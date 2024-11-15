@@ -11,7 +11,8 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th colspan="6" class="text-center">Totais: </th>
+                    <th> IBOV: {{ ibov }} </th>
+                    <th colspan="5" class="text-center">Totais: </th>
                     <th> {{totalProventos | currency : 'BRL'}}</th>
                     <th colspan="2"></th>
                     <th> {{ totalCusto | currency: 'BRL' }}</th>

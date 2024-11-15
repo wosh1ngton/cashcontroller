@@ -35,6 +35,13 @@ public class BrapiApiClient {
                 .bodyToMono(BrapiDTO.class);
     }
 
+    public String getIbov() {
+        return  webClientBrapi.get()
+                .uri("/quote/^BVSP?token=" + TOKEN_BRAPI)
+                .retrieve()
+                .bodyToMono(String.class).block();
+    }
+
 
 
 

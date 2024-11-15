@@ -21,6 +21,10 @@ export class AtivoService {
         return this.http.get<Ativo[]>(this.baseUrl + '/ativos');
     }
 
+    getAll() : Observable<Ativo[]> {
+        return this.http.get<Ativo[]>(this.baseUrl + '/ativos');
+    }
+
     getAtivosPorClasse(id: number) : Observable<Ativo[]> {
         return this.http.get<Ativo[]>(this.baseUrl + '/ativos/por-classe/' + id);
     }

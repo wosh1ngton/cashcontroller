@@ -85,6 +85,14 @@ export class HomeComponent implements OnInit {
         id: '15',
         command: (event) => this.getMenuSelecionado(event)
       },
+
+      {
+        label: 'Aporte',
+        icon: PrimeIcons.CREDIT_CARD,
+        routerLink: 'listar-aportes',
+        id: '16',
+        command: (event) => this.getMenuSelecionado(event)
+      },
       
       {
         label: 'Posições Encerradas',

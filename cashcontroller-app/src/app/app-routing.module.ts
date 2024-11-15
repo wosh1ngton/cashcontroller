@@ -10,6 +10,7 @@ import { ListarOperacoesComponent } from './components/renda-variavel/listar-ope
 import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar-carteira-renda-fixa/listar-carteira-renda-fixa.component';
 import { ListarAtivosCarteiraPrincipalComponent } from './components/carteira-principal/listar-ativos-carteira-principal/listar-ativos-carteira-principal.component';
 import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
+import { ListarAportesComponent } from './components/aporte/listar-aportes/listar-aportes.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,10 @@ const routes: Routes = [
       {
         path: 'listar-patrimonio',
         component: ListarPatrimonioComponent,
+      },
+      {
+        path: 'listar-aportes',
+        component: ListarAportesComponent,
       },
       {
         path: 'listar-fiis',

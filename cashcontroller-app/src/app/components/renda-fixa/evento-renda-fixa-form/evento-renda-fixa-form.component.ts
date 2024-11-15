@@ -21,7 +21,7 @@ import { AtivoService } from 'src/app/services/ativo.service';
 import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variavel.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { DateUtil } from 'src/app/shared/util/date-util';
-import { SharedModule } from 'src/app/shared-modules/shared.module';
+import { SharedExtendedModule } from 'src/app/shared-modules/shared.module';
 import { EventoRendaFixaService } from 'src/app/services/evento-renda-fixa.service';
 import { EventoRendaFixa } from 'src/app/models/evento-renda-fixa.model';
 
@@ -35,7 +35,7 @@ import { EventoRendaFixa } from 'src/app/models/evento-renda-fixa.model';
     CommonModule,
     InputNumberModule,
     CalendarModule, 
-    SharedModule   
+    SharedExtendedModule   
       
   ],
   templateUrl: './evento-renda-fixa-form.component.html',  

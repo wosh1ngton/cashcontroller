@@ -2,6 +2,9 @@ package br.com.cashcontroller.external.service;
 
 import br.com.cashcontroller.external.client.BrapiApiClient;
 import br.com.cashcontroller.external.dto.stock.BrapiDTO;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +26,14 @@ public class RendaVariavelService {
     public BrapiDTO getFiisBrapi() {
         var brapiDTO =brapiApiClient.getFiisBrapi().block();
         return brapiDTO;
+    }
+
+    public String getIbov() {
+        var body = brapiApiClient.getIbov();
+        JSONObject jsonObject = new JSONObject(body);
+        JSONArray resultsArray = jsonObject.getJSONArray("results");
+        JSONObject firstResult = resultsArray.getJSONObject(0);
+        double regularMarketPrice = firstResult.getDouble("regularMarketPrice");
+        return String.valueOf(regularMarketPrice);
     }
 }

@@ -4,6 +4,7 @@ import br.com.cashcontroller.dto.AtivoCarteiraDTO;
 import br.com.cashcontroller.dto.PatrimonioCategoriaDTO;
 import br.com.cashcontroller.dto.ProventosMesDTO;
 import br.com.cashcontroller.dto.TopPagadoraProventosDTO;
+import br.com.cashcontroller.external.service.RendaVariavelService;
 import br.com.cashcontroller.service.AtivoCarteiraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,9 @@ public class AtivoCarteiraController {
 
     @Autowired
     AtivoCarteiraService service;
+
+    @Autowired
+    RendaVariavelService rendaVariavelService;
     @PostMapping
     public ResponseEntity<AtivoCarteiraDTO> cadastrarAtivoCarteira(@RequestBody() AtivoCarteiraDTO ativoCarteiraDTO) {
         return ResponseEntity.ok(service.cadastrarAtivoCarteira(ativoCarteiraDTO));
@@ -88,6 +92,11 @@ public class AtivoCarteiraController {
     ResponseEntity<?> updateCarteiraBySubclasse(@PathVariable("id") Integer id) {
         this.service.updateCarteira(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/ibov")
+    public ResponseEntity<String> getIbov() {
+        return ResponseEntity.ok(rendaVariavelService.getIbov());
     }
 
 }

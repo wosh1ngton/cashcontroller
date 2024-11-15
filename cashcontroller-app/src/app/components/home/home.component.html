@@ -1,7 +1,7 @@
 <div class="grid">
   <div class="header">
 
-    <p-menubar [model]="items">
+    <p-menubar [model]="items" [baseZIndex]="1002" [autoZIndex]="false">
       <ng-template pTemplate="start">
         <a routerLink="/" style="text-decoration: none; font-size: 1.2rem;">         
             <h3 style="display: inline-flex; flex-wrap: wrap; color: #333;"> 
@@ -11,7 +11,7 @@
       </ng-template>
       <ng-template let-item pTemplate="item" class="p-menuitem">
 
-        <a [routerLink]="item.routerLink" class="p-menuitem-link"                              
+        <a [routerLink]="item.routerLink" class="p-menuitem-link"                               
           [ngClass]="selectedMenu == item.id ? 'p-menuitem-link-active' : ''" (click)="item.command($event)">
           <span class="p-menuitem-icon {{item.icon}}"></span>
           <span class="p-menuitem-text">
@@ -21,14 +21,15 @@
 
       </ng-template>
    
-
+     
     </p-menubar>
-    
+   
     <!-- {{selectedMenu}} -->
 
   </div>
-  <div class="w-full barra-header">       
+   <div class="w-full barra-header" #teste>       
     </div>
+ 
   <div class="col-12 content">    
     <app-loading></app-loading> 
     <router-outlet></router-outlet>

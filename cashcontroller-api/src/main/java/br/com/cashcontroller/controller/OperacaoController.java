@@ -1,6 +1,7 @@
 package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.*;
+import br.com.cashcontroller.entity.Aporte;
 import br.com.cashcontroller.entity.IpcaMes;
 import br.com.cashcontroller.entity.SelicMes;
 import br.com.cashcontroller.service.OperacaoService;
@@ -148,13 +149,7 @@ public class OperacaoController {
         return ResponseEntity.ok(operacoes);
     }
 
-    @PostMapping("/ipca-mes")
-    public ResponseEntity<List<IpcaMes>> ipcaMes(@RequestBody List<IpcaMes> ipcaMes) {
-        return ResponseEntity.ok(operacaoService.cadastrarIpcaMesEmLote(ipcaMes));
-    }
 
-    @PostMapping("/selic-mes")
-    public ResponseEntity<List<SelicMes>> selicMes(@RequestBody List<SelicMes> selicMes) {
-        return ResponseEntity.ok(operacaoService.cadastrarSelicMesEmLote(selicMes));
-    }
+
+
 }

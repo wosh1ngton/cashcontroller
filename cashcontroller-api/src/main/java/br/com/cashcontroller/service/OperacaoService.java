@@ -34,12 +34,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class OperacaoService {
 
-    @Autowired
-    IpcaMesRepository ipcaMesRepository;
+
     @Autowired
     CalculaImpostoService calculaImpostoService;
-    @Autowired
-    SelicMesRepository selicMesRepository;
     @Autowired
     OperacaoRendaVariavelRepository operacaoRendaVariavelRepository;
     @Autowired
@@ -56,6 +53,9 @@ public class OperacaoService {
     AtivoCarteiraRepository ativoCarteiraRepository;
     @Autowired
     AtivoRepository ativoRepository;
+
+    @Autowired
+    AporteRepository aporteRepository;
     private final FeriadosService feriadosService;
     private List<FeriadoDTO> listaFeriados;
 
@@ -195,6 +195,10 @@ public class OperacaoService {
             } else if (tipoOperacao == 2) {
                 ativoCarteira.get().setCustodia(ativoCarteira.get().getCustodia() - quantidadeDiff);
                 ativoCarteira.get().setCusto(ativoCarteira.get().getCusto() - custoDiff);
+                if(ativoCarteira.get().getCustodia() == 0) {
+                    ativoCarteiraRepository.delete(ativoCarteira.get());
+                    return;
+                }
             }
             ativoCarteiraRepository.save(ativoCarteira.get());
         }
@@ -462,21 +466,23 @@ public class OperacaoService {
 
     }
 
-
-    public List<IpcaMes> cadastrarIpcaMesEmLote(List<IpcaMes> ipcas) {
-        try {
-            return ipcaMesRepository.saveAll(ipcas);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public Aporte cadastrarAporte(Aporte aporte) {
+        var aporteSalvo =  aporteRepository.save(aporte);
+        return aporteSalvo;
     }
 
-    public List<SelicMes> cadastrarSelicMesEmLote(List<SelicMes> selics) {
-        try {
-            return selicMesRepository.saveAll(selics);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+    public List<Aporte> listarAportes() {
+        return aporteRepository.findAll();
+    }
+
+    public void excluirAporte(Integer id) {
+        var entity = aporteRepository.findById(id);
+        if(entity.isPresent()) {
+            aporteRepository.delete(entity.get());
+        } else {
+            throw new RuntimeException("aporte.nao.encontrado");
         }
+
     }
 
 }

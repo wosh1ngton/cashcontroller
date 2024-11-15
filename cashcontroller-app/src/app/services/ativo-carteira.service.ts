@@ -64,6 +64,10 @@ export class AtivoCarteiraService {
         return this.http.get(this.baseUrl + '/ativo-carteira/proventos')
     }
 
+    getIbov() {
+        return this.http.get(this.baseUrl + '/ativo-carteira/ibov')
+    }
+
     updateCarteiraBySubclasse(id: number) {
         return this.http.get(this.baseUrl + '/ativo-carteira/update-carteira/' + id)
     }

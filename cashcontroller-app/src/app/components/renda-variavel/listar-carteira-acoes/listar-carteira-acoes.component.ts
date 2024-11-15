@@ -6,6 +6,7 @@ import { AtivoService } from 'src/app/services/ativo.service';
 import { OperacaoRendaVariavelService } from 'src/app/services/operacao-renda-variavel.service';
 import { DetalharAtivoComponent } from '../detalhar-ativo/detalhar-ativo.component';
 import { LoadingService } from 'src/app/services/loading.service';
+import { AtivoCarteiraService } from 'src/app/services/ativo-carteira.service';
 
 @Component({
   selector: 'app-carteira-acoes',
@@ -16,7 +17,8 @@ export class ListarCarteiraAcoesComponent implements OnInit {
   constructor(
     private operacaoRendaVariavelService: OperacaoRendaVariavelService,
     private ativoService: AtivoService,
-    private loading: LoadingService
+    private loading: LoadingService,
+    private ativoCarteiraService: AtivoCarteiraService
   ) {}
 
   carteira: AtivoCarteira[] = [];
@@ -25,7 +27,7 @@ export class ListarCarteiraAcoesComponent implements OnInit {
   totalValorizacao: number = 0;
   ativoSelecionado: number = 0;
   totalProventos: number = 0;
-
+  ibov: string= "";
   ngOnInit(): void {
     this.listarCarteira();   
   }
@@ -34,6 +36,9 @@ export class ListarCarteiraAcoesComponent implements OnInit {
     this.ativoSelecionado = id.data;
   }
   listarCarteira() {
+    this.ativoCarteiraService.getIbov().subscribe((res:any) => {
+      this.ibov = res;
+    });
     const ativosBrapi$ = this.ativoService.getAcoesBrapi();
     const carteira$ = this.loading.showLoaderUntilCompleted(this.operacaoRendaVariavelService.carteiraAcoes());
 

@@ -17,7 +17,7 @@ export class ListarAtivosComponent implements OnInit {
 
   constructor(
     public dialogService: DialogService,
-    private ativoService: AtivoService,
+    public ativoService: AtivoService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
@@ -40,7 +40,7 @@ export class ListarAtivosComponent implements OnInit {
     this.listarAtivosRendaFixa();
   }
 
-  private listarAtivosRendaFixa() {
+  public listarAtivosRendaFixa() {
     this.ativoService.getAtivosPorClasse(EnumClasseAtivo.RENDA_FIXA)
       .subscribe(res => this.ativos = res);
   }
@@ -81,42 +81,6 @@ export class ListarAtivosComponent implements OnInit {
     this.ref.onClose.subscribe((res) => this.listarAtivosRendaFixa())
   }
 
-  validarExclusaoAtivo(ativo: any, event: Event, key: string) {
-    console.log(ativo)
-    this.confirmationService.confirm({
-      key: key,
-      target: event.target as EventTarget,
-      message: 'Tem certeza que deseja excluir esta operação?',
-      header: 'Confirmação',
-      icon: 'pi pi-exclamation-triangle',
-      acceptIcon: 'none',
-      rejectIcon: 'none',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',      
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-       this.excluirAtivo(ativo.id).subscribe(() => this.listarAtivosRendaFixa());
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmado',
-          detail: 'Confirmada a exclusão',
-        });
-      },
-      reject: () => {
-      //  this.filterData();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rejeitado',
-          detail: 'Cancelada a exclusão',
-          life: 3000,
-        });
-        
-      },
-    });
-  }
 
-  excluirAtivo(id: string) {
-    return this.ativoService.excluir(id);
-  }
 
 }

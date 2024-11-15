@@ -23,7 +23,7 @@ import { LoadingService } from 'src/app/services/loading.service';
 import { DateUtil } from 'src/app/shared/util/date-util';
 import { LoadingComponent } from '../../shared/loading/loading.component';
 import { AppModule } from 'src/app/app.module';
-import { SharedModule } from 'src/app/shared-modules/shared.module';
+import { SharedExtendedModule } from 'src/app/shared-modules/shared.module';
 
 @Component({
   selector: 'app-evento-rv-form',
@@ -35,7 +35,7 @@ import { SharedModule } from 'src/app/shared-modules/shared.module';
     CommonModule,
     InputNumberModule,
     CalendarModule, 
-    SharedModule   
+    SharedExtendedModule   
       
   ],
   templateUrl: './evento-rv-form.component.html',

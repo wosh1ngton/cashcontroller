@@ -62,8 +62,15 @@
                     <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editarAtivo(rowData.id)"
                         class="p-button-rounded p-button-text p-button-primary"></button>
 
-                    <p-button icon="pi pi-trash" (click)="validarExclusaoAtivo(rowData, $event, 'deleteAtivo')"
-                        styleClass="p-button-danger p-button-text"></p-button>
+                    <!-- <p-button icon="pi pi-trash" (click)="validarExclusaoAtivo(rowData, $event, 'deleteAtivo')"
+                        styleClass="p-button-danger p-button-text"></p-button> -->
+                    
+                    <validar-exclusao (entityDeleted)="listarAtivosRendaFixa()"
+                    [entity]="rowData" [key]="'deleteAtivo'" [service]="ativoService">
+
+                    </validar-exclusao>
+
+                    
                 </div>
 
             </td>
