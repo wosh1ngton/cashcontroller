@@ -2,10 +2,12 @@ package br.com.cashcontroller.service.util;
 
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
 import br.com.cashcontroller.entity.SelicMes;
+import br.com.cashcontroller.external.service.IndicesService;
 import br.com.cashcontroller.repository.SelicMesRepository;
 import br.com.cashcontroller.service.interfaces.CalcularRentabilidadeStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -17,6 +19,9 @@ public class CalcularRentabilidadeCDI implements CalcularRentabilidadeStrategy {
 
     @Autowired
     SelicMesRepository selicMesRepository;
+
+    @Autowired
+    IndicesService indicesService;
     private final CalculaImpostoService calculaImpostoService;
     @Autowired
     public CalcularRentabilidadeCDI(CalculaImpostoService calculaImpostoService) {
@@ -31,7 +36,7 @@ public class CalcularRentabilidadeCDI implements CalcularRentabilidadeStrategy {
     public double calcularRentabilidade(AtivoCarteiraRFDTO ativoCarteiraRFDTO) {
 
         List<SelicMes> selicMes =  selicMesRepository.findAll();
-        selicMes.forEach(indice -> indice.setDataYearMonth(YearMonth.of(indice.getData().getYear(),indice.getData().getMonthValue())));
+        selicMes.forEach(indice -> indice.setDataYearMonth(YearMonth.of(indice.getData().getYear(), indice.getData().getMonthValue())));
         LocalDate dataInicio = ativoCarteiraRFDTO.getDataOperacao();
         double valorDeMercado = ativoCarteiraRFDTO.getCusto();
         while (dataInicio.isBefore(LocalDate.now()) || dataInicio.equals(LocalDate.now())) {

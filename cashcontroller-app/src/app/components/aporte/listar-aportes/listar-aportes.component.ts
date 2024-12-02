@@ -19,6 +19,7 @@ export class ListarAportesComponent implements OnInit {
   aportes: Aporte[] = [];
   cadastrarAporte : CadastrarAporteComponent | undefined;
   ngOnInit(): void {
+    console.log('oi')
     this.listarAportes();
   }
 

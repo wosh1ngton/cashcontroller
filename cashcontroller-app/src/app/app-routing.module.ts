@@ -11,10 +11,12 @@ import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar
 import { ListarAtivosCarteiraPrincipalComponent } from './components/carteira-principal/listar-ativos-carteira-principal/listar-ativos-carteira-principal.component';
 import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
 import { ListarAportesComponent } from './components/aporte/listar-aportes/listar-aportes.component';
+import { AppComponent } from './app.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: '',   
+     
     children: [
       {
         path: 'renda-variavel',
@@ -61,7 +63,7 @@ const routes: Routes = [
           ),
       },
     ],
-    component: HomeComponent,
+    // component: HomeComponent,
   },
  
 ];

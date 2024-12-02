@@ -35,3 +35,5 @@ logging:
     org.springframework.security: debug
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+app:
+  version: '@project.version@'

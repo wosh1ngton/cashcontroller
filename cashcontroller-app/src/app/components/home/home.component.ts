@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } fro
 import { Router } from '@angular/router';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
+import { VersionService } from 'src/app/services/version.service';
 
 
 @Component({
@@ -12,15 +13,16 @@ import { PrimeIcons } from 'primeng/api';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private versionService: VersionService) { }
 
   items: MenuItem[] | undefined;
   selectedMenu: any;
-  
+  @Input('version') version = new Input();
   
   
 
   ngOnInit(): void {
+    
     this.items = [    
       {
         label: 'Operações',
@@ -114,5 +116,6 @@ export class HomeComponent implements OnInit {
   getMenuSelecionado($event: MenuItemCommandEvent) {    
     this.selectedMenu = $event.item?.id;
   }
+
 
 }

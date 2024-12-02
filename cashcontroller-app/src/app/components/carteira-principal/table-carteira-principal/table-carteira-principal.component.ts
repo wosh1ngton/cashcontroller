@@ -48,7 +48,7 @@ export class TableCarteiraPrincipalComponent implements OnChanges {
 
   colsCarteiraAtivo = [
     { field: 'ativo', header: 'Ativo', type: 'object'},
-    { field: 'custodia', header: 'Custódia', type: 'number'},
+    { field: 'custodia', header: 'Custódia'},
     { field: 'custo', header: 'Custo', type: 'number'},
     { field: 'valorMercado', header: 'Valor de Mercado', type: 'number'},
     { field: 'percentual', header: 'Percentual', type: 'percentual'},

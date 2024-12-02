@@ -27,6 +27,18 @@ public class BacenApiClient {
                 .bodyToMono(SelicMesDTO[].class);
     }
 
+    public Mono<SelicMesDTO[]> getSelicDia(String dataInicial, String dataFinal) {
+        return webClientBacen.get()
+                .uri(uriBuilder -> uriBuilder
+                                .path("/dados/serie/bcdata.sgs.11/dados")
+                                .queryParam("formato", "json")
+                                .queryParam("dataInicial", dataInicial)
+                                .queryParam("dataFinal", dataFinal)
+                        .build())
+                .retrieve()
+                .bodyToMono(SelicMesDTO[].class);
+    }
+
     public Mono<IPCAMesDTO[]> getIpcaMes() {
         return webClientBacen.get()
                 .uri("/dados/serie/bcdata.sgs.433/dados?formato=json")

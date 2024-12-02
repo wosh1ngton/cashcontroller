@@ -34,6 +34,9 @@ styleClass="p-datatable-sm">
                 <ng-container *ngIf="col.type === 'number'">
                     {{ rowData[col.field] | currency:'BRL' }}
                 </ng-container>
+                <ng-container *ngIf="col.field === 'custodia'">
+                    {{ rowData.custodia | number: '1.0-2' }}
+                </ng-container>
                 <ng-container *ngIf="col.field === 'percentualAtual'">
                     {{ rowData.valorMercado / totalValorMercado | percent: '1.0-2' }}
                 </ng-container>
