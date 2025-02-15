@@ -142,7 +142,7 @@ public class EventoService {
 
 	public List<EventoListRendaVariavelDTO> listarEventosRendaVariavelPorData(Filter filter) {
 
-		List<EventoRendaVariavel> eventos = eventoRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes());
+		List<EventoRendaVariavel> eventos = eventoRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), filter.getAtivo());
 		return eventos.stream().map(EventoRendaVariavelMapper.INSTANCE::toListDTO)
 				.peek(eventoDto -> eventoDto.setValorTotal(
 				getValorLiquidoEvento(eventoDto)

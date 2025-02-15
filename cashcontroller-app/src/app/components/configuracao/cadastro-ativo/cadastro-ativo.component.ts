@@ -62,10 +62,8 @@ export class CadastroAtivoComponent implements OnInit {
 
 
 
-  save(ativo: any) {
+  save(ativo: any) {    
     
-    console.log(this.ativo)
-    console.log(ativo)
     let parametroRendaFixa = new ParametroRendaFixa();
     this.ativo.parametroRendaFixaDto = parametroRendaFixa;
     this.ativo.parametroRendaFixaDto.dataVencimento = ativo.dataVencimento;

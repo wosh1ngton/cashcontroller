@@ -37,6 +37,7 @@ import { EventoRendaVariavelService } from 'src/app/services/evento-renda-variav
 import { NumerosDoMesComponent } from '../../numeros-do-mes/numeros-do-mes.component';
 import { LoadingService } from 'src/app/services/loading.service';
 import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service';
+import { ItemLabel } from 'src/app/models/interfaces/item-label';
 
 @Component({
   selector: 'app-listar-renda-variavel',
@@ -64,6 +65,7 @@ import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service'
 export class ListarOperacoesComponent {
   item: MenuItem[] | undefined;
   ativos: Ativo[] = [];
+  ativosOperados: ItemLabel[] = [];
   subclasses: SubclasseAtivo[] = [];
   visible = false;
   ref: DynamicDialogRef | undefined;
@@ -110,8 +112,8 @@ export class ListarOperacoesComponent {
 
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
-    this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
-   // this.listarEventos();
+    this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);   
+    this.listarAtivosOperados()
     this.filterData();
     this.filterEventos();    
 
@@ -158,6 +160,14 @@ export class ListarOperacoesComponent {
       });
   }
 
+  private listarAtivosOperados(): void {
+    this.operacaoRendaVariavelService.buscarAtivosOperados()
+      .subscribe((res: ItemLabel[]) => {
+        console.log('ativo: ', res)
+        this.ativosOperados = res;
+        console.log('ativo: ', this.ativosOperados)
+      });
+  }
   showEventoDialog(dados?: any) {
     
     this.ref = this.dialogService.open(EventoRvFormComponent, {

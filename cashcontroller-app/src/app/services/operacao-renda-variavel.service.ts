@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { FilterOperacao } from "../models/filter-operacao.model";
 import { FiltrarOperacao } from "./interfaces/filtrar-operacao";
+import { ItemLabel } from "../models/interfaces/item-label";
 
 @Injectable({
     providedIn: 'root'
@@ -69,6 +70,10 @@ export class OperacaoRendaVariavelService implements FiltrarOperacao {
 
     getOperacoesPorAtivo(idAtivo: number): Observable<any> {
         return this.http.get<any[]>(this.baseUrl + '/operacoes/por-ativo/' + idAtivo);
+    }
+
+    public buscarAtivosOperados(): Observable<ItemLabel[]> {
+        return this.http.get<ItemLabel[]>(`${this.baseUrl}/operacoes/ativos-operados`);
     }
 	
 }

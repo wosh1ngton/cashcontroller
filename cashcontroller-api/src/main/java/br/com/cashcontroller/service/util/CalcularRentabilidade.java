@@ -13,6 +13,7 @@ public class CalcularRentabilidade {
     @Autowired List<CalcularRentabilidadeStrategy> strategies;
 
     public double calcularRentabilidade(AtivoCarteiraRFDTO ativoCarteiraRFDTO) {
+
         CalcularRentabilidadeStrategy strategy = strategies.stream()
                 .filter(a -> a.getIdStrategy().equals(ativoCarteiraRFDTO.getIdIndice()))
                 .findAny()

@@ -59,6 +59,11 @@ public class OperacaoController {
     public ResponseEntity<List<TipoOperacaoDTO>> getTiposOperacao() {
         return ResponseEntity.ok(this.operacaoService.listarTipoOperacao());
     }
+    @GetMapping("/ativos-operados")
+    public ResponseEntity<List<ItemLabelDTO>> getAtivosOperados() {
+        return ResponseEntity.ok(this.operacaoService.listarAtivosOperados());
+    }
+
 
     @PostMapping
     public ResponseEntity<OperacaoRendaVariavelDTO> cadastrarOperacaoRendaVariavel(@RequestBody OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {

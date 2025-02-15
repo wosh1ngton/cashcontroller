@@ -15,6 +15,6 @@ public class Filter {
     private Integer subclasse;
     private Integer ano;
     private Integer mes;
-
+    private Integer ativo;
 
 }

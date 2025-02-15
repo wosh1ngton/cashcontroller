@@ -16,6 +16,6 @@ public class TesouroService {
     }
 
     public TesouroDiretoDTO getTitulos() {
-        return tesouroDiretoApiClient.getTitulosTesouroDireto();
+        return tesouroDiretoApiClient.getTitulosTesouroDireto2().block();
     }
 }

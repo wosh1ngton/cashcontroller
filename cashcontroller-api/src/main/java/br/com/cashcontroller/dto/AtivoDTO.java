@@ -19,6 +19,11 @@ public class AtivoDTO {
 	private ParametroRendaFixaDTO parametroRendaFixaDto;
 	private double precoMedio;
 
+	public AtivoDTO(int id, String sigla) {
+		this.id = id;
+		this.sigla = sigla;
+	}
+
 	public AtivoDTO(int id, String nome, double precoMedio) {
 		this.id = id;
 		this.nome = nome;

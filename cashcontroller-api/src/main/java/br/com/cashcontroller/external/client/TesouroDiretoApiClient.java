@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 import java.net.SocketException;
+import java.time.Duration;
 
 @Component
 public class TesouroDiretoApiClient {
@@ -32,6 +34,17 @@ public class TesouroDiretoApiClient {
                 .retrieve()
                 .bodyToMono(TesouroDiretoDTO.class)
                 .block();
+
+    }
+
+    public Mono<TesouroDiretoDTO> getTitulosTesouroDireto2() {
+        return webClientTesouro.get()
+                .uri("/json/br/com/b3/tesourodireto/service/api/treasurybondsinfo.json")
+                .retrieve()
+                .bodyToMono(TesouroDiretoDTO.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)));
+
+
     }
 
     private static ExchangeFilterFunction logRequest() {

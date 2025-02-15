@@ -40,8 +40,13 @@ export class ListarFiisComponent implements OnInit {
       .pipe(
         map(([ativosBrapi, carteira]) => {
           return carteira.map((c) => {
+            console.log('o que? ', c)
             let ativo = ativosBrapi.stocks.find(
-              (a: any) => a.stock === c.ativo.sigla
+             
+              (a: any) => {
+                console.log('o que2? ', a),
+                a.stock === c.ativo.sigla
+              }
             );
             return {
               ...c,

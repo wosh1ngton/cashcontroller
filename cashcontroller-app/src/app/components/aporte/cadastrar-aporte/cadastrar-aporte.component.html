@@ -1,39 +1,33 @@
 <div class="dialog-content mr-3 ml-3">
-    <form #f="ngForm" >         
+    <form #f="ngForm">
 
         <div class="field grid">
-            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> 
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">
                 Aporte </label>
             <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
-                <p-inputNumber [(ngModel)]="aporte.valorAporte"  inputId="valor" [min]="0" locale="pt-BR"                     
-                    [minFractionDigits]="2"
-                    [maxFractionDigits]="4" name="valorAporte">
+                <p-inputNumber [(ngModel)]="aporte.valorAporte" inputId="valor" [min]="0" locale="pt-BR"
+                    [minFractionDigits]="2" [maxFractionDigits]="4" name="valorAporte">
                 </p-inputNumber>
             </div>
 
-          
+
         </div>
-    <div class="field grid">
-        <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> 
-            Data </label>
-        <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
-            <p-calendar [(ngModel)]="aporte.dataAporte" [iconDisplay]="'input'"
-            appendTo="body" [showIcon]="true"
-            inputId="icondisplay" dateFormat="dd/mm/yy" name="dataAporte"></p-calendar>
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">
+                Data </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-calendar [(ngModel)]="aporte.dataAporte" [iconDisplay]="'input'" appendTo="body" [showIcon]="true"
+                    inputId="icondisplay" dateFormat="dd/mm/yy" name="dataAporte"></p-calendar>
+            </div>
         </div>
-    </div>
-      
+
 
         <div class="grid mt-3">
             <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-6 p-fluid">
-                <p-button label="Cancelar" 
-                (onClick)="close()"
-                severity="danger" size="small" ></p-button>
+                <p-button label="Cancelar" (onClick)="close()" severity="danger" size="small"></p-button>
             </div>
             <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-0 p-fluid">
-                <p-button label="Salvar"
-                (onClick)="save(f.value)"
-                class="cor-btn" size="small"></p-button>
+                <p-button label="Salvar" (onClick)="save(f.value)" class="cor-btn" size="small"></p-button>
             </div>
         </div>
     </form>

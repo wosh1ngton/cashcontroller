@@ -59,7 +59,7 @@ export class CadastrarAtivoCarteiraComponent {
   }
 
   private buscarAtivos(): void {
-    this.ativoService.getAtivos().subscribe({
+    this.ativoService.getAll().subscribe({
       next: (res) => (this.ativos = res),
       error: (err) => console.error('erro: ', err.message),
     });

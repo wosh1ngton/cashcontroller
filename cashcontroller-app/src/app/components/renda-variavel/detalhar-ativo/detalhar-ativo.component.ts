@@ -22,7 +22,7 @@ export class DetalharAtivoComponent implements OnChanges {
   constructor(private operacaoService: OperacaoRendaVariavelService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.operacaoService.getOperacoesPorAtivo(this.idAtivo).subscribe((val) => {
+    this.operacaoService.getOperacoesPorAtivo(this.idAtivo).subscribe((val) => {      
       this.operacoes = val;
     });
   }

@@ -18,6 +18,7 @@ export class ListarAportesComponent implements OnInit {
   dialogRef : DynamicDialogRef | undefined;  
   aportes: Aporte[] = [];
   cadastrarAporte : CadastrarAporteComponent | undefined;
+  CadastrarAporteComponent = CadastrarAporteComponent;
   ngOnInit(): void {
     console.log('oi')
     this.listarAportes();

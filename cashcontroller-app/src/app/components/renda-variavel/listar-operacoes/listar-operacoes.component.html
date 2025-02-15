@@ -52,6 +52,16 @@
                                 name="fim" placeholder="dd/MM/yyyy" [style]="{'width': '100%'}"></p-calendar>
                         </div>
                     </div>
+
+                    <div class="p-2">
+                        <label for="subclasse"> <strong>  Filtrar por Ativo </strong> </label>
+                        <div class="ui-g pt-2">
+                            <p-dropdown [(ngModel)]="filter.ativo" [options]="ativosOperados" appendTo="body"
+                                name="subclasse" (onChange)="filterData(); filterEventos()" optionLabel="label" [showClear]="true"
+                                placeholder="Ativo" [style]="{'width': '100%'}" optionValue="id" [filter]="true">
+                            </p-dropdown>
+                        </div>
+                    </div>
                 </p-card>
 
             </div>

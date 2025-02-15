@@ -19,13 +19,15 @@ public interface EventoRepository extends JpaRepository<EventoRendaVariavel, Int
             "INNER JOIN a.subclasseAtivo sub " +
             "WHERE " +
             "((:endDate IS NULL) OR (:startDate IS NULL) OR (op.dataPagamento BETWEEN :startDate AND :endDate)) " +
-            "AND ((:id IS NULL) OR (:id = 0) OR (sub.id = :id))" +
+            "AND ((:id IS NULL) OR (:id = 0) OR (sub.id = :id)) " +
+            "AND ((:ativo IS NULL) OR (:ativo = 0) OR (a.id = :ativo)) " +
             "AND ((:ano IS NULL or :ano = 0) OR (:mes IS NULL  or :mes = 0) OR (YEAR(op.dataPagamento) = :ano AND MONTH(op.dataPagamento) = :mes))")
     List<EventoRendaVariavel> findEventosByData(@Param("startDate") LocalDate startDate,
                                                     @Param("endDate") LocalDate endDate,
                                                     @Param("id") Integer id,
                                                     @Param("ano") Integer ano,
-                                                    @Param("mes") Integer mes);
+                                                    @Param("mes") Integer mes,
+                                                    @Param("ativo") Integer ativo);
 
 
 

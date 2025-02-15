@@ -31,7 +31,7 @@ import { ListarPatrimonioComponent } from './components/relatorios/listar-patrim
 import { TreeMapChartComponent } from './components/charts/tree-map-chart/tree-map-chart.component';
 import { CadastrarAporteComponent } from './components/aporte/cadastrar-aporte/cadastrar-aporte.component';
 import { ListarAportesComponent } from './components/aporte/listar-aportes/listar-aportes.component';
-import { initializer } from './app-init';
+
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 
 

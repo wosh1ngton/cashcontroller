@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.TextStyle;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +68,7 @@ public class OperacaoService {
     }
 
     public List<OperacaoRendaVariavelDTO> listarOperacoesRendaVariavelPorData(Filter filter) {
-        List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findOperacoesByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes());
+        List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findOperacoesByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), filter.getAtivo());
         return OperacaoRendaVariavelMapper.INSTANCE.toListDTO(operacoes);
     }
 
@@ -100,7 +97,7 @@ public class OperacaoService {
 
     private static double calcularTaxaseImpostos(OperacaoRendaVariavelSaveDTO operacaoDto, double valorBase) {
         double impostos = 0d;
-        if(operacaoDto.getValorCorretagem() > 0){
+        if (operacaoDto.getValorCorretagem() > 0) {
             impostos = (operacaoDto.getValorCorretagem() / Taxa.IMPOSTOS) - operacaoDto.getValorCorretagem();
         }
         double taxas = Taxa.TAXA_LIQUIDACAO_B3 + Taxa.TAXA_EMOLUMENTOS;
@@ -117,6 +114,10 @@ public class OperacaoService {
     public List<TipoOperacaoDTO> listarTipoOperacao() {
         List<TipoOperacao> tiposOperacao = tipoOperacaoRepository.findAll();
         return TipoOperacaoMapper.INSTANCE.toListDTO(tiposOperacao);
+    }
+
+    public List<ItemLabelDTO> listarAtivosOperados() {
+        return this.operacaoRendaVariavelRepository.findDistinctAtivo();
     }
 
     public OperacaoRendaVariavelDTO cadastrarOperacaoRendaVariavel(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
@@ -163,11 +164,11 @@ public class OperacaoService {
                 .orElseThrow(() -> new NullPointerException("registro.nao.encontrado"));
 
 
-            double quantidadeDiff = operacaoRendaVariavelDTO.getQuantidadeNegociada() - operacao.getQuantidadeNegociada();
-            double custoDiff = operacaoRendaVariavelDTO.getCustoTotal() - operacao.getCustoTotal();
-            operacao = OperacaoRendaVariavelMapper.INSTANCE.toEntity(operacaoRendaVariavelDTO);
+        double quantidadeDiff = operacaoRendaVariavelDTO.getQuantidadeNegociada() - operacao.getQuantidadeNegociada();
+        double custoDiff = operacaoRendaVariavelDTO.getCustoTotal() - operacao.getCustoTotal();
+        operacao = OperacaoRendaVariavelMapper.INSTANCE.toEntity(operacaoRendaVariavelDTO);
 
-        if(!posicaoLiquidada(operacao.getAtivo().getId())) {
+        if (!posicaoLiquidada(operacao.getAtivo().getId())) {
             updateOrCreateAtivoCarteira(operacao.getAtivo().getId(), quantidadeDiff, custoDiff, operacaoRendaVariavelDTO.getTipoOperacaoDto().getId());
         }
         var operacaoDto = OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.save(operacao));
@@ -178,10 +179,11 @@ public class OperacaoService {
         Long custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo);
         return custodia == 0;
     }
+
     private void updateOrCreateAtivoCarteira(int ativo, double quantidadeDiff, double custoDiff, int tipoOperacao) {
         Optional<AtivoCarteira> ativoCarteira = ativoCarteiraRepository.findByIdAtivo(ativo);
 
-        if(!ativoCarteira.isPresent()) {
+        if (!ativoCarteira.isPresent()) {
             AtivoCarteira novoAtivoCarteira = new AtivoCarteira();
             novoAtivoCarteira.setAtivo(ativoRepository.findById(ativo).get());
             novoAtivoCarteira.setCustodia(quantidadeDiff);
@@ -195,7 +197,7 @@ public class OperacaoService {
             } else if (tipoOperacao == 2) {
                 ativoCarteira.get().setCustodia(ativoCarteira.get().getCustodia() - quantidadeDiff);
                 ativoCarteira.get().setCusto(ativoCarteira.get().getCusto() - custoDiff);
-                if(ativoCarteira.get().getCustodia() == 0) {
+                if (ativoCarteira.get().getCustodia() == 0) {
                     ativoCarteiraRepository.delete(ativoCarteira.get());
                     return;
                 }
@@ -236,7 +238,7 @@ public class OperacaoService {
             double pmAtivo = this.operacaoRendaFixaRepository.calcularPrecoMedio(operacaoRendaFixaDto.getAtivoDto().getId(),
                     operacaoRendaFixaDto.getDataOperacao(),
                     startDate).getPrecoMedio();
-            return  pmAtivo * operacaoRendaFixaDto.getQuantidadeNegociada();
+            return pmAtivo * operacaoRendaFixaDto.getQuantidadeNegociada();
 
         }
         return custoTotal;
@@ -264,7 +266,7 @@ public class OperacaoService {
 
         Optional<OperacaoRendaVariavel> operacao = operacaoRendaVariavelRepository.findById(id);
         operacao.ifPresent(value -> {
-            updateOrCreateAtivoCarteira(value.getAtivo().getId(),value.getQuantidadeNegociada(),value.getCustoTotal(),2);
+            updateOrCreateAtivoCarteira(value.getAtivo().getId(), value.getQuantidadeNegociada(), value.getCustoTotal(), 2);
             this.operacaoRendaVariavelRepository.delete(value);
         });
 
@@ -372,16 +374,23 @@ public class OperacaoService {
         }).collect(Collectors.toList());
 
         carteira.forEach(
-                ativoCarteiraRFDTO -> {
-                    ativoCarteiraRFDTO.setCusto(ativoCarteiraRFDTO.getCustodia() * ativoCarteiraRFDTO.getPrecoMedio());
-                    ativoCarteiraRFDTO.setTotalEmProventos(eventoService.getTotalProventosPorAtivoRendaFixa(ativoCarteiraRFDTO.getIdAtivo()));
-                    if (ativoCarteiraRFDTO.getIdSubclasseAtivo() == 3) {
-                        calcularValorDeMercadoTesouroDireto(ativoCarteiraRFDTO, titulosTesouro);
-                        ativoCarteiraRFDTO.setValorMercado(this.calculaImpostoService.getValorLiquidoDeImposto(ativoCarteiraRFDTO, ativoCarteiraRFDTO.getValorMercado()));
+                operacaoRendaFixaDto -> {
+                    operacaoRendaFixaDto.setCusto(operacaoRendaFixaDto.getCustodia() * operacaoRendaFixaDto.getPrecoMedio());
+                    operacaoRendaFixaDto.setTotalEmProventos(eventoService.getTotalProventosPorAtivoRendaFixa(operacaoRendaFixaDto.getIdAtivo()));
+                    if (operacaoRendaFixaDto.getIdSubclasseAtivo() == 3) {
+                        calcularValorDeMercadoTesouroDireto(operacaoRendaFixaDto, titulosTesouro);
+                        operacaoRendaFixaDto.setValorMercado(this.calculaImpostoService.getValorLiquidoDeImposto(operacaoRendaFixaDto, operacaoRendaFixaDto.getValorMercado()));
+                    } else if (operacaoRendaFixaDto.getIdSubclasseAtivo() == 5) {
+                        OptionalDouble optionalValorMercado = ativoCarteiraRepository.findByIdAtivo(operacaoRendaFixaDto.getIdAtivo())
+                                .stream()
+                                .mapToDouble(AtivoCarteira::getValorMercado)
+                                .findFirst();
+
+                        operacaoRendaFixaDto.setValorMercado(optionalValorMercado.orElse(0.0));
                     } else {
-                        ativoCarteiraRFDTO.setValorMercado(calcularRentabilidade.calcularRentabilidade(ativoCarteiraRFDTO));
+                        operacaoRendaFixaDto.setValorMercado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
                     }
-                    ativoCarteiraRFDTO.setValorContratado(calcularRentabilidade.calcularRentabilidade(ativoCarteiraRFDTO));
+                    operacaoRendaFixaDto.setValorContratado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
                 }
         );
 
@@ -466,23 +475,5 @@ public class OperacaoService {
 
     }
 
-    public Aporte cadastrarAporte(Aporte aporte) {
-        var aporteSalvo =  aporteRepository.save(aporte);
-        return aporteSalvo;
-    }
-
-    public List<Aporte> listarAportes() {
-        return aporteRepository.findAll();
-    }
-
-    public void excluirAporte(Integer id) {
-        var entity = aporteRepository.findById(id);
-        if(entity.isPresent()) {
-            aporteRepository.delete(entity.get());
-        } else {
-            throw new RuntimeException("aporte.nao.encontrado");
-        }
-
-    }
 
 }

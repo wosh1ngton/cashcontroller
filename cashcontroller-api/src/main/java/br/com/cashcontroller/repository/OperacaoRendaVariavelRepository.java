@@ -1,9 +1,7 @@
 package br.com.cashcontroller.repository;
 
-import br.com.cashcontroller.dto.AtivoCarteiraDTO;
-import br.com.cashcontroller.dto.AtivoDTO;
-import br.com.cashcontroller.dto.MesDTO;
-import br.com.cashcontroller.dto.PosicaoEncerradaDTO;
+import br.com.cashcontroller.dto.*;
+import br.com.cashcontroller.entity.Ativo;
 import br.com.cashcontroller.entity.OperacaoRendaVariavel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,13 +21,15 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "INNER JOIN a.subclasseAtivo sub " +
             "WHERE " +
             "((:endDate IS NULL) OR (:startDate IS NULL) OR (op.dataOperacao BETWEEN :startDate AND :endDate)) " +
-            "AND ((:id IS NULL) OR (:id = 0) OR (sub.id = :id))" +
+            "AND ((:id IS NULL) OR (:id = 0) OR (sub.id = :id)) " +
+            "AND ((:ativo IS NULL) OR (:ativo = 0) OR (a.id = :ativo)) " +
             "AND ((:ano IS NULL or :ano = 0) OR (:mes IS NULL  or :mes = 0) OR (YEAR(op.dataOperacao) = :ano AND MONTH(op.dataOperacao) = :mes))")
     List<OperacaoRendaVariavel> findOperacoesByData(@Param("startDate") LocalDate startDate,
                                                     @Param("endDate") LocalDate endDate,
                                                     @Param("id") Integer id,
                                                     @Param("ano") Integer ano,
-                                                    @Param("mes") Integer mes);
+                                                    @Param("mes") Integer mes,
+                                                    @Param("ativo") Integer ativo);
 
 
 
@@ -195,5 +195,9 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "       ELSE 0 " +
             "       END) = 0")
     List<PosicaoEncerradaDTO> listarAtivosComOperacoesFechadas();
+
+
+    @Query("SELECT DISTINCT new br.com.cashcontroller.dto.ItemLabelDTO(o.ativo.id, o.ativo.sigla) FROM OperacaoRendaVariavel o")
+    List<ItemLabelDTO> findDistinctAtivo();
 
 }

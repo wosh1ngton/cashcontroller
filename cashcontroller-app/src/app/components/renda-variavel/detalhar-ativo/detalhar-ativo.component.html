@@ -12,6 +12,7 @@ styleClass="p-datatable-sm"
             <th>Qt negociada</th>
             <th>Valor Total</th>
             <th>Custo</th>
+            <th>Unitário</th>
             <th>Data </th>
             <th>Operação </th>
         </tr>
@@ -21,6 +22,7 @@ styleClass="p-datatable-sm"
             <td>{{ op.quantidadeNegociada }}</td>
             <td>{{ op.valorTotal | currency: 'BRL' }}</td>
             <td>{{ op.custoTotal | currency: 'BRL' }}</td>
+            <td>{{ op.valorUnitario | currency: 'BRL' }}</td>
             <td> {{ op.dataOperacao | date: 'dd/MM/yyyy'}}</td>
             <td> {{ op.tipoOperacaoDto.nome}}</td>
         </tr>

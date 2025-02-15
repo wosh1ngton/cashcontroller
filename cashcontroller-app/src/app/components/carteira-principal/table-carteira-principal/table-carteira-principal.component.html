@@ -26,7 +26,7 @@ styleClass="p-datatable-sm">
         <tr>
             <td *ngFor="let col of columns">
                 <ng-container *ngIf="col.type === 'object'">
-                    {{ rowData[col.field].nome }}
+                    <strong> {{ rowData[col.field].sigla }} </strong> - {{ rowData[col.field].nome }} 
                 </ng-container>
                 <ng-container *ngIf="col.type === 'percentual'">
                     {{ rowData[col.field] /100 | percent : '1.0-2' }}

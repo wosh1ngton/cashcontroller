@@ -7,11 +7,11 @@ export const environment = {
   mainUrlAPI: 'http://localhost:8083/api',
   brapiURL: 'https://brapi.dev/api',
   tokenBrapi: 'hQTbQHiTVUDV9ohDHfCErU',
-  keycloak: {
-    issuer: 'http://localhost:8083',
-    realm: 'cash_controller',
-    clientId: 'spring-security-keycloak'
-  }
+  // keycloak: {
+  //   issuer: 'http://localhost:8083',
+  //   realm: 'cash_controller',
+  //   clientId: 'spring-security-keycloak'
+  // }
 };
 
 /*

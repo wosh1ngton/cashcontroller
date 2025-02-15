@@ -5,25 +5,18 @@ import { environment } from "src/environments/environment";
 import { Ativo } from "src/app/models/ativo.model";
 import { AtivoBrapi } from "src/app/models/ativo-brapi.model";
 import { SubclasseAtivo } from "../models/subclasse-ativo.model";
+import { AbstractService } from "./abstract.service";
 
 @Injectable({
     providedIn: 'root'
 })
-export class AtivoService {
+export class AtivoService extends AbstractService<Ativo> {
+    
+    private readonly baseBrapiUrl = environment.brapiURL;    
 
-    private readonly baseUrl = environment.mainUrlAPI;
-    private readonly baseBrapiUrl = environment.brapiURL;
-    private readonly tokenBrapi = environment.tokenBrapi;
-
-    constructor(private http: HttpClient) {}
-
-    getAtivos() : Observable<Ativo[]> {
-        return this.http.get<Ativo[]>(this.baseUrl + '/ativos');
-    }
-
-    getAll() : Observable<Ativo[]> {
-        return this.http.get<Ativo[]>(this.baseUrl + '/ativos');
-    }
+    constructor(private http: HttpClient) {
+        super(http, 'ativos');
+    } 
 
     getAtivosPorClasse(id: number) : Observable<Ativo[]> {
         return this.http.get<Ativo[]>(this.baseUrl + '/ativos/por-classe/' + id);
@@ -43,21 +36,6 @@ export class AtivoService {
 
     getSubclasseAtivos() : Observable<SubclasseAtivo[]> {
         return this.http.get<SubclasseAtivo[]>(this.baseUrl + '/ativos/subclasses');
-    }
-
-    save(ativo: any) {
-        return this.http.post(this.baseUrl + '/ativos', ativo);
-    }
-
-    update(ativo: any) {
-        return this.http.put(this.baseUrl + '/ativos', ativo);
-    }
-
-    excluir(id: string) {
-        return this.http.delete(this.baseUrl + '/ativos/' + id);
-    }
-
-    findById(id: number) {
-        return this.http.get(this.baseUrl + '/ativos/' + id)
-    }
+    }    
+    
 }
