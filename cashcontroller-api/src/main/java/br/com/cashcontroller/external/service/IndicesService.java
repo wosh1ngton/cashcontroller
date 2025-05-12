@@ -1,10 +1,12 @@
 package br.com.cashcontroller.external.service;
 
+import br.com.cashcontroller.dto.IndiceDTO;
 import br.com.cashcontroller.entity.SelicMes;
 import br.com.cashcontroller.external.client.BacenApiClient;
 import br.com.cashcontroller.external.dto.selic.IPCAMesDTO;
 import br.com.cashcontroller.external.dto.selic.SelicMesDTO;
 import br.com.cashcontroller.repository.SelicMesRepository;
+import br.com.cashcontroller.service.listarindicesstrategy.ListarHistoricoIndiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.DoubleStream;
 
@@ -22,6 +25,9 @@ public class IndicesService {
     private final BacenApiClient bacenApiClient;
     @Autowired
     SelicMesRepository selicMesRepository;
+
+    @Autowired
+    ListarHistoricoIndiceService listarHistoricoIndiceService;
 
     public SelicMesDTO[] getAllSelicMes() {
         return this.bacenApiClient.getSelicMes().block();
@@ -49,6 +55,10 @@ public class IndicesService {
             novaSelic.setData(inicioMes);
             selicMesRepository.save(novaSelic);
         }
+    }
+
+    public List<IndiceDTO> listarHistoricoIndice(String indice) {
+        return listarHistoricoIndiceService.listarHistorico(indice);
     }
 
 }

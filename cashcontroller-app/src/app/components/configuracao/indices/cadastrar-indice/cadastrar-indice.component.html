@@ -1,0 +1,47 @@
+<div class="dialog-content mr-3 ml-3">
+    <form #formIndice="ngForm">
+
+        <div class="field grid">
+            <input type="hidden" [(ngModel)]="indice.id" name="id">
+            <label for="indexador" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> Índice </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-dropdown [options]="indices" [(ngModel)]="indice.label" [showClear]="true"
+                    appendTo="body" placeholder="Índice" name="tipo">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> 
+                Data         </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-calendar [(ngModel)]="indice.data" inputId="icondisplay" dateFormat="dd/mm/yy"
+                    [iconDisplay]="'input'" [showIcon]="true" appendTo="body" name="data"> </p-calendar>
+            </div>
+        </div>      
+       
+        <div class="field grid">
+
+            <label for="logo" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Valor</label>
+
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR"                     
+                [(ngModel)]="indice.valor" [minFractionDigits]="2"
+                [maxFractionDigits]="4" name="valor">
+            </p-inputNumber>   
+            </div>
+        </div>       
+
+       
+      
+
+        <div class="grid mt-3">
+            <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-2 p-fluid">
+                <p-button label="Cancelar" severity="danger" size="small" (onClick)="close()"></p-button>
+            </div>
+            <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-4 p-fluid">
+                <p-button label="Salvar" class="cor-btn" size="small" (onClick)="save(formIndice.value)"></p-button>
+            </div>
+        </div>
+    </form>
+</div>

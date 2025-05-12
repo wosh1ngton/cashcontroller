@@ -11,12 +11,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CalendarModule } from 'primeng/calendar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SharedExtendedModule } from "../../shared-modules/shared.module";
+import { IndicesComponent } from './indices/indices.component';
+import { CadastrarIndiceComponent } from './indices/cadastrar-indice/cadastrar-indice.component';
+import { DataView } from 'primeng/dataview';
 
 @NgModule({
   declarations: [
     ConfiguracaoComponent,
     ListarAtivosComponent,
-    CadastroAtivoComponent
+    CadastroAtivoComponent,
+    IndicesComponent,
+    CadastrarIndiceComponent
   ],
   imports: [
     CommonModule,
@@ -25,7 +30,7 @@ import { SharedExtendedModule } from "../../shared-modules/shared.module";
     FormsModule,
     CalendarModule,
     ConfiguracaoRoutingModule,
-    SharedExtendedModule
+    SharedExtendedModule,    
 ]
 })
 export class ConfiguracaoModule { }

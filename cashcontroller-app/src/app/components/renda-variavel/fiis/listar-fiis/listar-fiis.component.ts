@@ -32,33 +32,8 @@ export class ListarFiisComponent implements OnInit {
     console.log('id', id)
     this.ativoSelecionado = id.data;
   }
-  listarCarteira() {
-    const ativosBrapi$ = this.ativoService.getFiisBrapi();
-    const carteira$ = this.loading.showLoaderUntilCompleted(this.operacaoRendaVariavelService.carteiraFiis());
-
-    forkJoin([ativosBrapi$, carteira$])
-      .pipe(
-        map(([ativosBrapi, carteira]) => {
-          return carteira.map((c) => {
-            console.log('o que? ', c)
-            let ativo = ativosBrapi.stocks.find(
-             
-              (a: any) => {
-                console.log('o que2? ', a),
-                a.stock === c.ativo.sigla
-              }
-            );
-            return {
-              ...c,
-              cotacao: ativo.close,
-              oscilacaoDia: ativo.change,              
-              valorMercado: ativo.close * c.custodia,
-              custo: c.custodia * c.precoMedio,
-              valorizacao: ativo.close * c.custodia - c.custodia * c.precoMedio,
-            };
-          });
-        })
-      )
+  listarCarteira() {        
+    this.loading.showLoaderUntilCompleted(this.ativoService.getMeusFiis())
       .subscribe({
         next: (data) => {
             (this.carteira = data),
@@ -67,8 +42,7 @@ export class ListarFiisComponent implements OnInit {
         complete: () => console.log('complete'),
         error: (err: Error) => console.log('Erro: ', err.message),
       });
-  }
-
+  }  
   
   getTotalValorMercado(): number {
     return this.carteira.reduce((total, item) => total + item.valorMercado, 0);

@@ -9,4 +9,5 @@ public class AporteDTO {
     private int id;
     private LocalDate dataAporte;
     private double valorAporte;
+    private double resultadoMes;
 }

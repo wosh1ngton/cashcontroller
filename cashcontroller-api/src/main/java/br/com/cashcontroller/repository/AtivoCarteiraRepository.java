@@ -3,6 +3,7 @@ package br.com.cashcontroller.repository;
 import br.com.cashcontroller.dto.PatrimonioCategoriaDTO;
 import br.com.cashcontroller.dto.ProventosMesDTO;
 import br.com.cashcontroller.dto.TopPagadoraProventosDTO;
+import br.com.cashcontroller.entity.Ativo;
 import br.com.cashcontroller.entity.AtivoCarteira;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -62,5 +63,14 @@ public interface AtivoCarteiraRepository extends JpaRepository<AtivoCarteira, In
             "JOIN ev.ativo a " +
             "GROUP BY a.sigla, a.subclasseAtivo.id")
     List<TopPagadoraProventosDTO> listarTopPagadoras();
+
+    @Query("SELECT " +
+            "a FROM AtivoCarteira ac " +
+            "JOIN ac.ativo a " +
+            "JOIN a.subclasseAtivo sub " +
+            "WHERE " +
+            "ac.custodia > 0 AND " +
+            "sub.id = 1")
+    List<Ativo> findAllFiis();
 
 }

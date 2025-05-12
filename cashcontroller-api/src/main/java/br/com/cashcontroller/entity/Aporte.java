@@ -21,4 +21,7 @@ public class Aporte {
     @Column(name = "QT_VALOR_APORTE")
     private double valorAporte;
 
+    @Column(name = "QT_RESULTADO_MES")
+    private Double resultadoMes;
+
 }

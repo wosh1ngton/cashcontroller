@@ -2,13 +2,13 @@
   width: 100%;
 
 }
-.barra-header {  
+/* .barra-header {  
   background-color: var(--secondary-color-cc);
   height: 6px;  
   z-index: 1000;
   position: relative;
   
-}
+} */
 
 p-menubar {
   z-index: 1002 !important;

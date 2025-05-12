@@ -139,17 +139,17 @@ public class OperacaoService {
     }
 
 
-    private Long desdobrarAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
-        Long fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
-        Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
-        Long totalDoAumento = (fatorDeProporcao * totalAtualDeAcoes) - totalAtualDeAcoes;
+    private int desdobrarAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
+        int fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
+        int totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
+        int totalDoAumento = (fatorDeProporcao * totalAtualDeAcoes) - totalAtualDeAcoes;
         return totalDoAumento;
     }
 
-    private Long agruparAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
-        Long fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
-        Long totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
-        Long totalDecrescimo = totalAtualDeAcoes - (totalAtualDeAcoes / fatorDeProporcao);
+    private int agruparAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
+        int fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
+        int totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
+        int totalDecrescimo = totalAtualDeAcoes - (totalAtualDeAcoes / fatorDeProporcao);
         return totalDecrescimo;
     }
 
@@ -176,7 +176,7 @@ public class OperacaoService {
     }
 
     private boolean posicaoLiquidada(int idAtivo) {
-        Long custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo);
+        int custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo);
         return custodia == 0;
     }
 
@@ -235,9 +235,13 @@ public class OperacaoService {
         } else if (operacaoRendaFixaDto.getTipoOperacaoDto().getId() == TipoOperacaoEnum.COMPRA.getId()) {
             double valorBase = 0.0;
             LocalDate startDate = LocalDate.of(2015, 1, 1);
-            double pmAtivo = this.operacaoRendaFixaRepository.calcularPrecoMedio(operacaoRendaFixaDto.getAtivoDto().getId(),
-                    operacaoRendaFixaDto.getDataOperacao(),
-                    startDate).getPrecoMedio();
+            double pmAtivo = operacaoRendaFixaDto.getValorUnitario();
+            var operacoes = this.operacaoRendaVariavelRepository.listarOperacoesPorAtivo(operacaoRendaFixaDto.getAtivoDto().getId());
+            if(!operacoes.isEmpty()) {
+                pmAtivo = this.operacaoRendaFixaRepository.calcularPrecoMedio(operacaoRendaFixaDto.getAtivoDto().getId(),
+                        operacaoRendaFixaDto.getDataOperacao(),
+                        startDate).getPrecoMedio();
+            }
             return pmAtivo * operacaoRendaFixaDto.getQuantidadeNegociada();
 
         }

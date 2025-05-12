@@ -1,20 +1,11 @@
 server:
   port: 8083
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 86400000  # 24 hours in milliseconds
+
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: spring-security-keycloak
-            client-secret: MQDBNKbTSO6T7BCeflmsSa8PgluFq9pm
-            scope: openid
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/realms/cash_controller
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/cash_controller
   jackson:
     time-zone: America/Sao_Paulo
   datasource:    
@@ -37,3 +28,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 app:
   version: '@project.version@'
+  admin:
+    username: admin
+    password: ${ADMIN_PASSWORD:admin123}  # Default password if env variable not set
+    seed-enabled: true  # Set to false to disable admin user creation

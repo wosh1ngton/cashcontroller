@@ -28,11 +28,15 @@ export class AtivoService extends AbstractService<Ativo> {
 
     getAcoesBrapi(): Observable<any> {
         return this.http.get(this.baseBrapiUrl + '/quote/list?type=stock&token=hQTbQHiTVUDV9ohDHfCErU');
-    }
+    } 
+    
+    getMinhasAcoes(): Observable<any> {
+        return this.http.get(this.baseUrl + '/cotacao/minhas-acoes');
+    } 
 
-    getFiisBrapi(): Observable<any> {
-        return this.http.get(this.baseBrapiUrl + '/quote/list?type=fund&token=hQTbQHiTVUDV9ohDHfCErU');
-    }
+    getMeusFiis(): Observable<any> {
+        return this.http.get(this.baseUrl + '/cotacao/meus-fiis');
+    }   
 
     getSubclasseAtivos() : Observable<SubclasseAtivo[]> {
         return this.http.get<SubclasseAtivo[]>(this.baseUrl + '/ativos/subclasses');

@@ -14,6 +14,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ChartModule } from 'primeng/chart';
+import { DataViewModule } from 'primeng/dataview';
+
 @NgModule({
   declarations: [],
   exports: [
@@ -31,7 +33,8 @@ import { ChartModule } from 'primeng/chart';
     ProgressSpinnerModule,
     InputTextModule,
     FieldsetModule,
-    ChartModule
+    ChartModule,
+    DataViewModule
   ]
 })
 export class PrimengModule { }

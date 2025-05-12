@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { ListarRendaFixaComponent } from './components/renda-fixa/listar-renda-fixa/listar-renda-fixa.component';
 import { ListarCarteiraAcoesComponent } from './components/renda-variavel/listar-carteira-acoes/listar-carteira-acoes.component';
@@ -11,13 +13,24 @@ import { ListarCarteiraRendaFixaComponent } from './components/renda-fixa/listar
 import { ListarAtivosCarteiraPrincipalComponent } from './components/carteira-principal/listar-ativos-carteira-principal/listar-ativos-carteira-principal.component';
 import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
 import { ListarAportesComponent } from './components/aporte/listar-aportes/listar-aportes.component';
-import { AppComponent } from './app.component';
+
 
 const routes: Routes = [
   {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
     path: '',   
-     
+    title: 'Home Page',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
     children: [
+      {
+        path: '',
+        redirectTo: 'renda-variavel',
+        pathMatch: 'full'
+      },
       {
         path: 'renda-variavel',
         component: ListarOperacoesComponent,
@@ -63,7 +76,7 @@ const routes: Routes = [
           ),
       },
     ],
-    // component: HomeComponent,
+    
   },
  
 ];

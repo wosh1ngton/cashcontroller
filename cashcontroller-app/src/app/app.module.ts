@@ -6,8 +6,8 @@ import { PrimengModule } from './primeng/primeng.module';
 import { SharedExtendedModule } from './shared-modules/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MessageService, SharedModule } from 'primeng/api';
 import { OperacaoRendaVariavelService } from './services/operacao-renda-variavel.service';
 import { ListarCarteiraAcoesComponent } from './components/renda-variavel/listar-carteira-acoes/listar-carteira-acoes.component';
@@ -27,12 +27,16 @@ import { CalendarModule } from 'primeng/calendar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableCarteiraPrincipalComponent } from './components/carteira-principal/table-carteira-principal/table-carteira-principal.component';
 import { TabViewModule } from 'primeng/tabview';
+import { ToastModule } from 'primeng/toast';
 import { ListarPatrimonioComponent } from './components/relatorios/listar-patrimonio/listar-patrimonio.component';
 import { TreeMapChartComponent } from './components/charts/tree-map-chart/tree-map-chart.component';
 import { CadastrarAporteComponent } from './components/aporte/cadastrar-aporte/cadastrar-aporte.component';
 import { ListarAportesComponent } from './components/aporte/listar-aportes/listar-aportes.component';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { DefaultComponent } from './components/default/default.component';
+import { LoginComponent } from './components/login/login.component';
 
 
 registerLocaleData(localePt, 'pt-BR', localePtExtra);
@@ -52,7 +56,9 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     ListarPatrimonioComponent,
     TreeMapChartComponent,
     CadastrarAporteComponent,
-    ListarAportesComponent   
+    ListarAportesComponent   ,
+    DefaultComponent,
+    LoginComponent
     
   ],
   imports: [    
@@ -61,23 +67,26 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     ConfirmDialogModule,
     PrimengModule,
     BrowserAnimationsModule,
-    FormsModule,    
+    FormsModule,
+    ReactiveFormsModule,
     DetalharAtivoComponent,  
     SharedModule,
     SharedExtendedModule,
     CalendarModule,  
-    ConfiguracaoModule      ,
-    KeycloakAngularModule
+    ConfiguracaoModule,
+    KeycloakAngularModule,
+    ToastModule,
+    HttpClientModule
   ],  
   exports: [
     ConfirmDialogModule
   ],
   providers: [
-    provideHttpClient(),
     MessageService,    
     LoadingService,
     OperacaoRendaVariavelService,
     { provide: LOCALE_ID, useValue: 'pt-BR' },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     // {
     //   provide: APP_INITIALIZER,
     //   useFactory: initializer,

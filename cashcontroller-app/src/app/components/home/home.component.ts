@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 import { VersionService } from 'src/app/services/version.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -13,16 +14,24 @@ import { VersionService } from 'src/app/services/version.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router, private versionService: VersionService) { }
+  constructor(
+    private router: Router,
+    private versionService: VersionService,
+    private authService: AuthService
+  ) { }
 
   items: MenuItem[] | undefined;
   selectedMenu: any;
-  @Input('version') version = new Input();
+  version: string = "";
+  username: string = "";
   
-  
+  getVersion() {
+    this.versionService.getVersion().subscribe((res) => this.version = res);
+  }
 
   ngOnInit(): void {
-    
+    this.getVersion();
+    this.authService.getUsername().subscribe(username => this.username = username);
     this.items = [    
       {
         label: 'Operações',
@@ -115,6 +124,10 @@ export class HomeComponent implements OnInit {
 
   getMenuSelecionado($event: MenuItemCommandEvent) {    
     this.selectedMenu = $event.item?.id;
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
 

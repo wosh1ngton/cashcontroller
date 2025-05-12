@@ -31,7 +31,7 @@ public class AtivoService {
 	public AtivoAddDTO cadastrarAtivo(AtivoAddDTO ativoAddDto) {
 
 		Ativo ativo = AtivoMapper.INSTANCE.toAddEntity(ativoAddDto);
-		if (ativo.getParametroRendaFixa() != null) {
+		if (ativoAddDto.getParametroRendaFixaDto() != null) {
 			ativo.getParametroRendaFixa().setAtivo(ativo);
 		}
 		var entitySaved = ativoRepository.saveAndFlush(ativo);

@@ -6,8 +6,13 @@
         <a routerLink="/" style="text-decoration: none; font-size: 1.2rem;">         
             <h3 style="display: inline-flex; flex-wrap: wrap; color: #333;"> 
               Ca$hController </h3>
-            <span style="font-size: 2.8rem; font-weight: 100; vertical-align: middle;"> | </span> 
         </a>
+      </ng-template>
+      <ng-template pTemplate="end">
+        <div class="flex align-items-center gap-2">
+          <span style="color: #666;">Olá, {{username}}</span>
+          <button pButton type="button" icon="pi pi-sign-out" class="p-button-rounded" (click)="logout()" pTooltip="Sair"></button>
+        </div>
       </ng-template>
       <ng-template let-item pTemplate="item" class="p-menuitem">
 
@@ -19,9 +24,7 @@
           </span>
         </a>
 
-      </ng-template>
-   
-     
+      </ng-template>  
     </p-menubar>
    
   </div>

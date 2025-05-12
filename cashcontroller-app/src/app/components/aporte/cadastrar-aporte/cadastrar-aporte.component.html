@@ -12,6 +12,18 @@
 
 
         </div>
+
+        <div class="field grid">
+            <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">
+                Resultado </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-inputNumber [(ngModel)]="aporte.resultadoMes" inputId="valor" [min]="0" locale="pt-BR"
+                    [minFractionDigits]="2" [maxFractionDigits]="4" name="resultadoMes">
+                </p-inputNumber>
+            </div>
+
+
+        </div>
         <div class="field grid">
             <label for="icondisplay" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">
                 Data </label>

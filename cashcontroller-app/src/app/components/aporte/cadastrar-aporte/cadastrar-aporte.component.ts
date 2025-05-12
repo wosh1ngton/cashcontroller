@@ -31,6 +31,7 @@ export class CadastrarAporteComponent implements OnInit {
       this.aporte = {
         id: aporteEmEdicao.id,
         valorAporte : aporteEmEdicao.valorAporte,
+        resultadoMes : aporteEmEdicao.resultadoMes,
         dataAporte : DateUtil.dateConstructor(aporteEmEdicao.dataAporte) 
       }
     }    

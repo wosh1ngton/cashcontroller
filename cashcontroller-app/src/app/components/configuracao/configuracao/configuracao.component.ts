@@ -15,9 +15,18 @@ export class ConfiguracaoComponent implements OnInit {
         label: 'Ativos',
         icon: 'pi pi-globe',
         routerLink: 'listar-ativo',
-        id: '1',
       },
-      { label: 'Parâmetros', icon: 'pi pi-wrench' },
+      {
+        label: 'IPCA',
+        routerLink: ['listar-indices', 'IPCA'],
+       
+      },
+      {
+        label: 'SELIC',
+        routerLink: ['listar-indices', 'SELIC'],
+       
+      },
     ];
+    
   }
 }

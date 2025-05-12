@@ -1,7 +1,9 @@
 package br.com.cashcontroller.service;
 
 import br.com.cashcontroller.dto.*;
+import br.com.cashcontroller.entity.Ativo;
 import br.com.cashcontroller.entity.AtivoCarteira;
+import br.com.cashcontroller.external.dto.stock.BrapiDTO;
 import br.com.cashcontroller.external.dto.stock.StocksDTO;
 import br.com.cashcontroller.external.service.RendaVariavelService;
 import br.com.cashcontroller.external.service.TesouroService;
@@ -23,7 +25,6 @@ import java.util.stream.Collectors;
 public class AtivoCarteiraService {
     @Autowired
     AtivoCarteiraRepository repository;
-    private AtivoCarteiraMapper mapper;
 
     @Autowired
     AtivoRepository ativoRepository;
@@ -65,6 +66,35 @@ public class AtivoCarteiraService {
         ativosCarteiraDTO = ativosCarteiraDTO.stream().filter(a -> a.getAtivo().getSubclasseAtivo().getId() == 1).toList();
         var fiisComValordeMercado = Arrays.stream(this.rendaVariavelService.getFiisBrapi().getStocks()).toList();
         return setValoresFromAPI(ativosCarteiraDTO, fiisComValordeMercado);
+    }
+
+    public List<AtivoCarteiraDTO> getCotacaoMeusFiis() {
+        var brapiDTO = rendaVariavelService.getFiisBrapi();
+        List<AtivoCarteiraDTO> meusFiis = operacaoService.listarCarteiraDeFiis();
+        setCotacoes(brapiDTO, meusFiis);
+        return meusFiis;
+    }
+
+    public List<AtivoCarteiraDTO> getCotacaoMinhasAcoes() {
+        var brapiDTO = rendaVariavelService.getStocksBrapi();
+        List<AtivoCarteiraDTO> minhasAcoes = operacaoService.listarCarteiraDeAcoes();
+        setCotacoes(brapiDTO, minhasAcoes);
+        return minhasAcoes;
+    }
+
+    private static void setCotacoes(BrapiDTO brapiDTO, List<AtivoCarteiraDTO> meusAtivos) {
+        Arrays.stream(brapiDTO.getStocks()).forEach(ativoBrapi -> {
+            meusAtivos.forEach(ativo -> {
+                if(ativo.getAtivo().getSigla().equals(ativoBrapi.getStock())) {
+                    ativo.setCotacao(ativoBrapi.getClose());
+                    ativo.setOscilacaoDia(ativoBrapi.getChange());
+                    ativo.setValorMercado(ativoBrapi.getClose() * ativo.getCustodia());
+                    ativo.setCusto(ativo.getCustodia() * ativo.getPrecoMedio());
+                    ativo.setValorizacao(ativoBrapi.getClose() * ativo.getCustodia() - ativo.getCustodia() * ativo.getPrecoMedio());
+
+                }
+            });
+        });
     }
 
     private List<AtivoCarteiraDTO> setValoresFromAPI(List<AtivoCarteiraDTO> ativoCarteiraDto, List<StocksDTO> ativosBrapi) {

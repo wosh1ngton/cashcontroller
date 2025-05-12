@@ -2,6 +2,7 @@ package br.com.cashcontroller.external.service;
 
 import br.com.cashcontroller.external.client.BrapiApiClient;
 import br.com.cashcontroller.external.dto.stock.BrapiDTO;
+import br.com.cashcontroller.service.AtivoCarteiraService;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,9 +14,11 @@ public class RendaVariavelService {
 
     private final BrapiApiClient brapiApiClient;
 
+
     @Autowired
     public RendaVariavelService(BrapiApiClient brapiApiClient) {
         this.brapiApiClient = brapiApiClient;
+
     }
 
     public BrapiDTO getStocksBrapi() {
@@ -27,6 +30,9 @@ public class RendaVariavelService {
         var brapiDTO =brapiApiClient.getFiisBrapi().block();
         return brapiDTO;
     }
+
+
+
 
     public String getIbov() {
         var body = brapiApiClient.getIbov();

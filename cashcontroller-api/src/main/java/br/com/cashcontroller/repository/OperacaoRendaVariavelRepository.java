@@ -155,7 +155,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    op.ativo a " +
             "JOIN " +
             "   op.tipoOperacao top WHERE a.id = :id")
-    Long getCustodiaPorAtivo(@Param("id") int id);
+    int getCustodiaPorAtivo(@Param("id") int id);
 
 
     @Query("SELECT " +
@@ -170,7 +170,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    op.ativo a " +
             "JOIN " +
             "   op.tipoOperacao top WHERE a.id = :id AND op.dataOperacao <= :dataCom")
-    Long getCustodiaPorAtivo(@Param("id") int id, @Param("dataCom") LocalDate dataCom);
+    int getCustodiaPorAtivo(@Param("id") int id, @Param("dataCom") LocalDate dataCom);
 
     @Query("SELECT new br.com.cashcontroller.dto.PosicaoEncerradaDTO(" +
             "    (SELECT MIN(op2.dataOperacao) FROM OperacaoRendaVariavel op2 WHERE op2.ativo.id = a.id) as data_inicio, " +
