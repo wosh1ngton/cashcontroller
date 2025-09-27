@@ -57,6 +57,7 @@ public class AtivoCarteiraService {
         var ativosCarteiraDTO = getCarteira();
         ativosCarteiraDTO = ativosCarteiraDTO.stream().filter(a -> a.getAtivo().getSubclasseAtivo().getId() == 2).toList();
         var stocks = Arrays.stream(this.rendaVariavelService.getStocksBrapi().getStocks()).toList();
+
         return setValoresFromAPI(ativosCarteiraDTO, stocks);
 
     }
@@ -75,10 +76,21 @@ public class AtivoCarteiraService {
         return meusFiis;
     }
 
+    public List<AtivoCarteiraDTO> getIVVB11() {
+        var brapiDTO = rendaVariavelService.getIVVB11();
+        List<AtivoCarteiraDTO> ivvb11 = operacaoService.listarCarteiraDeAcoes().stream()
+                .filter(ativo -> ativo.getAtivo().getSigla().equals("IVVB11")).collect(Collectors.toList());
+        setCotacoes(brapiDTO, ivvb11);
+        return ivvb11;
+    }
+
     public List<AtivoCarteiraDTO> getCotacaoMinhasAcoes() {
         var brapiDTO = rendaVariavelService.getStocksBrapi();
+
         List<AtivoCarteiraDTO> minhasAcoes = operacaoService.listarCarteiraDeAcoes();
+        minhasAcoes.removeIf(ativo -> ativo.getAtivo().getSigla().equals("IVVB11"));
         setCotacoes(brapiDTO, minhasAcoes);
+        minhasAcoes.addAll(getIVVB11());
         return minhasAcoes;
     }
 

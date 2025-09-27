@@ -1,6 +1,7 @@
 package br.com.cashcontroller.external.client;
 
 import br.com.cashcontroller.external.dto.stock.BrapiDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 public class BrapiApiClient {
 
@@ -24,7 +26,8 @@ public class BrapiApiClient {
         return webClientBrapi.get()
                 .uri("/quote/list?type=stock&token="+TOKEN_BRAPI)
                 .retrieve()
-                .bodyToMono(BrapiDTO.class);
+                .bodyToMono(BrapiDTO.class)
+                .doOnNext(body -> log.info("Response: {}", body));
     }
 
 
@@ -34,6 +37,14 @@ public class BrapiApiClient {
                 .retrieve()
                 .bodyToMono(BrapiDTO.class);
     }
+
+    public Mono<BrapiDTO> getIIVB11() {
+        return webClientBrapi.get()
+                .uri("/quote/list?search=IVVB11&token="+TOKEN_BRAPI)
+                .retrieve()
+                .bodyToMono(BrapiDTO.class);
+    }
+
 
     public String getIbov() {
         return  webClientBrapi.get()

@@ -28,23 +28,23 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!seedEnabled) {
-            System.out.println("Admin user seeding is disabled");
-            return;
-        }
-
-        // Check if admin user already exists
-        if (userRepository.findByUsername(username).isEmpty()) {
-            User adminUser = new User();
-            adminUser.setUsername(username);
-            adminUser.setPassword(passwordEncoder.encode(password));
-            adminUser.setRole(Role.ROLE_ADMIN);
-            
-            userRepository.save(adminUser);
-            System.out.println("Admin user created successfully!");
-        } else {
-            System.out.println("Admin user already exists");
-        }
+//        if (!seedEnabled) {
+//            System.out.println("Admin user seeding is disabled");
+//            return;
+//        }
+//
+//        // Check if admin user already exists
+//        if (userRepository.findByUsername(username).isEmpty()) {
+//            User adminUser = new User();
+//            adminUser.setUsername(username);
+//            adminUser.setPassword(passwordEncoder.encode(password));
+//            adminUser.setRole(Role.ROLE_ADMIN);
+//
+//            userRepository.save(adminUser);
+//            System.out.println("Admin user created successfully!");
+//        } else {
+//            System.out.println("Admin user already exists");
+//        }
     }
 
     // Getters and setters for configuration properties

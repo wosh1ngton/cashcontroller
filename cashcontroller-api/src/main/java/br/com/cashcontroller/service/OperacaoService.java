@@ -344,6 +344,7 @@ public class OperacaoService {
         var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeAcoes();
         carteira
                 .forEach(ativoCarteira -> {
+
                             ativoCarteira.setTotalEmProventos(this.eventoService.getTotalProventosPorAtivo(ativoCarteira.getAtivo().getId()));
                             ativoCarteira.setGanhoDeCapital(this.calcularGanhoDeCapital(ativoCarteira.getAtivo().getId()));
                         }

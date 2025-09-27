@@ -31,6 +31,11 @@ public class RendaVariavelService {
         return brapiDTO;
     }
 
+    public BrapiDTO getIVVB11() {
+        var brapiDTO =brapiApiClient.getFiisBrapi().block();
+        return brapiDTO;
+    }
+
 
 
 
