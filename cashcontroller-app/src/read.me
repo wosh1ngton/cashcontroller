@@ -1,0 +1,14 @@
+## Deploy
+
+## compilar o front
+ng build --configuration production
+
+##copiar para recurso estático do backend
+cp -r frontend\dist\app-name\* backend\src\main\resources\static\
+
+##compilar o backend
+mvn clean package -DskipTests
+
+##executar o bat da área de trabalho
+ajustar a versao para executar o jar correto
+

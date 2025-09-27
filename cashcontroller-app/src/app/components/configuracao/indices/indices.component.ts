@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CadastrarIndiceComponent } from './cadastrar-indice/cadastrar-indice.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +15,8 @@ export class IndicesComponent implements OnInit {
   
   cadastroIndiceRef: DynamicDialogRef | undefined;
   indice: any = ({} = '');
-  indices: Indice[] = [];
+  // indices: Indice[] = [];
+  indices = signal<Indice[]>([]);
   constructor(
     private dialogService: DialogService,
     private route: ActivatedRoute,
@@ -75,11 +76,13 @@ export class IndicesComponent implements OnInit {
 
   listarIndices() {
     this.indiceService.listarHistorico(this.indice.id).subscribe((result) => {
-      this.indices = result.sort((a, b) => {
-        const dateA = new Date(a.data);
-        const dateB = new Date(b.data);
-        return dateB.getTime() - dateA.getTime();
-      });
+      const resultOrdenado = result.sort((a, b) => {
+          const dateA = new Date(a.data);
+          const dateB = new Date(b.data);
+          return dateB.getTime() - dateA.getTime();
+        });
+    
+      return this.indices.set(resultOrdenado);
     });
   }
 }

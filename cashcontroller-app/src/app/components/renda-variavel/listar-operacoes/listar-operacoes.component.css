@@ -22,11 +22,6 @@
     
 }
 
-::ng-deep .cor-btn > .p-button {
-    background-color: #000080;
-    border: none;
-}
-
 .painel-de-botoes {
     display: flex;
     justify-content: end;
@@ -36,3 +31,40 @@
 .rowstyle {        
     background-color: #f4f4f4;
 }
+
+
+
+::ng-deep .cor-btn > .p-button {
+    --border-angle: 0deg;
+    border-radius: 12px;
+    /* box-shadow: 0px 2px 4px hsla(219, 96%, 38%, 0.25); */
+    animation: border-angle-rotate 4s infinite linear;
+    /* border: 0.3rem solid transparent;    */
+    color: #fff;
+    
+    
+    background:
+    linear-gradient(#3150A8, #3B82F6) padding-box;
+    /* conic-gradient(
+      from var(--border-angle),
+      #1E3A8A,   
+      #2563EB,   
+      #3B82F6,   
+      #60A5FA,   
+      #93C5FD,   
+      #60A5FA,
+      #3B82F6,
+      #2563EB,
+      #1E3A8A
+    ) border-box; */
+}  
+  /* @keyframes border-angle-rotate {
+    from { --border-angle: 0deg; }
+    to { --border-angle: 360deg; }
+  }
+    
+  @property --border-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  } */

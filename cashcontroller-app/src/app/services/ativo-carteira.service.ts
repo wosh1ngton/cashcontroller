@@ -60,8 +60,8 @@ export class AtivoCarteiraService {
         return this.http.get(this.baseUrl + '/ativo-carteira/top-pagadoras')
     }
 
-    getProventos() {
-        return this.http.get(this.baseUrl + '/ativo-carteira/proventos')
+    getProventos(): Observable<any[]> {
+        return this.http.get<any[]>(this.baseUrl + '/ativo-carteira/proventos')
     }
 
     getIbov() {

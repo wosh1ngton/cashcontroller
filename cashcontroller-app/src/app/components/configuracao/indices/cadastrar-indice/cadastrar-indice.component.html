@@ -5,7 +5,9 @@
             <input type="hidden" [(ngModel)]="indice.id" name="id">
             <label for="indexador" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> Índice </label>
             <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
-                <p-dropdown [options]="indices" [(ngModel)]="indice.label" [showClear]="true"
+                <p-dropdown [options]="indices" 
+                    optionLabel="label"
+                    [(ngModel)]="tipoIndice" [showClear]="true"
                     appendTo="body" placeholder="Índice" name="tipo">
                 </p-dropdown>
             </div>
@@ -25,7 +27,7 @@
             <label for="logo" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Valor</label>
 
             <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
-                <p-inputNumber inputId="valor" [min]="0" locale="pt-BR"                     
+                <p-inputNumber inputId="valor"  locale="pt-BR"                     
                 [(ngModel)]="indice.valor" [minFractionDigits]="2"
                 [maxFractionDigits]="4" name="valor">
             </p-inputNumber>   
@@ -37,10 +39,10 @@
 
         <div class="grid mt-3">
             <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-2 p-fluid">
-                <p-button label="Cancelar" severity="danger" size="small" (onClick)="close()"></p-button>
+                <p-button label="Cancelar!" severity="danger" size="small" (onClick)="close()"></p-button>
             </div>
             <div class="col-12 lg:col-3 sm:col-12 lg:col-offset-4 p-fluid">
-                <p-button label="Salvar" class="cor-btn" size="small" (onClick)="save(formIndice.value)"></p-button>
+                <p-button label="Salvar!" class="cor-btn" size="small" (onClick)="save(formIndice.value)"></p-button>
             </div>
         </div>
     </form>

@@ -56,16 +56,21 @@ public class IndexadorService {
             return IndexadorValorMesMapper.INSTANCE.fromIPCAtoDTO(ipcaMes);
     }
 
-    public void editarIPCAMes(IndiceDTO indiceDTO) {
+    public void editarIndiceMes(IndiceDTO indiceDTO) {
         if(Objects.nonNull(indiceDTO.getId()) ) {
-            var indice = ipcaMesRepository.findById(indiceDTO.getId());
-            if(indice.isPresent()){
-                indice.get().setValor(indiceDTO.getValor());
-                ipcaMesRepository.saveAndFlush(indice.get());
+
+            if(indiceDTO.getTipo().equals("IPCA")) {
+                var indice = ipcaMesRepository.getReferenceById(indiceDTO.getId());
             }
 
+//            if(indice.isPresent()){
+//                indice.get().setValor(indiceDTO.getValor());
+//                ipcaMesRepository.saveAndFlush(indice.get());
+//            }
         }
     }
+
+
 
     public List<SelicMes> cadastrarSelicMesEmLote(List<SelicMes> selics) {
         try {

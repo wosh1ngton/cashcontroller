@@ -9,7 +9,7 @@ import { EditarComponent } from '../components/shared/form-action/editar.compone
 @NgModule({
   declarations: [
     ValidarExclusaoComponent,
-    EditarComponent
+    EditarComponent,
   ],
   imports: [
     CommonModule,

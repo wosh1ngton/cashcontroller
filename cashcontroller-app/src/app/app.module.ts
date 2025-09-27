@@ -37,6 +37,8 @@ import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { DefaultComponent } from './components/default/default.component';
 import { LoginComponent } from './components/login/login.component';
+import { CardComponent } from './components/shared/card/card.component';
+import { ListarUsuarioComponent } from './components/configuracao/usuario/listar-usuario/listar-usuario.component';
 
 
 registerLocaleData(localePt, 'pt-BR', localePtExtra);
@@ -58,7 +60,7 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     CadastrarAporteComponent,
     ListarAportesComponent   ,
     DefaultComponent,
-    LoginComponent
+    LoginComponent      
     
   ],
   imports: [    
@@ -86,13 +88,7 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     LoadingService,
     OperacaoRendaVariavelService,
     { provide: LOCALE_ID, useValue: 'pt-BR' },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    // {
-    //   provide: APP_INITIALIZER,
-    //   useFactory: initializer,
-    //   deps: [KeycloakService],
-    //   multi: true,
-    // },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },  
      
   ],
   bootstrap: [AppComponent],

@@ -15,6 +15,9 @@ import { ButtonModule } from 'primeng/button';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ChartModule } from 'primeng/chart';
 import { DataViewModule } from 'primeng/dataview';
+import { PasswordModule } from 'primeng/password';
+import { MessageModule } from 'primeng/message';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [],
@@ -34,7 +37,11 @@ import { DataViewModule } from 'primeng/dataview';
     InputTextModule,
     FieldsetModule,
     ChartModule,
-    DataViewModule
+    DataViewModule,
+    PasswordModule,
+    MessageModule,
+    ToastModule
+
   ]
 })
 export class PrimengModule { }

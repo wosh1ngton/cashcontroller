@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
@@ -19,12 +19,12 @@ export class IndexadorService {
         return this.http.get<Indexador[]>(this.baseUrl + '/indexadores');
     }
 
-    save(indexador: any) {
-        return this.http.post(this.baseUrl + '/indexadores/ipca-mes-unitario', indexador, {});    
+    save(indexador: any, tipo: string) {
+        return this.http.post(this.baseUrl + `/indexadores/${tipo}`, indexador, {});    
     }
 
-    editar(indexador: any) {
-        return this.http.put(this.baseUrl + '/indexadores/ipca-mes-unitario', indexador, {});    
+    editar(indexador: any, tipo: string, id: number) {        
+        return this.http.put(`${this.baseUrl}/indexadores/${tipo}/${id}`, indexador, {});    
     }
 
     listarHistorico(tipo: string): Observable<Indice[]>  {

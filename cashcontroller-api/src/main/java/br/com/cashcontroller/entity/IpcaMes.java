@@ -17,20 +17,10 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "IPCA_MES")
-public class IpcaMes {
-	
-	@Id
-	@Column(name = "ID_IPCA_MES")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+public class IpcaMes extends IndiceMesBase {
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	@Column(name = "DT_REFERENCIA")
-	private LocalDate data;
-
-	@Column(name = "QT_VALOR")
-	private double valor;
-
-	@Transient
-	YearMonth dataYearMonth;
+    @Id
+    @Column(name = "ID_IPCA_MES")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 }

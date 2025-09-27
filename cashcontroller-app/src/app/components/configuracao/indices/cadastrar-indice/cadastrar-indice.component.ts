@@ -2,27 +2,38 @@ import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IndexadorService } from 'src/app/services/indexador.service';
+import { IndiceMes } from '../models/indice-mes.model';
 
 @Component({
-  selector: 'app-cadastrar-indice',  
+  selector: 'app-cadastrar-indice',
   templateUrl: './cadastrar-indice.component.html',
-  styleUrl: './cadastrar-indice.component.css'
+  styleUrl: './cadastrar-indice.component.css',
 })
 export class CadastrarIndiceComponent implements OnInit {
-
   indice: any = {};
-  indices: SelectItem[] = [{label: 'IPCA', value: 'IPCA'},{label:'SELIC', value: 'SELIC'}];
-  
+  tipoIndice: SelectItem | undefined = { label: '', value: '' };
+  indices: SelectItem[] = [
+    { label: 'IPCA', value: 'IPCA' },
+    { label: 'SELIC', value: 'SELIC' },
+  ];
+
   constructor(
     private cadastrarIndiceRef: DynamicDialogRef,
     private indiceDialogConfig: DynamicDialogConfig,
-    private indexadorService: IndexadorService) { }
-  
+    private indexadorService: IndexadorService
+  ) {}
+
   ngOnInit(): void {
-    if(this.indiceDialogConfig.data.isEdicao) {
+    if (this.indiceDialogConfig.data.isEdicao) {
       this.indice = this.indiceDialogConfig.data.indice;
-      this.indice.data = new Date(this.indice.data);      
-    }        
+      this.tipoIndice = this.indices.find(
+        (tipo) => this.indiceDialogConfig.data.indice.tipo === tipo.value
+      );
+      if (!this.indice.data.includes('T') || !this.indice.data.includes(' ')) {
+        this.indice.data += 'T00:00';
+      }
+      this.indice.data = new Date(this.indice.data);
+    }
   }
 
   get isEditar(): boolean {
@@ -32,19 +43,23 @@ export class CadastrarIndiceComponent implements OnInit {
   close() {
     this.cadastrarIndiceRef.close();
   }
-  
-  save(form: any) {
-    if(this.isEditar) {
-      this.indexadorService.editar(form).subscribe((result: any) => {
-        this.cadastrarIndiceRef.close(result);
-      });
-    } else {
-      this.indexadorService.save(form).subscribe((result: any) => {
-        this.cadastrarIndiceRef.close(result);
-      });
-    }
-    
-    console.log(form);
-  }
 
+  save(form: any) {
+    const indiceMes = IndiceMes.fromDate(form.data, form.valor);
+   
+      if (this.isEditar) {
+        this.indexadorService
+          .editar(indiceMes, form.tipo.value, form.id)
+          .subscribe((result: any) => {
+            this.cadastrarIndiceRef.close(result);
+          });
+      } else {
+        this.indexadorService
+          .save(indiceMes, form.tipo.value)
+          .subscribe((result: any) => {
+            this.cadastrarIndiceRef.close(result);
+          });
+      }
+  
+  }
 }

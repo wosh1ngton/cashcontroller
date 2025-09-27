@@ -6,11 +6,12 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { PrimengModule } from 'src/app/primeng/primeng.module';
+import { CardComponent } from '../shared/card/card.component';
 
 @Component({
   selector: 'app-numeros-do-mes',
   standalone: true,
-  imports: [PrimengModule],
+  imports: [PrimengModule, CardComponent],
   templateUrl: './numeros-do-mes.component.html',
   styleUrl: './numeros-do-mes.component.css',
 })

@@ -2,16 +2,20 @@ package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.IndexadorDTO;
 import br.com.cashcontroller.dto.IndiceDTO;
+import br.com.cashcontroller.entity.IndiceMesBase;
 import br.com.cashcontroller.entity.IpcaMes;
 import br.com.cashcontroller.entity.SelicMes;
 import br.com.cashcontroller.external.service.IndicesService;
 import br.com.cashcontroller.service.IndexadorService;
+import br.com.cashcontroller.service.IndiceMesFacadeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/indexadores")
@@ -22,6 +26,12 @@ public class IndexadorController {
 
     @Autowired
     IndicesService indicesService;
+    @Autowired
+    ObjectMapper objectMapper;
+
+
+    @Autowired
+    private IndiceMesFacadeService facade;
 
 
     @GetMapping
@@ -38,9 +48,9 @@ public class IndexadorController {
         return ResponseEntity.ok(service.cadastrarIpcaMes(ipcaMes));
     }
 
-    @PutMapping("/ipca-mes-unitario")
-    public ResponseEntity<Void> editarIpcaMes(@RequestBody IndiceDTO ipcaMes) {
-        service.editarIPCAMes(ipcaMes);
+    @PutMapping("/indice-mes")
+    public ResponseEntity<Void> editarIndice(@RequestBody IndiceDTO indiceDTO) {
+        service.editarIndiceMes(indiceDTO);
         return ResponseEntity.noContent().build();
     }
 
@@ -61,4 +71,41 @@ public class IndexadorController {
         return ResponseEntity.ok(indicesService.listarHistoricoIndice(indice));
     }
 
+    @PostMapping("/{tipo}")
+    public ResponseEntity<?> save(
+            @PathVariable String tipo,
+            @RequestBody Map<String, Object> json) {
+        IndiceMesBase entity = convertToEntity(tipo, json);
+        return ResponseEntity.ok(facade.save(tipo, entity));
+    }
+
+    @PutMapping("/{tipo}/{id}")
+    public ResponseEntity<?> update(
+            @PathVariable String tipo,
+            @PathVariable int id,
+            @RequestBody Map<String, Object> json
+            ) {
+        IndiceMesBase entity = convertToEntity(tipo, json);
+        return ResponseEntity.ok(facade.update(tipo,id,entity));
+    }
+
+    private IndiceMesBase convertToEntity(String tipo, Map<String, Object> json) {
+
+        switch (tipo.toLowerCase()) {
+            case "ipca":
+                return objectMapper.convertValue(json, IpcaMes.class);
+            case "selic":
+                return objectMapper.convertValue(json, SelicMes.class);
+            default:
+                throw new IllegalArgumentException("Tipo desconhecido");
+        }
+    }
+
+
+
+    @PostConstruct
+    public void logModules() {
+        System.out.println("Registered Jackson modules: ");
+        objectMapper.getRegisteredModuleIds().forEach(System.out::println);
+    }
 }

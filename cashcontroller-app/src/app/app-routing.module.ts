@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
+import { authGuard } from './guards/auth.guard';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { ListarRendaFixaComponent } from './components/renda-fixa/listar-renda-fixa/listar-renda-fixa.component';
@@ -24,7 +24,7 @@ const routes: Routes = [
     path: '',   
     title: 'Home Page',
     component: HomeComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',

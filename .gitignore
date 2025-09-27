@@ -1,3 +1,177 @@
+# Common
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+ehthumbs.db
+Icon?
+Desktop.ini
+
+### Java ###
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle/wrapper/gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+### Spring Boot ###
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Angular ###
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+aot/
+build/
+static/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# IDEs
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Environment variables
 .env
-*.env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Angular CLI
+.angular/cache
+
+# Temporary files
+*.tmp
+*.temp
+
+# System Files
+.DS_Store
+Thumbs.db
+
+### Application Specific ###
+# Application properties (consider if you want to ignore these)
+# src/main/resources/application*.properties
+# src/main/resources/application*.yml
+
+# Frontend build output when built from root
+/angular-dist/
+
+# Backend build output when built from root
+/spring-boot-target/
+
+# Database files (if using embedded databases)
+*.db
+*.sqlite
+
+# Docker
+docker-compose.override.yml
+
+# Kubernetes
+k8s/
+
+# Logs
+logs/
+*.log
+
+# Package files
+*.tgz
+*.tar.gz
+
+# Local configuration files
+local.properties

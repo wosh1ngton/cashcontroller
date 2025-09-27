@@ -26,6 +26,12 @@ export class ConfiguracaoComponent implements OnInit {
         routerLink: ['listar-indices', 'SELIC'],
        
       },
+      {
+        label: 'Usuários',
+        icon: 'pi pi-user',
+        routerLink: 'listar-usuarios',
+       
+      },
     ];
     
   }
