@@ -46,7 +46,9 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
     @Query("SELECT new br.com.cashcontroller.dto.AtivoDTO( " +
             "a.id, " +
             "a.nome, " +
-            "SUM(CASE WHEN to.id != 2 and to.id != 5 and to.id != 4 THEN op.custoTotal WHEN to.id = 2 or to.id = 5 THEN -op.custoTotal ELSE 0 END) / SUM(CASE WHEN to.id != 2 and to.id != 5 THEN op.quantidadeNegociada WHEN to.id = 2 or to.id = 5 THEN -op.quantidadeNegociada ELSE 0 END)) " +
+            "SUM(CASE WHEN to.id != 2 and to.id != 5 and to.id != 4 and to.id != 6 THEN op.custoTotal WHEN to.id = 2 or to.id = 5 or to.id = 6 THEN -op.custoTotal ELSE 0 END) " +
+            "/ SUM(CASE WHEN to.id != 2 and to.id != 5  and to.id != 6 THEN op.quantidadeNegociada WHEN to.id = 2 or to.id = 5 THEN -op.quantidadeNegociada " +
+            "ELSE 0 END)) " +
             "FROM OperacaoRendaVariavel op " +
             "INNER JOIN op.ativo a " +
             "INNER JOIN op.tipoOperacao to " +
@@ -82,7 +84,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    a " +
             "HAVING " +
             "       SUM(CASE" +
-            "       WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada" +
+            "       WHEN top.id != 2 and top.id != 5 and top.id != 6 THEN op.quantidadeNegociada" +
             "       WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) > 0")
@@ -93,13 +95,13 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
     @Query("SELECT new br.com.cashcontroller.dto.AtivoCarteiraDTO(" +
             "    a, " +
             "    SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
-            "        WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
+            "        WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END) AS custodia, " +
             "    (" +
-            "  SELECT SUM(CASE WHEN to.id != 2 and to.id != 5 and to.id != 4 THEN opi.custoTotal WHEN to.id = 2 or to.id= 5 THEN -opi.custoTotal ELSE 0 END) " +
-            " / SUM(CASE WHEN to.id != 2 and to.id != 5 THEN opi.quantidadeNegociada WHEN to.id = 2 or to.id = 5 THEN -opi.quantidadeNegociada ELSE 0 END) " +
+            "  SELECT SUM(CASE WHEN to.id != 2 and to.id != 5 and to.id != 4 and to.id != 6 THEN opi.custoTotal WHEN to.id = 2 or to.id= 5 or to.id = 6 THEN -opi.custoTotal ELSE 0 END) " +
+            " / SUM(CASE WHEN to.id != 2 and to.id != 5  THEN opi.quantidadeNegociada WHEN to.id = 2 or to.id = 5 THEN -opi.quantidadeNegociada ELSE 0 END) " +
             "        FROM OperacaoRendaVariavel opi JOIN opi.tipoOperacao to WHERE opi.ativo.id = op.ativo.id " +
             "    ) AS pm) " +
             "FROM " +
@@ -116,8 +118,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    a " +
             "HAVING " +
             "       SUM(CASE" +
-            "       WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada" +
-            "       WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
+            "       WHEN top.id != 2 and top.id != 5 and top.id != 6  THEN op.quantidadeNegociada" +
+            "       WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) > 0")
     List<AtivoCarteiraDTO> listarCarteiraDeFiis();
@@ -145,7 +147,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
 
     @Query("SELECT " +
             "    SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
             "        WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END) " +
@@ -160,8 +162,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
 
     @Query("SELECT " +
             "    COALESCE(SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
-            "        WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
+            "        WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END),0) " +
             "FROM " +
@@ -176,8 +178,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    (SELECT MIN(op2.dataOperacao) FROM OperacaoRendaVariavel op2 WHERE op2.ativo.id = a.id) as data_inicio, " +
             "    CONCAT(a.nome, ' - ', a.sigla), " +
             "    SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
-            "        WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
+            "        WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END) AS soma, " +
             "    (SELECT MAX(op3.dataOperacao) FROM OperacaoRendaVariavel op3 WHERE op3.ativo.id = a.id) as data_encerramento, " +
@@ -190,8 +192,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "GROUP BY a " +
             "HAVING " +
             "       SUM(CASE" +
-            "       WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada" +
-            "       WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
+            "       WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada" +
+            "       WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) = 0")
     List<PosicaoEncerradaDTO> listarAtivosComOperacoesFechadas();

@@ -28,8 +28,8 @@
         </div>
         <div class="field p-fluid">
             <label for="valorAtivo"> Valor do Ativo </label>
-            <p-inputNumber inputId="valorAtivo" [min]="0" locale="pt-BR" mode="currency" currency="BRL"
-                inputId="currency-brazil" [(ngModel)]="operacaoRendaVariavel.valorUnitario" name="valorUnitario">
+            <p-inputNumber inputId="valorAtivo" [min]="0"  locale="pt-BR" mode="currency" currency="BRL"
+                inputId="currency-brazil" [maxFractionDigits]="6" [(ngModel)]="operacaoRendaVariavel.valorUnitario" name="valorUnitario">
             </p-inputNumber>
         </div>
         <div class="field p-fluid">

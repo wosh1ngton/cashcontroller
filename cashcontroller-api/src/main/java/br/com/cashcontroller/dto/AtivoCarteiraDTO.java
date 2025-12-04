@@ -34,14 +34,14 @@ public class AtivoCarteiraDTO {
         this.precoMedio = precoMedio;
     }
 
-    public AtivoCarteiraDTO(Integer id, String nome, String sigla, double custodia, double precoMedio) {
-
-        this.getAtivo().setId(id);
-        this.getAtivo().setNome(nome);
-        this.getAtivo().setSigla(sigla);
-        this.custodia = custodia;
-        this.precoMedio = precoMedio;
-    }
+//    public AtivoCarteiraDTO(Integer id, String nome, String sigla, double custodia, double precoMedio) {
+//
+//        this.getAtivo().setId(id);
+//        this.getAtivo().setNome(nome);
+//        this.getAtivo().setSigla(sigla);
+//        this.custodia = custodia;
+//        this.precoMedio = precoMedio;
+//    }
 
 
 }

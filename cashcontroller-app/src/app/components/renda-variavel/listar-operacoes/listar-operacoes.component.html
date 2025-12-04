@@ -18,12 +18,17 @@
 
                         <p-toast></p-toast>
                     </div>
-                    <div class="p-2">
+                    <div class="p-2">                   
                         <label for="subclasse"> <strong>  Filtrar por Classe </strong> </label>
                         <div class="ui-g pt-2">
-                            <p-dropdown [(ngModel)]="filter.subclasse" [options]="subclasses" appendTo="body"
-                                name="subclasse" (onChange)="filterData(); filterEventos()" optionLabel="nome" [showClear]="true"
-                                placeholder="Subclasse" [style]="{'width': '100%'}" optionValue="id">
+                            <p-dropdown 
+                                [(ngModel)]="filter.subclasse" 
+                                [options]="subclasses" appendTo="body"
+                                name="subclasse" 
+                                (onChange)="filterData(); filterEventos()" 
+                                optionLabel="nome" [showClear]="true"
+                                placeholder="Subclasse" 
+                                [style]="{'width': '100%'}" optionValue="id">
                             </p-dropdown>
                         </div>
                     </div>
@@ -68,14 +73,25 @@
             <div class="col-10">
                 <div class="grid">
                     <div class="col-6">
-                        <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange">
-
+                        <app-irpf-mes [filtro]="filter" 
+                        [filtroChanged]="filtroChange"
+                        [subclasseAtivo]="enumSubclasseAtivo.Acao"
+                        [tituloSubclasseAtivo]="'Ação'">
+                        
                         </app-irpf-mes>
                     </div>
                   
-                      
+                      <div class="col-6">
+                        <app-irpf-mes [filtro]="filter" 
+                        [subclasseAtivo]="enumSubclasseAtivo.FII"
+                        [filtroChanged]="filtroChange"
+                        [tituloSubclasseAtivo]="'Fii'"
+                        >
+
+                        </app-irpf-mes>
+                    </div>
                     
-                    <div class="col-6">
+                    <div class="col-12">
                         <app-numeros-do-mes [eventos]="eventos" 
                         [operacoes]="operacoes" [filtro]="filter">
 

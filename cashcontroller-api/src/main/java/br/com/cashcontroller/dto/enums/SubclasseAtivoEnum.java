@@ -1,13 +1,10 @@
 package br.com.cashcontroller.dto.enums;
 
-public enum TipoOperacaoEnum {
-    COMPRA("compra",1),
-    VENDA("venda",2),
-    DESDOBRAMENTO("desdobramento", 3),
-    BONIFICACAO("bonificacao", 4),
-    GRUPAMENTO("grupamento", 5),
-    AMORTIZACAO("amortizacao", 6);
-    TipoOperacaoEnum(String descricao, int id) {
+public enum SubclasseAtivoEnum {
+    FII("FII",1),
+    ACAO("ACAO",2);
+
+    SubclasseAtivoEnum(String descricao, int id) {
         this.descricao = descricao;
         this.id = id;
     }

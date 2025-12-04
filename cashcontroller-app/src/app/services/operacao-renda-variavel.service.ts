@@ -6,6 +6,7 @@ import { Injectable } from "@angular/core";
 import { FilterOperacao } from "../models/filter-operacao.model";
 import { FiltrarOperacao } from "./interfaces/filtrar-operacao";
 import { ItemLabel } from "../models/interfaces/item-label";
+import { EnumSubclasseAtivo } from "../enums/subclasse-ativo.enum";
 
 @Injectable({
     providedIn: 'root'
@@ -76,4 +77,7 @@ export class OperacaoRendaVariavelService implements FiltrarOperacao {
         return this.http.get<ItemLabel[]>(`${this.baseUrl}/operacoes/ativos-operados`);
     }
 	
+    public atualizarPrejuizoAcumulado(anoMes: string, subclasseAtivoId: EnumSubclasseAtivo) {
+        return this.http.get(`${this.baseUrl}/operacoes/prejuizo/${anoMes}/${subclasseAtivoId}`);
+    }
 }

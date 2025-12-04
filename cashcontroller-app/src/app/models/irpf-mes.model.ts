@@ -8,4 +8,6 @@ export class IrpfMes {
         imposto: boolean = false;
         totalVendido: number = 0;
         ativosVendidos: OperacaoRendaVariavel[] = [];
+        prejuizoCompensar: number = 0;
+        prejuizoPosResultado: number = 0;
 }

@@ -1,11 +1,8 @@
 package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.*;
-import br.com.cashcontroller.entity.Aporte;
-import br.com.cashcontroller.entity.IpcaMes;
-import br.com.cashcontroller.entity.SelicMes;
 import br.com.cashcontroller.service.OperacaoService;
-import jakarta.websocket.server.PathParam;
+import br.com.cashcontroller.service.PrejuizoCompensatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +19,8 @@ public class OperacaoController {
 
     @Autowired
     OperacaoService operacaoService;
-
+    @Autowired
+    PrejuizoCompensatorioService prejuizoCompensatorioService;
     @GetMapping(value = "/{id}")
     public ResponseEntity<OperacaoRendaVariavelDTO> findById(@PathVariable(value="id") Integer id) {
 
@@ -51,6 +49,16 @@ public class OperacaoController {
         return ResponseEntity.ok(operacoes);
     }
 
+//    @GetMapping("/prejuizo/{anoMes}/{categoria}")
+//    public ResponseEntity<Double> getPrejuizoMesAnterior(@PathVariable("anoMes") String anoMes, @PathVariable("categoria") String categoria) {
+//        return ResponseEntity.ok(prejuizoCompensatorioService.getPrejuizoMesAnterior(anoMes,categoria));
+//    }
+
+    @GetMapping("/prejuizo/{anoMes}/{subclasseAtivoId}")
+    public ResponseEntity<Void> atualizarPrejuizoAcumulado(@PathVariable("anoMes") String anoMes, @PathVariable("subclasseAtivoId") Integer subclasseAtivoId) {
+        operacaoService.atualizarPrejuizoAcumulado(anoMes,subclasseAtivoId);
+        return ResponseEntity.noContent().build();
+    }
     @GetMapping("/renda-fixa")
     public ResponseEntity<List<OperacaoRendaFixaDTO>> getOperacoesRendaFixa() {
         return ResponseEntity.ok(this.operacaoService.listarOperacoesRendaFixa());

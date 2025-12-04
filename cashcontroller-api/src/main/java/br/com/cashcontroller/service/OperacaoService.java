@@ -1,6 +1,7 @@
 package br.com.cashcontroller.service;
 
 import br.com.cashcontroller.dto.*;
+import br.com.cashcontroller.dto.enums.SubclasseAtivoEnum;
 import br.com.cashcontroller.dto.enums.TipoOperacaoEnum;
 import br.com.cashcontroller.entity.*;
 import br.com.cashcontroller.external.dto.FeriadoDTO;
@@ -26,7 +27,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +54,9 @@ public class OperacaoService {
     CalcularRentabilidade calcularRentabilidade;
     @Autowired
     TesouroService tesouroService;
+
+    @Autowired
+    PrejuizoCompensatorioService prejuizoCompensatorioService;
     @Autowired
     AtivoCarteiraRepository ativoCarteiraRepository;
     @Autowired
@@ -110,6 +117,7 @@ public class OperacaoService {
         double taxas = Taxa.TAXA_LIQUIDACAO_B3 + Taxa.TAXA_EMOLUMENTOS;
         double taxaCorretora = operacaoDto.getValorCorretagem() * Taxa.TAXA_OPERACIONAL_XP;
         double custos = impostos + (valorBase * (taxas / 100));
+        if(operacaoDto.getTipoOperacaoDto() == TipoOperacaoEnum.AMORTIZACAO.getId()) { custos = 0d; }
         return valorBase + custos + operacaoDto.getValorCorretagem() + taxaCorretora;
     }
 
@@ -129,6 +137,7 @@ public class OperacaoService {
 
     public OperacaoRendaVariavelDTO cadastrarOperacaoRendaVariavel(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
 
+
         if (operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == TipoOperacaoEnum.DESDOBRAMENTO.getId()) {
             operacaoRendaVariavelSaveDTO.setQuantidadeNegociada(desdobrarAtivo(operacaoRendaVariavelSaveDTO));
         }
@@ -139,6 +148,10 @@ public class OperacaoService {
 
         operacaoRendaVariavelSaveDTO.setCustoTotal(custoTotalOperacao(operacaoRendaVariavelSaveDTO));
         operacaoRendaVariavelSaveDTO.setValorTotal(valorTotalOperacao(operacaoRendaVariavelSaveDTO));
+
+        if(operacaoRendaVariavelSaveDTO.getTipoOperacaoDto() == TipoOperacaoEnum.AMORTIZACAO.getId()) {
+            operacaoRendaVariavelSaveDTO.setValorTotal(0);
+        }
         updateOrCreateAtivoCarteira(operacaoRendaVariavelSaveDTO.getAtivoDto(), operacaoRendaVariavelSaveDTO.getQuantidadeNegociada(), operacaoRendaVariavelSaveDTO.getCustoTotal(), operacaoRendaVariavelSaveDTO.getTipoOperacaoDto());
 
         OperacaoRendaVariavel operacao = OperacaoRendaVariavelMapper.INSTANCE.toSaveEntity(operacaoRendaVariavelSaveDTO);
@@ -295,17 +308,49 @@ public class OperacaoService {
         return OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.findById(id).get());
     }
 
+    public void atualizarPrejuizoAcumulado(String anoMes, Integer subclasseAtivoId) {
+        Filter filtro = new Filter();
+        parserAnoMes(anoMes, filtro);
+        List<OperacaoRendaVariavelDTO> vendasDoMes = listarVendasDoMes(filtro);
+        oterResultadoOperacao(vendasDoMes);
+        double resultadoMes = obterResultadoMesPorSubclasse(vendasDoMes,subclasseAtivoId);
+        Double valorVendasMes = vendasDoMes.stream()
+                .filter(op -> op.getAtivoDto().getSubclasseAtivoDto().getId() == subclasseAtivoId
+
+        ).mapToDouble(op -> op.getValorTotal()).sum();
+        prejuizoCompensatorioService.atualizaPrejuizoAcumulado(anoMesAnteriorString(anoMes), anoMes, subclasseAtivoId, resultadoMes, valorVendasMes);
+    }
+
+    private static void parserAnoMes(String anoMes, Filter filtro) {
+        var arr = (anoMes.split("-"));
+        filtro.setAno(Integer.parseInt(arr[1]));
+        filtro.setMes(Integer.parseInt(arr[0]));
+        filtro.setEndDate(LocalDate.of(filtro.getAno(), filtro.getMes(),1)
+                .with(TemporalAdjusters.lastDayOfMonth()));
+    }
+
+    private String anoMesAnteriorString(String anoMesAtual) {
+        var arr = (anoMesAtual.split("-"));
+        var data = LocalDate.of(Integer.parseInt(arr[1]), Integer.parseInt(arr[0]), 1);
+        var mesAnterior = data.minusMonths(1);
+        String mesAnterioString = mesAnterior.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+        return mesAnterioString;
+    }
+
     public IrpfMesDTO calcularImpostoMensal(Filter filter) {
 
-        var vendasDoMes = listarVendasDoMes(filter);
+        List<OperacaoRendaVariavelDTO> vendasDoMes = listarVendasDoMes(filter);
         oterResultadoOperacao(vendasDoMes);
-        double resultadoMes = vendasDoMes.stream().mapToDouble(op -> op.getResultadoOperacao()).sum();
+        double resultadoMes = obterResultadoMesPorSubclasse(vendasDoMes, filter.getSubclasse());
 
         IrpfMesDTO irMes = new IrpfMesDTO();
 
         String monthName = filter.getEndDate().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"));
         irMes.setMes(monthName);
-        var valorTotalEmVendas = vendasDoMes.stream().mapToDouble(op -> op.getValorTotal()).sum();
+        var valorTotalEmVendas = vendasDoMes.stream()
+                .filter(op -> op.getAtivoDto().getSubclasseAtivoDto().getId() == filter.getSubclasse())
+                .mapToDouble(op -> op.getValorTotal()).sum();
+
         irMes.setAtivosVendidos(vendasDoMes);
         irMes.setResultadoMes(resultadoMes);
         irMes.setTotalVendido(valorTotalEmVendas);
@@ -313,8 +358,40 @@ public class OperacaoService {
             irMes.setImposto(true);
             irMes.setValorAPagar(resultadoMes * Taxa.ALIQUOTA_IR);
         }
+        LocalDate previousMonth = filter.getEndDate().minusMonths(1);
+        String formatted = previousMonth.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+
+        Double pejuizoACompensar = prejuizoCompensatorioService.getPrejuizoMesAnterior(formatted, filter.getSubclasse());
+        if(pejuizoACompensar == null) {
+            pejuizoACompensar = 0d;
+        }
+        irMes.setPrejuizoCompensar(pejuizoACompensar);
+        setPrejuizoAcumuladoAtualizado(irMes, pejuizoACompensar, valorTotalEmVendas, filter.getSubclasse());
+
         return irMes;
     }
+
+    private static void setPrejuizoAcumuladoAtualizado(IrpfMesDTO irMes, Double pejuizoACompensar, double valorTotalEmVendas, Integer subclasseAtivoId) {
+        if(irMes.getResultadoMes() < 0) {
+            irMes.setPrejuizoPosResultado(pejuizoACompensar + Math.abs(irMes.getResultadoMes()));
+        } else if(irMes.getResultadoMes() > 0 && valorTotalEmVendas > 20000 && subclasseAtivoId.equals(SubclasseAtivoEnum.ACAO.getId()) || irMes.getResultadoMes() > 0 && subclasseAtivoId.equals(SubclasseAtivoEnum.FII.getId())) {
+            irMes.setPrejuizoPosResultado(pejuizoACompensar - irMes.getResultadoMes());
+        } else {
+            irMes.setPrejuizoPosResultado(pejuizoACompensar);
+        }
+    }
+
+    private Double obterResultadoMesPorSubclasse(
+            List<OperacaoRendaVariavelDTO> vendasDoMes,
+            int idSubclasseAtivo
+    ) {
+        if (vendasDoMes == null) return 0.0;
+
+        return vendasDoMes.stream()
+                .filter(op -> op.getAtivoDto().getSubclasseAtivoDto().getId() == idSubclasseAtivo)
+                .mapToDouble(OperacaoRendaVariavelDTO::getResultadoOperacao)
+                .sum();
+        }
 
 
     private void oterResultadoOperacao(List<OperacaoRendaVariavelDTO> vendasDoMes) {
@@ -336,7 +413,8 @@ public class OperacaoService {
         var mes = filter.getEndDate().getMonth();
         var operacoes = listarOperacoesRendaVariavelPorData(filter);
 
-        var operacoesDeVenda = operacoes.stream().filter(op -> op.getTipoOperacaoDto().getNome().contains("Venda") && op.getDataOperacao().getMonth() == mes).collect(Collectors.toList());
+        var operacoesDeVenda = operacoes.stream().filter(op -> op.getTipoOperacaoDto().getNome()
+                .contains("Venda") && op.getDataOperacao().getMonth() == mes).collect(Collectors.toList());
         return operacoesDeVenda;
     }
 

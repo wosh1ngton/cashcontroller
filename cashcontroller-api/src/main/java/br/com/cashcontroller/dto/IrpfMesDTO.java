@@ -19,5 +19,6 @@ public class IrpfMesDTO {
 	private boolean isImposto;
 	private double totalVendido;
 	private List<OperacaoRendaVariavelDTO> ativosVendidos;
-
+	private double prejuizoCompensar;
+	private double prejuizoPosResultado;
 }

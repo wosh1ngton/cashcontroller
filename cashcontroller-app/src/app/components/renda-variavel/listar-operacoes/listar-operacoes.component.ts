@@ -38,6 +38,7 @@ import { NumerosDoMesComponent } from '../../numeros-do-mes/numeros-do-mes.compo
 import { LoadingService } from 'src/app/services/loading.service';
 import { FiltroOperacaoService } from 'src/app/services/filtro-operacao.service';
 import { ItemLabel } from 'src/app/models/interfaces/item-label';
+import { EnumSubclasseAtivo } from 'src/app/enums/subclasse-ativo.enum';
 
 @Component({
   selector: 'app-listar-renda-variavel',
@@ -81,7 +82,7 @@ export class ListarOperacoesComponent {
   filter: FilterOperacao = new FilterOperacao();
   filtroChange: boolean = false;
   filtroEventoChange: boolean = false;
-
+  enumSubclasseAtivo = EnumSubclasseAtivo;
   meses: Mes[] = [];
   mesSelecionado: number = 0;
   mesAtual: number = 0;
@@ -107,9 +108,7 @@ export class ListarOperacoesComponent {
     { field: 'valorTotal', header: 'Valor a ser Pago', type: 'number' },
   ];
 
-  ngOnInit() {   
-    
-
+  ngOnInit() {       
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
     this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);   
@@ -220,8 +219,12 @@ export class ListarOperacoesComponent {
   }
 
   buscarSubclassesAtivos(id: number) {
-    this.ativoService.getSubclasseAtivos().subscribe((sc) => {
-      this.subclasses = sc.filter((c) => c.classeAtivo.id === id);
+    this.ativoService.getSubclasseAtivos()
+      .subscribe((subclasseList: SubclasseAtivo[]) => {
+        this.subclasses = subclasseList
+            .filter((subclasse: SubclasseAtivo) => 
+                  subclasse.classeAtivo.id === id);
+       
     });
   }
 
@@ -372,11 +375,11 @@ export class ListarOperacoesComponent {
 
   filterData() {
     this.filterService.filtrarPorDataEspecifica(this.filter);
+   
     return this.operacaoRendaVariavelService
       .filter(this.filter)
       .subscribe((res: any) => {
-        (this.operacoes = res), console.log('ano ', this.filter.ano);
-        console.log('meses: ', this.filter);
+        (this.operacoes = res);      
         this.filtroChange = !this.filtroChange;
       });
   }

@@ -16,6 +16,7 @@ import { DateUtil } from 'src/app/shared/util/date-util';
 export class ListarAportesComponent implements OnInit {
   dialogRef: DynamicDialogRef | undefined;
   aportes: Aporte[] = [];
+  aportesTabela: Aporte[] = [];
   cadastrarAporte: CadastrarAporteComponent | undefined;
   CadastrarAporteComponent = CadastrarAporteComponent;
   dataGrafico: any = {};
@@ -23,6 +24,7 @@ export class ListarAportesComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarAportes();
+    this.listarAportesTabela();
   }
 
   constructor(
@@ -48,6 +50,13 @@ export class ListarAportesComponent implements OnInit {
     this.aporteService.getAll().subscribe((res: any) => {
       this.aportes = res;
       this.initChart();
+    });
+  }
+
+  listarAportesTabela() {
+    this.aporteService.getAll().subscribe((res: any) => {
+      this.aportesTabela = res;
+      
     });
   }
 
