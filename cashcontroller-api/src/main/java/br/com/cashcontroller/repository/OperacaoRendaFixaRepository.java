@@ -1,6 +1,5 @@
 package br.com.cashcontroller.repository;
 
-import br.com.cashcontroller.dto.AtivoCarteiraDTO;
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
 import br.com.cashcontroller.dto.AtivoDTO;
 import br.com.cashcontroller.dto.MesDTO;
@@ -111,7 +110,7 @@ public interface OperacaoRendaFixaRepository extends JpaRepository<OperacaoRenda
             ") " +
             "GROUP BY a.id, a.nome, a.sigla, sub.id, op.taxaContratada, ind.id, ind.nome, op.dataOperacao, op.id " +
             "HAVING SUM(CASE WHEN top.id = 1 THEN op.quantidadeNegociada WHEN top.id = 2 THEN -op.quantidadeNegociada ELSE 0 END) > 0")
-    List<AtivoCarteiraRFDTO> listarCarteiraRendaFixa();
+    List<AtivoCarteiraRFDTO> listarOperacoesAtivosCustodiados();
 
 
 

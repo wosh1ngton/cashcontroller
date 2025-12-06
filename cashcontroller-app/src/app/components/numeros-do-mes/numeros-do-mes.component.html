@@ -1,26 +1,36 @@
 <app-card [tituloCard]="'Números do Mês'">    
    <ng-container card-body>
    <div class="grid">
-      <div class="col-4 md:col-6 lg:col-4">
+      <div class="col-2 md:col-6 lg:col-2">
+         <img src="../../../assets/icons/money.png" width="80px" height="60px" />
          <h4> Proventos </h4>
          <h2 class="subtitulo-numero-mes"> {{totalEmProventosMes | currency:'BRL'}}</h2>
       </div>
-      <div class="col-4 md:col-6 lg:col-4">
+      <div class="col-2 md:col-6 lg:col-2">
+         <img src="../../../assets/icons/rendimentos.png" width="80px" height="60px" />
          <h4> Rendimentos </h4>
          <h2 class="subtitulo-numero-mes"> {{totalEmRendimentosMes | currency:'BRL'}}</h2>
       </div>
-      <div class="col-4 md:col-6 lg:col-4">
+      <div class="col-2 md:col-6 lg:col-2">
+          <img src="../../../assets/icons/total.png" width="80px" height="60px" />
          <h4> Total Recebido </h4>
          <h2 class="subtitulo-numero-mes"> {{rendimentosMaisProventos | currency:'BRL'}}</h2>
       </div>
-      <div class="col-4 md:col-6 lg:col-4">
+      <div class="col-2 md:col-6 lg:col-2">
+         <img src="../../../assets/icons/fii.png" width="80px" height="60px" />
          <h4> Saldo FIIs </h4>
          <h2 class="subtitulo-numero-mes"> {{investimentoEmFiisMes | currency:'BRL'}}</h2>
       </div>
-      <div class="col-4 md:col-6 lg:col-4">         
+      <div class="col-2 md:col-6 lg:col-2">         
+         <img src="../../../assets/icons/acoes.png" width="80px" height="60px" />
          <h4> Saldo Ações </h4>
          <h2 class="subtitulo-numero-mes"> {{investimentoEmAcoesMes | currency:'BRL'}}</h2>
-      </div>     
+      </div>    
+            <div class="col-2 md:col-6 lg:col-2">         
+         <img src="../../../assets/icons/saldo.png" width="70px" height="60px" />
+         <h4> Saldo Geral </h4>
+         <h2 class="subtitulo-numero-mes"> {{saldoInvestido | currency:'BRL'}}</h2>
+      </div>  
       
    </div>
 </ng-container>

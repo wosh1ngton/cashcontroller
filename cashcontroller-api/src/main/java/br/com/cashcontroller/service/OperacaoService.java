@@ -5,10 +5,6 @@ import br.com.cashcontroller.dto.enums.SubclasseAtivoEnum;
 import br.com.cashcontroller.dto.enums.TipoOperacaoEnum;
 import br.com.cashcontroller.entity.*;
 import br.com.cashcontroller.external.dto.FeriadoDTO;
-import br.com.cashcontroller.external.dto.tesouro.ResponseDTO;
-import br.com.cashcontroller.external.dto.tesouro.TesouroDiretoDTO;
-import br.com.cashcontroller.external.dto.tesouro.TituloTesouroDTO;
-import br.com.cashcontroller.external.dto.tesouro.TrsrBdTradgDTO;
 import br.com.cashcontroller.external.service.FeriadosService;
 import br.com.cashcontroller.external.service.TesouroService;
 import br.com.cashcontroller.mapper.OperacaoRendaFixaMapper;
@@ -20,7 +16,6 @@ import br.com.cashcontroller.service.util.CalcularRentabilidade;
 import br.com.cashcontroller.utils.Taxa;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Internal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +24,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -451,65 +445,72 @@ public class OperacaoService {
 
     public List<AtivoCarteiraRFDTO> listarCarteiraRendaFixa() {
 
-        List<AtivoCarteiraRFDTO> carteira = this.operacaoRendaFixaRepository.listarCarteiraRendaFixa();
+        List<AtivoCarteiraRFDTO> operacoesAtivosCustodiados = this.operacaoRendaFixaRepository.listarOperacoesAtivosCustodiados();
         List<PuTesouroDireto> precosTesouro = puTesouroDiretoRepository.listarValoresMaisRecentesPorTitulo();
 
-//        TesouroDiretoDTO response = this.tesouroService.getTitulos();
-//        List<TituloTesouroDTO> titulosTesouro = Optional.ofNullable(response.getResponse())
-//                .map(ResponseDTO::getTrsrBdTradgList)
-//                .orElse(Collections.emptyList())
-//                .stream()
-//                .map(TrsrBdTradgDTO::getTrsrBd)
-//                .toList();
-
-
-            carteira = carteira.stream().filter(ativoCarteira -> {
-                List<OperacaoRendaFixa> operacoes = verificarVendaParcial(ativoCarteira);
-                return operacoes.isEmpty() || operacoes.stream().anyMatch(operacao -> operacao.getId() == ativoCarteira.getIdOperacao());
+            operacoesAtivosCustodiados = operacoesAtivosCustodiados.stream().filter(operacaoAtivo -> {
+                List<OperacaoRendaFixa> operacoes = verificarVendaParcial(operacaoAtivo);
+                return operacoes.isEmpty() || operacoes.stream().anyMatch(operacao -> operacao.getId() == operacaoAtivo.getIdOperacao());
 
             }).collect(Collectors.toList());
 
-           // List<TituloTesouroDTO> finalTitulosTesouro = titulosTesouro;
-            carteira.forEach(
-                    operacaoRendaFixaDto -> {
-                        operacaoRendaFixaDto.setCusto(operacaoRendaFixaDto.getCustodia() * operacaoRendaFixaDto.getPrecoMedio());
-                        operacaoRendaFixaDto.setTotalEmProventos(eventoService.getTotalProventosPorAtivoRendaFixa(operacaoRendaFixaDto.getIdAtivo()));
-                        if (operacaoRendaFixaDto.getIdSubclasseAtivo() == 3) {
-                            if(!precosTesouro.isEmpty()) {
-                                calcularValorDeMercadoTesouroDireto(operacaoRendaFixaDto, precosTesouro);
-                                operacaoRendaFixaDto.setValorMercado(this.calculaImpostoService.getValorLiquidoDeImposto(operacaoRendaFixaDto, operacaoRendaFixaDto.getValorMercado()));
-                            } else {
-                                OptionalDouble optionalValorMercado = ativoCarteiraRepository.findByIdAtivo(operacaoRendaFixaDto.getIdAtivo())
-                                        .stream()
-                                        .mapToDouble(ativoCarteira -> {
-                                            double custodiaTotal = ativoCarteira.getCustodia();
-                                            double percentualCustodiaAtivo = (operacaoRendaFixaDto.getCustodia() / custodiaTotal);
-                                            return ativoCarteira.getValorMercado() * percentualCustodiaAtivo;
-                                        })
-                                        .findFirst();
+        setValoresAtivos(operacoesAtivosCustodiados, precosTesouro);
 
-                                operacaoRendaFixaDto.setValorMercado(optionalValorMercado.orElse(0.0));
-                            }
-                        } else if (operacaoRendaFixaDto.getIdSubclasseAtivo() == 5) {
-                            OptionalDouble optionalValorMercado = ativoCarteiraRepository.findByIdAtivo(operacaoRendaFixaDto.getIdAtivo())
-                                    .stream()
-                                    .mapToDouble(AtivoCarteira::getValorMercado)
-                                    .findFirst();
 
-                            operacaoRendaFixaDto.setValorMercado(optionalValorMercado.orElse(0.0));
-                        } else {
-                            operacaoRendaFixaDto.setValorMercado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
-                        }
-                        operacaoRendaFixaDto.setValorContratado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
+        return operacoesAtivosCustodiados;
+
+    }
+
+    private void setValoresAtivos(List<AtivoCarteiraRFDTO> carteira, List<PuTesouroDireto> precosTesouro) {
+
+        List<Integer> idsAtivos = new ArrayList<>();
+
+        carteira.forEach(
+                operacaoRendaFixaDto -> {
+                    operacaoRendaFixaDto.setCusto(operacaoRendaFixaDto.getCustodia() * operacaoRendaFixaDto.getPrecoMedio());
+                    operacaoRendaFixaDto.setTotalEmProventos(eventoService.getTotalProventosPorAtivoRendaFixa(operacaoRendaFixaDto.getIdAtivo()));
+
+                    if (operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.TESOURO_DIRETO.getId()) {
+                        setValoresTesouroDireto(precosTesouro, operacaoRendaFixaDto);
+
+                    } else if (operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.CREDITO_BANCARIO.getId()) {
+                        operacaoRendaFixaDto.setValorMercado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
+
+                    } else if(operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.CREDITO_PRIVADO.getId() ||
+                             operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.PREVIDENCIA.getId())  {
+
+                        boolean verificaOperacaoMultipla = idsAtivos.stream().anyMatch(id -> id == operacaoRendaFixaDto.getIdAtivo());
+                        if(verificaOperacaoMultipla) return;
+                        idsAtivos.add(operacaoRendaFixaDto.getIdAtivo());
+
+
+                        OptionalDouble optionalValorMercado = ativoCarteiraRepository.findByIdAtivo(operacaoRendaFixaDto.getIdAtivo())
+                                .stream()
+                                .mapToDouble(AtivoCarteira::getValorMercado)
+                                .findFirst();
+
+                        operacaoRendaFixaDto.setValorMercado(optionalValorMercado.orElse(0.0));
                     }
-            );
+                    operacaoRendaFixaDto.setValorContratado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
+                }
+        );
+    }
 
+    private void setValoresTesouroDireto(List<PuTesouroDireto> precosTesouro, AtivoCarteiraRFDTO operacaoRendaFixaDto) {
+        if(!precosTesouro.isEmpty()) {
+            calcularValorDeMercadoTesouroDireto(operacaoRendaFixaDto, precosTesouro);
+        } else {
+            OptionalDouble optionalValorMercado = ativoCarteiraRepository.findByIdAtivo(operacaoRendaFixaDto.getIdAtivo())
+                    .stream()
+                    .mapToDouble(ativoCarteira -> {
+                        double custodiaTotal = ativoCarteira.getCustodia();
+                        double percentualCustodiaAtivo = (operacaoRendaFixaDto.getCustodia() / custodiaTotal);
+                        return ativoCarteira.getValorMercado() * percentualCustodiaAtivo;
+                    })
+                    .findFirst();
 
-
-
-
-        return carteira;
-
+            operacaoRendaFixaDto.setValorMercado(optionalValorMercado.orElse(0.0));
+        }
     }
 
     public List<OperacaoRendaFixa> verificarVendaParcial(AtivoCarteiraRFDTO ativoCarteiraRFDTO) {
@@ -532,13 +533,15 @@ public class OperacaoService {
 
     }
 
-    private static void calcularValorDeMercadoTesouroDireto(AtivoCarteiraRFDTO ativoCarteiraRFDTO, List<PuTesouroDireto> titulos) {
+    private void calcularValorDeMercadoTesouroDireto(AtivoCarteiraRFDTO ativoCarteiraRFDTO, List<PuTesouroDireto> titulos) {
         Optional<PuTesouroDireto> titulo = titulos.stream()
                 .filter(val -> val.getTipoTitulo().equals(ativoCarteiraRFDTO.getNomeAtivo()))
                 .findFirst();
         titulo.ifPresent(tituloTesouroDTO -> {
             ativoCarteiraRFDTO.setCotacao(tituloTesouroDTO.getPuBaseManha());
-            ativoCarteiraRFDTO.setValorMercado(tituloTesouroDTO.getPuBaseManha() * ativoCarteiraRFDTO.getCustodia());
+            var valorBruto = tituloTesouroDTO.getPuBaseManha() * ativoCarteiraRFDTO.getCustodia();
+            var valorLiquido = this.calculaImpostoService.getValorLiquidoDeImposto(ativoCarteiraRFDTO, valorBruto);
+            ativoCarteiraRFDTO.setValorMercado(valorLiquido);
 
         });
     }

@@ -18,6 +18,9 @@ import { DataViewModule } from 'primeng/dataview';
 import { PasswordModule } from 'primeng/password';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
+import { PanelModule } from 'primeng/panel';
+import { TooltipModule } from 'primeng/tooltip';
+
 
 @NgModule({
   declarations: [],
@@ -40,8 +43,9 @@ import { ToastModule } from 'primeng/toast';
     DataViewModule,
     PasswordModule,
     MessageModule,
-    ToastModule
-
+    ToastModule,
+    PanelModule,
+    TooltipModule
   ]
 })
 export class PrimengModule { }

@@ -61,7 +61,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
     @Query("SELECT new br.com.cashcontroller.dto.AtivoCarteiraDTO(" +
             "    a, " +
             "    SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5 and top.id != 6 THEN op.quantidadeNegociada " +
             "        WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END) AS custodia, " +
@@ -147,7 +147,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
 
     @Query("SELECT " +
             "    SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5 and top.id != 6  THEN op.quantidadeNegociada " +
             "        WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END) " +
@@ -162,7 +162,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
 
     @Query("SELECT " +
             "    COALESCE(SUM(CASE " +
-            "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
+            "        WHEN top.id != 2 and top.id != 5  and top.id != 6 THEN op.quantidadeNegociada " +
             "        WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END),0) " +
@@ -192,7 +192,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "GROUP BY a " +
             "HAVING " +
             "       SUM(CASE" +
-            "       WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada" +
+            "       WHEN top.id != 2 and top.id != 5 and top.id != 6  THEN op.quantidadeNegociada" +
             "       WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) = 0")

@@ -1,14 +1,25 @@
 
-    <p-card [header]="'Cálculo de Imposto em ' + tituloSubclasseAtivo">
+    <p-card  [style]="{ 'min-height': '20rem' }"   
+    [header]="'Cálculo de Imposto em ' + tituloSubclasseAtivo">
+
+   
         <p class="m-1">
-            prejuízo a compensar do mês anterior: <span style="color: #ff0000; font-weight: bold;"> {{ irpfMes.prejuizoCompensar | currency: 'BRL' }}  </span>
+            prejuízo a compensar do mês anterior: <span style="color: #d43737e1;; font-weight: bold;"> {{ irpfMes.prejuizoCompensar | currency: 'BRL' }}  </span>
         </p>       
         <p class="m-1">
            <span style="color: #2542e6; font-weight: bold;">  {{ irpfMes.mes }} </span> / imposto a pagar: {{ irpfMes.valorAPagar | currency: 'BRL' }}
         </p> 
         <p *ngIf="irpfMes.ativosVendidos.length === 0"> Nenhuma venda para essa subclasse de ativos neste mês </p>      
+        <p-panel 
+        *ngIf="irpfMes.ativosVendidos.length > 0"
+        header="Ativos Vendidos"
+        [toggleable]="true"
+        [collapsed]="true"
+        styleClass="mt-2">
         <p-table *ngIf="irpfMes.ativosVendidos.length > 0" [value]="irpfMes.ativosVendidos" 
-            [tableStyle]="{ 'border': '1px solid #ccc' }" class="tabela-irpf">
+            [tableStyle]="{ 'border': '1px solid #ccc' }" 
+            [scrollable]="true" scrollHeight="7rem"
+            class="tabela-irpf">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Ativo</th>
@@ -30,6 +41,7 @@
                 </tr>
             </ng-template>
         </p-table>
+        </p-panel>
         <div class="grid">
         <p class="m-1 col-5">
            Resultado do Mês Ações 
@@ -43,12 +55,17 @@
             {{ irpfMes.totalVendido | currency: 'BRL'}} 
         </p>
 
-        <p class="m-1">
-            prejuízo a compensar pós resultado do Mês: <span style="color: #ff0000; font-weight: bold;"> {{ irpfMes.prejuizoPosResultado | currency: 'BRL' }}  </span>
-        </p>   
-        <div class="field p-fluid">
-            <p-button label="Atualizar Prejuízo Acumulado" size="small" class="cor-btn" (onClick)="atualizarPrejuizoAcumulado(subclasseAtivo)" />
+        <div class="m-3 w-full flex">
+            prejuízo a compensar pós resultado do Mês: <span style="color: #d43737e1; font-weight: bold;"> {{ irpfMes.prejuizoPosResultado | currency: 'BRL' }}  </span>
+            <div class="flex w-full justify-content-end">
+            <p-button size="small" pTooltip="Atualizar Prejuízo a Compensar" class="cor-btn" icon="pi pi-refresh" (onClick)="atualizarPrejuizoAcumulado(subclasseAtivo)" />
+            </div>
+        </div>  
+        
+         <div class="flex justify-content-end w-full">                    
+            
         </div>
+        
     </div>
    
     </p-card>

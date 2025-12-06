@@ -36,7 +36,7 @@ public interface AtivoCarteiraRepository extends JpaRepository<AtivoCarteira, In
             "new br.com.cashcontroller.dto.ProventosMesDTO( " +
             "concat(year(ev.dataPagamento), '-', lpad((CAST(month(ev.dataPagamento) AS STRING)), 2, '0')), " +
             "SUM(CASE WHEN te.id = 2 THEN ev.valor - (ev.valor * 0.15) ELSE ev.valor END * " +
-            "COALESCE((SELECT SUM(CASE WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
+            "COALESCE((SELECT SUM(CASE WHEN top.id != 2 and top.id != 5 and top.id != 6 THEN op.quantidadeNegociada " +
             "WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada ELSE 0 END)  " +
             "FROM OperacaoRendaVariavel op JOIN op.tipoOperacao top " +
             "WHERE op.ativo.id = ev.ativo.id AND op.dataOperacao <= ev.dataCom), 0 ))," +
@@ -54,7 +54,7 @@ public interface AtivoCarteiraRepository extends JpaRepository<AtivoCarteira, In
             "a.sigla, " +
             "a.subclasseAtivo.id, " +
             "SUM(CASE WHEN te.id = 2 THEN ev.valor - (ev.valor * 0.15) ELSE ev.valor END * " +
-            "COALESCE((SELECT SUM(CASE WHEN top.id != 2 and top.id != 5 THEN op.quantidadeNegociada " +
+            "COALESCE((SELECT SUM(CASE WHEN top.id != 2 and top.id != 5 and top.id != 6 THEN op.quantidadeNegociada " +
             "WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada ELSE 0 END)  " +
             "FROM OperacaoRendaVariavel op JOIN op.tipoOperacao top " +
             "WHERE op.ativo.id = ev.ativo.id AND op.dataOperacao <= ev.dataCom), 0 )) " +

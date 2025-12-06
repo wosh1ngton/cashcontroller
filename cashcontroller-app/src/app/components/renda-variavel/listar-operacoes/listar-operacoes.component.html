@@ -9,34 +9,26 @@
                                 Filtrar por mês e ano
                             </strong>
                         </p>
-                        <app-filtro-superior 
-                            [selectedMonth]="filter.mes" 
-                            [selectedAno]="filter.ano"
-                            [tipoDeOperacao]="operacaoRendaVariavelService" 
-                            (selecaoMes)="filtrarPorMes($event)">
+                        <app-filtro-superior [selectedMonth]="filter.mes" [selectedAno]="filter.ano"
+                            [tipoDeOperacao]="operacaoRendaVariavelService" (selecaoMes)="filtrarPorMes($event)">
                         </app-filtro-superior>
 
                         <p-toast></p-toast>
                     </div>
-                    <div class="p-2">                   
-                        <label for="subclasse"> <strong>  Filtrar por Classe </strong> </label>
+                    <div class="p-2">
+                        <label for="subclasse"> <strong> Filtrar por Classe </strong> </label>
                         <div class="ui-g pt-2">
-                            <p-dropdown 
-                                [(ngModel)]="filter.subclasse" 
-                                [options]="subclasses" appendTo="body"
-                                name="subclasse" 
-                                (onChange)="filterData(); filterEventos()" 
-                                optionLabel="nome" [showClear]="true"
-                                placeholder="Subclasse" 
-                                [style]="{'width': '100%'}" optionValue="id">
+                            <p-dropdown [(ngModel)]="filter.subclasse" [options]="subclasses" appendTo="body"
+                                name="subclasse" (onChange)="filterData(); filterEventos()" optionLabel="nome"
+                                [showClear]="true" placeholder="Subclasse" [style]="{'width': '100%'}" optionValue="id">
                             </p-dropdown>
                         </div>
                     </div>
                     <div class="p-2">
-                        <p> 
+                        <p>
                             <strong>
-                                Filtrar por data específica 
-                            </strong> 
+                                Filtrar por data específica
+                            </strong>
                         </p>
                         <label for="inicio">
                             Início
@@ -59,11 +51,12 @@
                     </div>
 
                     <div class="p-2">
-                        <label for="subclasse"> <strong>  Filtrar por Ativo </strong> </label>
+                        <label for="subclasse"> <strong> Filtrar por Ativo </strong> </label>
                         <div class="ui-g pt-2">
                             <p-dropdown [(ngModel)]="filter.ativo" [options]="ativosOperados" appendTo="body"
-                                name="subclasse" (onChange)="filterData(); filterEventos()" optionLabel="label" [showClear]="true"
-                                placeholder="Ativo" [style]="{'width': '100%'}" optionValue="id" [filter]="true">
+                                name="subclasse" (onChange)="filterData(); filterEventos()" optionLabel="label"
+                                [showClear]="true" placeholder="Ativo" [style]="{'width': '100%'}" optionValue="id"
+                                [filter]="true">
                             </p-dropdown>
                         </div>
                     </div>
@@ -72,43 +65,38 @@
             </div>
             <div class="col-10">
                 <div class="grid">
-                    <div class="col-6">
-                        <app-irpf-mes [filtro]="filter" 
-                        [filtroChanged]="filtroChange"
-                        [subclasseAtivo]="enumSubclasseAtivo.Acao"
-                        [tituloSubclasseAtivo]="'Ação'">
-                        
-                        </app-irpf-mes>
-                    </div>
-                  
-                      <div class="col-6">
-                        <app-irpf-mes [filtro]="filter" 
-                        [subclasseAtivo]="enumSubclasseAtivo.FII"
-                        [filtroChanged]="filtroChange"
-                        [tituloSubclasseAtivo]="'Fii'"
-                        >
-
-                        </app-irpf-mes>
-                    </div>
-                    
                     <div class="col-12">
-                        <app-numeros-do-mes [eventos]="eventos" 
-                        [operacoes]="operacoes" [filtro]="filter">
+                        <app-numeros-do-mes [eventos]="eventos" [operacoes]="operacoes" [filtro]="filter">
 
                         </app-numeros-do-mes>
                     </div>
+                    <div class="col-6">
+                        <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange"
+                            [subclasseAtivo]="enumSubclasseAtivo.Acao" [tituloSubclasseAtivo]="'Ação'">
+
+                        </app-irpf-mes>
+                    </div>
+
+                    <div class="col-6">
+                        <app-irpf-mes [filtro]="filter" [subclasseAtivo]="enumSubclasseAtivo.FII"
+                            [filtroChanged]="filtroChange" [tituloSubclasseAtivo]="'Fii'">
+
+                        </app-irpf-mes>
+                    </div>
+
+
                 </div>
-                <div class="painel-de-botoes">
-                    
+                <div class="grid">
+                <div class="painel-de-botoes col-12">
+
                     <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
                     <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
                 </div>
-                
+                </div>
                 <p-tabView [(activeIndex)]="activeIndex">
                     <p-tabPanel header="Operações">
                         <p-confirmDialog key="deleteOperacao" />
-                        <p-table [columns]="cols" dataKey="id" 
-                        editMode="row" class="m-3 tabela-operacoes"
+                        <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes"
                             [value]="operacoes" styleClass="p-datatable-sm"
                             [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #e9e9e9' }">
                             <ng-template pTemplate="header" let-columns>
@@ -124,8 +112,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-editing="editing" let-ri="rowIndex" let-operacao
                                 let-columns="columns">
-                                <tr class="rowstyle"
-                                    [pEditableRow]="operacao"
+                                <tr class="rowstyle" [pEditableRow]="operacao"
                                     [ngClass]="{'venda': operacao.tipoOperacaoDto.id === 2, 'compra': operacao.tipoOperacaoDto.id === 1}">
                                     <td>
                                         <p-cellEditor>
@@ -249,8 +236,7 @@
                     </p-tabPanel>
                     <p-tabPanel header="Eventos">
                         <p-confirmDialog key="deleteEvento" />
-                        <p-table [columns]="colsEventos" 
-                            [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }"
+                        <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }"
                             styleClass="p-datatable-sm">
                             <ng-template pTemplate="header" let-columns>
                                 <tr class="rowstyle">

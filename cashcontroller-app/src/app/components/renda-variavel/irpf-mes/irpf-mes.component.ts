@@ -8,6 +8,9 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
 import { EnumSubclasseAtivo } from 'src/app/enums/subclasse-ativo.enum';
+import { PanelModule } from 'primeng/panel';
+import { MenubarModule } from "primeng/menubar";
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
     selector: 'app-irpf-mes',
@@ -15,7 +18,7 @@ import { EnumSubclasseAtivo } from 'src/app/enums/subclasse-ativo.enum';
     styleUrl: 'irpf-mes.component.css',
     encapsulation : ViewEncapsulation.None,
     standalone: true,
-    imports: [CardModule, CommonModule, TableModule, ButtonModule]
+    imports: [CardModule, CommonModule, TableModule, ButtonModule, PanelModule, TooltipModule, MenubarModule]
 })
 export class IrpfMesComponent implements OnInit, OnChanges {
 
@@ -47,8 +50,7 @@ export class IrpfMesComponent implements OnInit, OnChanges {
 
     buscarImpostoMes() {
         let filtro = {...this.filtro}
-        filtro.subclasse = this.subclasseAtivo;
-       // this.filtro.subclasse = this.subclasseAtivo;
+        filtro.subclasse = this.subclasseAtivo;       
         return this.operacaoRendaVariavelService.getImpostoMes(filtro)
             .subscribe((x: any) => { 
                 this.irpfMes = x;

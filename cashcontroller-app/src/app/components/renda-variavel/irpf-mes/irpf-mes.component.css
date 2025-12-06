@@ -1,14 +1,20 @@
+
 .tabela-irpf tbody td, .tabela-irpf thead th  {    
-    padding: 5px;
+    padding: 4px;
+    
 }
 .tabela-irpf thead, .tabela-irpf tr  {
-    font-size: 12px;    
+    font-size: 11px;    
 }
 
 .lucro {
-    color: blue;
+    color: #0b4c97;
 }
 
 .prejuizo {
-    color: red;
+    color: #d43737e1;
+}
+
+.p-card-content {
+    padding: 0;
 }

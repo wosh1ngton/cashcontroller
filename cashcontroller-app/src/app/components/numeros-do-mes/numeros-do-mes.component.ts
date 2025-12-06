@@ -25,15 +25,23 @@ export class NumerosDoMesComponent implements OnInit, OnChanges {
   investimentoEmAcoesMes: number = 0;
   investimentoEmFiisMes: number = 0;
   rendimentosMaisProventos: number = 0;
-
+  saldoInvestido: number = 0;
   ngOnChanges(changes: SimpleChanges): void {
     this.calculaTotalProventos();
     this.calculaTotalRendimentos();
     this.calculaTotalInvestidoAcoes();
     this.calculaTotalInvestidoFiis();
+    this.calculaTotalInvestido();
     this.calculaTotalGeralRendimentos();
   }  
 
+  private calculaTotalInvestido() {
+    this.saldoInvestido = this.operacoes      
+      .reduce(
+        (total, operacao) => this.getTotalInvestidoMes(operacao, total),
+        0
+      );
+  }
   private calculaTotalInvestidoFiis() {
     this.investimentoEmFiisMes = this.operacoes
       .filter(operacao => !this.isInvestimentoEmAcoes(operacao))
