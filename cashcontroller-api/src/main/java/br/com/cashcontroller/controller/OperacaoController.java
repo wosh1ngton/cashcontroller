@@ -3,6 +3,7 @@ package br.com.cashcontroller.controller;
 import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.service.OperacaoService;
 import br.com.cashcontroller.service.PrejuizoCompensatorioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,77 +22,72 @@ public class OperacaoController {
     OperacaoService operacaoService;
     @Autowired
     PrejuizoCompensatorioService prejuizoCompensatorioService;
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<OperacaoRendaVariavelDTO> findById(@PathVariable(value="id") Integer id) {
-
         OperacaoRendaVariavelDTO operacao = operacaoService.findById(id);
         return ResponseEntity.ok(operacao);
     }
 
     @GetMapping("/renda-variavel")
     public ResponseEntity<List<OperacaoRendaVariavelDTO>> getOperacoesRendaVariavel() {
-
         List<OperacaoRendaVariavelDTO> operacoes = operacaoService.listarOperacoesRendaVariavel();
         return ResponseEntity.ok(operacoes);
     }
 
     @PostMapping("/renda-variavel/filter")
     public ResponseEntity<List<OperacaoRendaVariavelDTO>> filter(@RequestBody Filter filter) {
-
         List<OperacaoRendaVariavelDTO> operacoes = operacaoService.listarOperacoesRendaVariavelPorData(filter);
         return ResponseEntity.ok(operacoes);
     }
 
     @PostMapping("/renda-variavel/irpf")
     public ResponseEntity<IrpfMesDTO> irpf(@RequestBody Filter filter) {
-
         IrpfMesDTO operacoes = operacaoService.calcularImpostoMensal(filter);
         return ResponseEntity.ok(operacoes);
     }
-
-//    @GetMapping("/prejuizo/{anoMes}/{categoria}")
-//    public ResponseEntity<Double> getPrejuizoMesAnterior(@PathVariable("anoMes") String anoMes, @PathVariable("categoria") String categoria) {
-//        return ResponseEntity.ok(prejuizoCompensatorioService.getPrejuizoMesAnterior(anoMes,categoria));
-//    }
 
     @GetMapping("/prejuizo/{anoMes}/{subclasseAtivoId}")
     public ResponseEntity<Void> atualizarPrejuizoAcumulado(@PathVariable("anoMes") String anoMes, @PathVariable("subclasseAtivoId") Integer subclasseAtivoId) {
         operacaoService.atualizarPrejuizoAcumulado(anoMes,subclasseAtivoId);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/renda-fixa")
     public ResponseEntity<List<OperacaoRendaFixaDTO>> getOperacoesRendaFixa() {
         return ResponseEntity.ok(this.operacaoService.listarOperacoesRendaFixa());
     }
+
     @GetMapping("/tipo-operacoes")
     public ResponseEntity<List<TipoOperacaoDTO>> getTiposOperacao() {
         return ResponseEntity.ok(this.operacaoService.listarTipoOperacao());
     }
+
     @GetMapping("/ativos-operados")
     public ResponseEntity<List<ItemLabelDTO>> getAtivosOperados() {
         return ResponseEntity.ok(this.operacaoService.listarAtivosOperados());
     }
 
-
     @PostMapping
-    public ResponseEntity<OperacaoRendaVariavelDTO> cadastrarOperacaoRendaVariavel(@RequestBody OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
+    public ResponseEntity<OperacaoRendaVariavelDTO> cadastrarOperacaoRendaVariavel(@RequestBody @Valid OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
         return ResponseEntity.ok(this.operacaoService.cadastrarOperacaoRendaVariavel(operacaoRendaVariavelSaveDTO));
     }
 
     @PostMapping(value = "/renda-fixa")
-    public ResponseEntity<OperacaoRendaFixaDTO> cadastrarOperacaoRendaFixa(@RequestBody OperacaoRendaFixaDTO operacaoRendaFixaDTO) {
+    public ResponseEntity<OperacaoRendaFixaDTO> cadastrarOperacaoRendaFixa(@RequestBody @Valid OperacaoRendaFixaDTO operacaoRendaFixaDTO) {
         return ResponseEntity.ok(this.operacaoService.cadastrarOperacaoRendaFixa(operacaoRendaFixaDTO));
     }
 
     @PutMapping
-    public ResponseEntity<OperacaoRendaVariavelDTO> editarOperacaoRendaVariavel(@RequestBody OperacaoRendaVariavelDTO operacaoRendaVariavelDTO) {
+    public ResponseEntity<OperacaoRendaVariavelDTO> editarOperacaoRendaVariavel(@RequestBody @Valid OperacaoRendaVariavelDTO operacaoRendaVariavelDTO) {
         return ResponseEntity.ok(this.operacaoService.atualizarOperacaoRendaVariavel(operacaoRendaVariavelDTO));
     }
 
     @PutMapping(value = "/renda-fixa")
-    public ResponseEntity<OperacaoRendaFixaDTO> editarOperacaoRendaFixa(@RequestBody OperacaoRendaFixaDTO operacaoRendaFixaDTO) {
+    public ResponseEntity<OperacaoRendaFixaDTO> editarOperacaoRendaFixa(@RequestBody @Valid OperacaoRendaFixaDTO operacaoRendaFixaDTO) {
         return ResponseEntity.ok(this.operacaoService.atualizarOperacaoRendaFixa(operacaoRendaFixaDTO));
     }
+
     @DeleteMapping(value = "/{id}")
     ResponseEntity<?> excluirOperacaoRendaVariavel(@PathVariable(value="id") Integer id) {
         this.operacaoService.excluirOperacaoRendaVariavel(id);
@@ -122,7 +118,6 @@ public class OperacaoController {
         return ResponseEntity.ok(carteira);
     }
 
-
     @GetMapping(value = "/posicoes-encerradas")
     ResponseEntity<List<PosicaoEncerradaDTO>> listarPosicoesEncerradas() {
         var encerradaDTOS = this.operacaoService.listarPosicoesEncerradas();
@@ -140,6 +135,7 @@ public class OperacaoController {
         var anosOrdenados = this.operacaoService.listarAnosComOperacoes(Optional.of(true)).stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         return ResponseEntity.ok(anosOrdenados);
     }
+
     @GetMapping("/MesesComOperacoesPorAno/{ano}")
     ResponseEntity<List<MesDTO>> listarMesesComDespesas(@PathVariable(value = "ano") Integer ano) {
         return ResponseEntity.ok(this.operacaoService.listarMesesComOperacoes(ano));
@@ -157,12 +153,8 @@ public class OperacaoController {
 
     @PostMapping("/renda-fixa/filter")
     public ResponseEntity<List<OperacaoRendaFixaDTO>> filterRF(@RequestBody Filter filter) {
-
         List<OperacaoRendaFixaDTO> operacoes = operacaoService.listarOperacoesRendaFixaPorData(filter);
         return ResponseEntity.ok(operacoes);
     }
-
-
-
 
 }

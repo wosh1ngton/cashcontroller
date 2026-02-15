@@ -20,6 +20,9 @@ public interface AtivoCarteiraRepository extends JpaRepository<AtivoCarteira, In
     @Query("SELECT ac FROM AtivoCarteira ac WHERE ac.ativo.id = :idAtivo")
     Optional<AtivoCarteira> findByIdAtivo(@Param("idAtivo") int idAtivo);
 
+    @Query("SELECT ac FROM AtivoCarteira ac WHERE ac.ativo.id IN :ids")
+    List<AtivoCarteira> findByAtivoIdIn(@Param("ids") List<Integer> ids);
+
     @Query("SELECT " +
             "new br.com.cashcontroller.dto.PatrimonioCategoriaDTO(" +
             "sub.id, " +

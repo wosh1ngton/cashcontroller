@@ -43,8 +43,11 @@ public interface EventoRendaFixaRepository extends JpaRepository<EventoRendaFixa
 
     List<EventoRendaFixa> findByAtivo(Ativo ativo);
 
-
-
+    @Query("SELECT ev FROM EventoRendaFixa ev " +
+            "JOIN FETCH ev.ativo a " +
+            "JOIN FETCH ev.tipoEvento " +
+            "WHERE a.id IN :ativoIds")
+    List<EventoRendaFixa> findEventosByAtivoIn(@Param("ativoIds") List<Integer> ativoIds);
 
 
 }

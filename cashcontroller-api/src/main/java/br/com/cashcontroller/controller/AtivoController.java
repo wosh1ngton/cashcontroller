@@ -3,7 +3,7 @@ package br.com.cashcontroller.controller;
 import java.util.List;
 
 import br.com.cashcontroller.dto.AtivoAddDTO;
-import jakarta.websocket.server.PathParam;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +21,17 @@ public class AtivoController {
 	private AtivoService ativoService;
 
 	@PostMapping("/em-lote")
-	ResponseEntity<List<AtivoAddDTO>> cadastrarAtivos(@RequestBody List<AtivoAddDTO> ativosDto) {
+	ResponseEntity<List<AtivoAddDTO>> cadastrarAtivos(@RequestBody @Valid List<AtivoAddDTO> ativosDto) {
 		ativosDto.forEach(ativoDto -> this.ativoService.cadastrarAtivo(ativoDto));
 		return ResponseEntity.ok(ativosDto);
 	}
 	@PostMapping
-	ResponseEntity<AtivoAddDTO> cadastrarAtivo(@RequestBody AtivoAddDTO ativoAddDto) {
+	ResponseEntity<AtivoAddDTO> cadastrarAtivo(@RequestBody @Valid AtivoAddDTO ativoAddDto) {
 		return ResponseEntity.ok(this.ativoService.cadastrarAtivo(ativoAddDto));
 	}
-	
+
 	@PutMapping
-	ResponseEntity<AtivoAddDTO> editarAtivo(@RequestBody AtivoAddDTO ativoAddDto) {
+	ResponseEntity<AtivoAddDTO> editarAtivo(@RequestBody @Valid AtivoAddDTO ativoAddDto) {
 		return ResponseEntity.ok(this.ativoService.atualizarAtivo(ativoAddDto));
 	}
 
@@ -40,17 +40,17 @@ public class AtivoController {
 		this.ativoService.excluirAtivo(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
+
+
 	@GetMapping("/subclasses")
 	ResponseEntity<List<SubclasseAtivoDTO>> getSubClasseAtivos() {
 		List<SubclasseAtivoDTO> subclasses = this.ativoService.listarSubclasseAtivos();
 		return ResponseEntity.ok(subclasses);
 	}
-	
+
 	@GetMapping
 	ResponseEntity<List<AtivoDTO>> getAtivos() {
-		List<AtivoDTO> ativos = this.ativoService.listarAtivos();		
+		List<AtivoDTO> ativos = this.ativoService.listarAtivos();
 		return ResponseEntity.ok(ativos);
 	}
 
@@ -72,6 +72,4 @@ public class AtivoController {
 		return ResponseEntity.ok(ativos);
 	}
 
-
-	
 }

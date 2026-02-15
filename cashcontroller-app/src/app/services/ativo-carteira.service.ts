@@ -2,8 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
-import { Ativo } from "src/app/models/ativo.model";
-import { AtivoBrapi } from "src/app/models/ativo-brapi.model";
 import { SubclasseAtivo } from "../models/subclasse-ativo.model";
 import { AtivoCarteira } from "../models/ativo-carteira.model";
 
@@ -64,8 +62,8 @@ export class AtivoCarteiraService {
         return this.http.get<any[]>(this.baseUrl + '/ativo-carteira/proventos')
     }
 
-    getIbov() {
-        return this.http.get(this.baseUrl + '/ativo-carteira/ibov')
+    getIbov(): Observable<string> {
+        return this.http.get(this.baseUrl + '/ativo-carteira/ibov', { responseType: 'text' });
     }
 
     updateCarteiraBySubclasse(id: number) {

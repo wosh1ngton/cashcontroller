@@ -151,4 +151,15 @@ public interface OperacaoRendaFixaRepository extends JpaRepository<OperacaoRenda
             "JOIN oprf.ativo a " +
             "JOIN a.parametroRendaFixa prf WHERE a.id = :id")
     Optional<AtivoCarteiraRFDTO> findAtivoCarteiraRendaFixaById(@Param("id") Integer id);
+
+    @Query("SELECT new br.com.cashcontroller.dto.AtivoCarteiraRFDTO(" +
+            "a.id, " +
+            "MIN(oprf.dataOperacao), " +
+            "prf.isIsento" +
+            ") FROM OperacaoRendaFixa oprf " +
+            "JOIN oprf.ativo a " +
+            "JOIN a.parametroRendaFixa prf " +
+            "WHERE a.id IN :ids " +
+            "GROUP BY a.id, prf.isIsento")
+    List<AtivoCarteiraRFDTO> findAtivoParamsRendaFixaByAtivoIds(@Param("ids") List<Integer> ids);
 }

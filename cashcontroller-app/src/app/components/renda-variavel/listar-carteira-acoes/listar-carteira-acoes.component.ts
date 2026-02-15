@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AtivoCarteira } from 'src/app/models/ativo-carteira.model';
 import { AtivoService } from 'src/app/services/ativo.service';
 import { OperacaoRendaVariavelService } from 'src/app/services/operacao-renda-variavel.service';
@@ -11,6 +12,8 @@ import { AtivoCarteiraService } from 'src/app/services/ativo-carteira.service';
   styleUrl: './listar-carteira-acoes.component.css',
 })
 export class ListarCarteiraAcoesComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
   constructor(
     private operacaoRendaVariavelService: OperacaoRendaVariavelService,
     private ativoService: AtivoService,
@@ -25,30 +28,33 @@ export class ListarCarteiraAcoesComponent implements OnInit {
   ativoSelecionado: number = 0;
   totalProventos: number = 0;
   ibov: string = '';
+
   ngOnInit(): void {
     this.listarCarteira();
   }
 
-  selecionarAtivo(id: any) {
+  selecionarAtivo(id: { data: number }) {
     this.ativoSelecionado = id.data;
   }
 
   listarCarteira() {
-    this.ativoCarteiraService.getIbov().subscribe((res: any) => {
-      this.ibov = res;
-    });
+    this.ativoCarteiraService.getIbov()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res: string) => {
+        this.ibov = res;
+      });
 
     this.loading
       .showLoaderUntilCompleted(this.ativoService.getMinhasAcoes())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          (this.carteira = data), this.calculateTotals();
+          this.carteira = data;
+          this.calculateTotals();
         },
-        complete: () => console.log('complete'),
-        error: (err: Error) => console.log('Erro: ', err.message),
+        error: (err: Error) => {},
       });
   }
-  
 
   getTotalValorMercado(): number {
     return this.carteira.reduce((total, item) => total + item.valorMercado, 0);

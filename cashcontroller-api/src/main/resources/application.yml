@@ -2,7 +2,7 @@ server:
   port: 8083
 
 jwt:
-  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  secret: ${JWT_SECRET}
   expiration: 86400000  # 24 hours in milliseconds
 
 spring:
@@ -26,10 +26,10 @@ spring:
     show-sql: false
 logging:
   level:
-    org.springframework.web: DEBUG
-    org.springframework.security: debug
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
 app:
   version: '@project.version@'
   admin:

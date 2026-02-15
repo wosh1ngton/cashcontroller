@@ -32,8 +32,7 @@ export class RendaVariavelFormComponent {
   operacaoRendaVariavel: OperacaoRendaVariavelDto = new OperacaoRendaVariavelDto();
   value: string | undefined;
   ativos: Ativo[] = [];
-  ativosBrapi: any;
-  ativoSelecionado: any;
+  ativoSelecionado: Ativo | undefined;
   tiposOperacao: TipoOperacao[] = [];
   tipoOperacaoSelecionado: any;
   quantidade: any;
@@ -50,10 +49,9 @@ export class RendaVariavelFormComponent {
   {}
 
   ngOnInit(): void {
-    this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);    
+    this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
-   // this.buscarAtivosBrapi()
-  }  
+  }
 
   private buscarAtivos(id: number) {
     this.ativoService.getAtivosPorClasse(id).subscribe(
@@ -61,28 +59,15 @@ export class RendaVariavelFormComponent {
     );
   }
 
-  private buscarAtivosBrapi() {
-    this.ativoService.getAcoesBrapi().subscribe(
-        ativos => {
-          this.ativosBrapi = ativos.stocks.filter((a:any) => a.name.startsWith('FII')).map((a:any) => { 
-            return {sigla: a.stock,  nome: a.name, logo: a.logo}
-          }) ; 
-       
-        }
-    );
-  }
-
   private buscarTiposOperacao() {
-    this.operacaoRendaVariavelService.getTipoOperacoes().subscribe(  
-      
-        tipos => {console.log(tipos), this.tiposOperacao = tipos      }
+    this.operacaoRendaVariavelService.getTipoOperacoes().subscribe(
+        tipos => this.tiposOperacao = tipos
     );
   }
 
-  save(operacao: any) {    
-    console.log(operacao)
+  save(operacao: OperacaoRendaVariavelDto) {
     this.operacaoRendaVariavelService
-      .save(operacao)
+      .save(operacao as any)
         .pipe(
           tap(() => {this.dialogRef.close(operacao)})
           )

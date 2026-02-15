@@ -45,6 +45,12 @@ public class AtivoCarteiraRFDTO {
         this.isIsento = isIsento;
     }
 
+    public AtivoCarteiraRFDTO(int idAtivo, LocalDate dataOperacao, Boolean isIsento) {
+        this.idAtivo = idAtivo;
+        this.dataOperacao = dataOperacao;
+        this.isIsento = isIsento;
+    }
+
     public AtivoCarteiraRFDTO(
 
             int id,

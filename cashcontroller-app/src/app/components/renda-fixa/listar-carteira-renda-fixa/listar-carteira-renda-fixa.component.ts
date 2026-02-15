@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AtivoCarteira } from 'src/app/models/ativo-carteira.model';
 import { OperacaoRendaFixaService } from 'src/app/services/operacao-renda-fixa.service';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-listar-carteira-renda-fixa',
@@ -8,29 +10,32 @@ import { OperacaoRendaFixaService } from 'src/app/services/operacao-renda-fixa.s
   styleUrl: './listar-carteira-renda-fixa.component.css'
 })
 export class ListarCarteiraRendaFixaComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
 
-  
-  constructor(private operacaoRendaFixaService: OperacaoRendaFixaService) {}  
-  
+  constructor(
+    private operacaoRendaFixaService: OperacaoRendaFixaService,
+    private loading: LoadingService
+  ) {}
+
   ativoSelecionado: number = 0;
   carteira: AtivoCarteira[] = [];
   totalValorMercado: number = 0;
   totalCusto: number = 0;
-  totalValorizacao: number = 0;  
+  totalValorizacao: number = 0;
   totalContratado: number = 0;
   totalProventos: number = 0;
 
   ngOnInit(): void {
-
-    this.operacaoRendaFixaService.listarCarteiraRendaFixa()
+    this.loading
+      .showLoaderUntilCompleted(this.operacaoRendaFixaService.listarCarteiraRendaFixa())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         this.carteira = res;
         this.calculateTotals();
-      }) 
+      });
   }
 
-
-  selecionarAtivo(id: any) {    
+  selecionarAtivo(id: { data: number }) {
     this.ativoSelecionado = id.data;
   }
 
@@ -62,5 +67,3 @@ export class ListarCarteiraRendaFixaComponent implements OnInit {
     this.totalProventos = this.getTotalProventos();
   }
 }
-
-

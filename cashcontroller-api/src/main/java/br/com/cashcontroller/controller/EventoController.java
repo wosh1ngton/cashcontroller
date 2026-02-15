@@ -2,6 +2,7 @@ package br.com.cashcontroller.controller;
 
 import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.service.EventoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,23 +18,24 @@ public class EventoController {
 	private EventoService eventoService;
 
 	@PostMapping("/renda-fixa")
-	ResponseEntity<?> cadastrarEventoRendaFixa(@RequestBody EventoAddRendaFixaDTO eventoDTO) {
+	ResponseEntity<?> cadastrarEventoRendaFixa(@RequestBody @Valid EventoAddRendaFixaDTO eventoDTO) {
 		this.eventoService.cadastrarEvento(eventoDTO);
 		return ResponseEntity.noContent().build();
 	}
+
 	@PostMapping
-	ResponseEntity<?> cadastrarEvento(@RequestBody EventoAddRendaVariavelDTO eventoDTO, @RequestParam String periodosDeRecorrencia) {
+	ResponseEntity<?> cadastrarEvento(@RequestBody @Valid EventoAddRendaVariavelDTO eventoDTO, @RequestParam String periodosDeRecorrencia) {
 		this.eventoService.cadastrarEvento(eventoDTO,periodosDeRecorrencia);
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@PutMapping
-	ResponseEntity<EventoAddRendaVariavelDTO> editarEvento(@RequestBody EventoAddRendaVariavelDTO eventoDto) {
+	ResponseEntity<EventoAddRendaVariavelDTO> editarEvento(@RequestBody @Valid EventoAddRendaVariavelDTO eventoDto) {
 		return ResponseEntity.ok(this.eventoService.atualizarEvento(eventoDto));
 	}
 
 	@PutMapping("/renda-fixa")
-	ResponseEntity<EventoAddRendaFixaDTO> editarEventoRendaFixa(@RequestBody EventoAddRendaFixaDTO eventoDto) {
+	ResponseEntity<EventoAddRendaFixaDTO> editarEventoRendaFixa(@RequestBody @Valid EventoAddRendaFixaDTO eventoDto) {
 		return ResponseEntity.ok(this.eventoService.atualizarEventoRendaFixa(eventoDto));
 	}
 
@@ -63,20 +65,18 @@ public class EventoController {
 
 	@PostMapping("/filter")
 	public ResponseEntity<List<EventoListRendaVariavelDTO>> filter(@RequestBody Filter filter) {
-
 		List<EventoListRendaVariavelDTO> operacoes = eventoService.listarEventosRendaVariavelPorData(filter);
 		return ResponseEntity.ok(operacoes);
 	}
 
 	@PostMapping("/filter/renda-fixa")
 	public ResponseEntity<List<EventoListRendaFixaDTO>> filterRendaFixa(@RequestBody Filter filter) {
-
 		List<EventoListRendaFixaDTO> operacoes = eventoService.listarEventosRendaFixaPorData(filter);
 		return ResponseEntity.ok(operacoes);
 	}
 
 	@PostMapping("/parametro-fii")
-	ResponseEntity<ParametroEventoFIIAddDTO> cadastrarParametroFII(@RequestBody ParametroEventoFIIAddDTO parametroDto) {
+	ResponseEntity<ParametroEventoFIIAddDTO> cadastrarParametroFII(@RequestBody @Valid ParametroEventoFIIAddDTO parametroDto) {
 		return ResponseEntity.ok(this.eventoService.cadastrarParametro(parametroDto));
 	}
 }

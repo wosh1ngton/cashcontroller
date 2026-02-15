@@ -1,6 +1,9 @@
-import {  Component,
-  
+import {
+  Component,
+  DestroyRef,
+  inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PrimengModule } from 'src/app/primeng/primeng.module';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -20,7 +23,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { TipoOperacao } from 'src/app/models/tipo-operacao.model';
-import { Observable, delay, filter, map, of, tap } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -64,6 +67,8 @@ import { EnumSubclasseAtivo } from 'src/app/enums/subclasse-ativo.enum';
   providers: [DialogService, ConfirmationService],
 })
 export class ListarOperacoesComponent {
+  private destroyRef = inject(DestroyRef);
+
   item: MenuItem[] | undefined;
   ativos: Ativo[] = [];
   ativosOperados: ItemLabel[] = [];
@@ -73,9 +78,8 @@ export class ListarOperacoesComponent {
   refEvento: DynamicDialogRef | undefined;
   cols!: Column[];
 
-  operacoes: any[] = [];
-
-  eventos: any[] = [];
+  operacoes: OperacaoRendaVariavel[] = [];
+  eventos: EventoRendaVariavel[] = [];
   subclasse: number = 0;
   tiposOperacao: TipoOperacao[] = [];
   clonedOperacoes: { [s: string]: OperacaoRendaVariavel } = {};
@@ -108,13 +112,13 @@ export class ListarOperacoesComponent {
     { field: 'valorTotal', header: 'Valor a ser Pago', type: 'number' },
   ];
 
-  ngOnInit() {       
+  ngOnInit() {
     this.buscarAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
     this.buscarTiposOperacao();
-    this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);   
-    this.listarAtivosOperados()
+    this.buscarSubclassesAtivos(EnumClasseAtivo.RENDA_VARIAVEL);
+    this.listarAtivosOperados();
     this.filterData();
-    this.filterEventos();    
+    this.filterEventos();
 
     this.cols = [
       { field: 'ativoDto', header: 'Ativo' },
@@ -124,7 +128,7 @@ export class ListarOperacoesComponent {
       { field: 'tipoOperacaoDto', header: 'Operação' },
       { field: 'subclasseAtivoDto', header: 'Classe' },
       { field: 'valorCorretagem', header: 'Corretagem' },
-      { field: 'valorTotal', header: 'Total' }      
+      { field: 'valorTotal', header: 'Total' }
     ];
   }
 
@@ -141,6 +145,7 @@ export class ListarOperacoesComponent {
 
     this.ref.onClose
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         filter((val) => !!val),
         tap((val) => {
           this.filter.startDate = null;
@@ -161,14 +166,13 @@ export class ListarOperacoesComponent {
 
   private listarAtivosOperados(): void {
     this.operacaoRendaVariavelService.buscarAtivosOperados()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res: ItemLabel[]) => {
-        console.log('ativo: ', res)
         this.ativosOperados = res;
-        console.log('ativo: ', this.ativosOperados)
       });
   }
-  showEventoDialog(dados?: any) {
-    
+
+  showEventoDialog(dados?: EventoRendaVariavel) {
     this.ref = this.dialogService.open(EventoRvFormComponent, {
       header: 'Cadastro de Evento - Renda Variável',
       width: '50vw',
@@ -185,6 +189,7 @@ export class ListarOperacoesComponent {
 
     this.ref.onClose
     .pipe(
+      takeUntilDestroyed(this.destroyRef),
       filter((val) => !!val),
       tap((val) => {
         this.filter.startDate = null;
@@ -201,63 +206,38 @@ export class ListarOperacoesComponent {
         this.filterEventos();
         this.filterData();
       }
-      
     );
   }
 
   private buscarAtivos(id: number) {
-    this.ativoService.getAtivosPorClasse(id).subscribe((ativos) => {
-      this.ativos = ativos;
-    });
+    this.ativoService.getAtivosPorClasse(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ativos) => {
+        this.ativos = ativos;
+      });
   }
 
-  
-  filtrarPorMes($event: any) {
-    this.filterService.filtrarPorMes($event, this.filter);    
+  filtrarPorMes($event: Mes) {
+    this.filterService.filtrarPorMes($event, this.filter);
     this.filterData();
     this.filterEventos();
   }
 
   buscarSubclassesAtivos(id: number) {
     this.ativoService.getSubclasseAtivos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((subclasseList: SubclasseAtivo[]) => {
         this.subclasses = subclasseList
-            .filter((subclasse: SubclasseAtivo) => 
+            .filter((subclasse: SubclasseAtivo) =>
                   subclasse.classeAtivo.id === id);
-       
-    });
+      });
   }
 
   private buscarTiposOperacao() {
     this.operacaoRendaVariavelService
       .getTipoOperacoes()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((tipos) => (this.tiposOperacao = tipos));
-  }
-
-  private listarOperacoes() {
-    this.operacaoRendaVariavelService
-      .getOperacoesRendaVariavel()
-      .subscribe((ops: any[]) => {
-        this.operacoes = ops;
-      });
-  }
-
-  private listarEventos() {
-    this.eventoRendaVariavelService
-      .getEventosRendaVariavel()
-      .subscribe((eventos: any[]) => {
-        this.eventos = eventos;
-      });
-  }
-
-  private listarOperacoesPorSubclasse(subclasse: number) {
-    this.operacaoRendaVariavelService
-      .getOperacoesRendaVariavel()
-      .subscribe((ops: any[]) => {
-        this.operacoes = ops.filter(
-          (op) => op.ativoDto.subclasseAtivoDto.id == subclasse
-        );
-      });
   }
 
   onRowEditInit(operacao: OperacaoRendaVariavel) {
@@ -274,32 +254,32 @@ export class ListarOperacoesComponent {
     delete this.clonedOperacoes[operacao.id as string];
   }
 
-  onRowEditSave(operacao: any) {
+  onRowEditSave(operacao: OperacaoRendaVariavel) {
     if (operacao.valorUnitario > 0) {
       delete this.clonedOperacoes[operacao.id as string];
 
-      this.operacaoRendaVariavelService.editar(operacao).subscribe({
-        next: () => {
-          this.filterData();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Operação Atualizada',
-          });
-        },
-        error: (err) =>
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Valor inválido' + err,
-          }),
-      });
+      this.operacaoRendaVariavelService.editar(operacao)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.filterData();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Operação Atualizada',
+            });
+          },
+          error: () =>
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Erro ao atualizar operação',
+            }),
+        });
     }
   }
 
- 
-
-  validarExclusao(operacao: any, event: Event, key: string) {
+  validarExclusao(operacao: OperacaoRendaVariavel, event: Event, key: string) {
     this.confirmationService.confirm({
       key: key,
       target: event.target as EventTarget,
@@ -309,7 +289,7 @@ export class ListarOperacoesComponent {
       acceptIcon: 'none',
       rejectIcon: 'none',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',      
+      rejectLabel: 'Não',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.excluirOperacao(operacao.id).subscribe(() => this.filterData());
@@ -327,12 +307,11 @@ export class ListarOperacoesComponent {
           detail: 'Cancelada a exclusão',
           life: 3000,
         });
-        
       },
     });
   }
 
-  validarExclusaoEvento(evento: any, event: Event, key: string) {
+  validarExclusaoEvento(evento: EventoRendaVariavel, event: Event, key: string) {
     this.confirmationService.confirm({
       key: key,
       target: event.target as EventTarget,
@@ -342,10 +321,10 @@ export class ListarOperacoesComponent {
       acceptIcon: 'none',
       rejectIcon: 'none',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',      
+      rejectLabel: 'Não',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.excluirEvento(evento.id).subscribe(() => this.filterEventos());
+        this.excluirEvento(evento.id.toString()).subscribe(() => this.filterEventos());
         this.messageService.add({
           severity: 'info',
           summary: 'Confirmado',
@@ -359,8 +338,7 @@ export class ListarOperacoesComponent {
           summary: 'Rejeitado',
           detail: 'Cancelada a exclusão',
           life: 3000,
-        });       
-        
+        });
       },
     });
   }
@@ -375,11 +353,12 @@ export class ListarOperacoesComponent {
 
   filterData() {
     this.filterService.filtrarPorDataEspecifica(this.filter);
-   
+
     return this.operacaoRendaVariavelService
       .filter(this.filter)
-      .subscribe((res: any) => {
-        (this.operacoes = res);      
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res: OperacaoRendaVariavel[]) => {
+        this.operacoes = res;
         this.filtroChange = !this.filtroChange;
       });
   }
@@ -388,8 +367,9 @@ export class ListarOperacoesComponent {
     this.filterService.filtrarPorDataEspecifica(this.filter);
     return this.eventoRendaVariavelService
       .filter(this.filter)
-      .subscribe((res: any) => {
-        (this.eventos = res);        
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res: EventoRendaVariavel[]) => {
+        this.eventos = res;
         this.filtroEventoChange = !this.filtroEventoChange;
       });
   }

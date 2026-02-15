@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -187,6 +184,32 @@ public class EventoService {
 					return evento.getValorTotal();
 				})
 				.sum();
+	}
+
+	public Map<Integer, Double> getTotalProventosRendaFixaBatch(List<Integer> ativoIds) {
+		if (ativoIds.isEmpty()) return Collections.emptyMap();
+
+		List<EventoRendaFixa> allEvents = eventoRendaFixaRepository.findEventosByAtivoIn(ativoIds);
+		List<AtivoCarteiraRFDTO> allParams = operacaoRendaFixaRepository.findAtivoParamsRendaFixaByAtivoIds(ativoIds);
+
+		Map<Integer, AtivoCarteiraRFDTO> paramsMap = allParams.stream()
+				.collect(Collectors.toMap(AtivoCarteiraRFDTO::getIdAtivo, p -> p, (a, b) -> a));
+
+		return allEvents.stream()
+				.collect(Collectors.groupingBy(ev -> ev.getAtivo().getId()))
+				.entrySet().stream()
+				.collect(Collectors.toMap(
+						Map.Entry::getKey,
+						entry -> {
+							AtivoCarteiraRFDTO param = paramsMap.get(entry.getKey());
+							if (param == null) return 0.0;
+							return entry.getValue().stream()
+									.map(EventoRendaFixaMapper.INSTANCE::toListDTO)
+									.mapToDouble(dto -> calculaImpostoService.getValorLiquidoImpostoEvento(
+											dto.getValor(), param.getIsIsento(), param.getDataOperacao()))
+									.sum();
+						}
+				));
 	}
 
 

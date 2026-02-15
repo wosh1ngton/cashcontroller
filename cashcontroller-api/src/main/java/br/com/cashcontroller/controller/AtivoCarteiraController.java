@@ -6,8 +6,8 @@ import br.com.cashcontroller.dto.ProventosMesDTO;
 import br.com.cashcontroller.dto.TopPagadoraProventosDTO;
 import br.com.cashcontroller.external.service.RendaVariavelService;
 import br.com.cashcontroller.service.AtivoCarteiraService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,39 +22,29 @@ public class AtivoCarteiraController {
 
     @Autowired
     RendaVariavelService rendaVariavelService;
+
     @PostMapping
-    public ResponseEntity<AtivoCarteiraDTO> cadastrarAtivoCarteira(@RequestBody() AtivoCarteiraDTO ativoCarteiraDTO) {
+    public ResponseEntity<AtivoCarteiraDTO> cadastrarAtivoCarteira(@RequestBody @Valid AtivoCarteiraDTO ativoCarteiraDTO) {
         return ResponseEntity.ok(service.cadastrarAtivoCarteira(ativoCarteiraDTO));
     }
 
     @GetMapping
-    public ResponseEntity<?> listarCarteiraPrincipal() {
-        try {
-            List<AtivoCarteiraDTO> ativosCarteira = service.listarCarteiraAcoes();
-            return ResponseEntity.ok(ativosCarteira);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<List<AtivoCarteiraDTO>> listarCarteiraPrincipal() {
+        List<AtivoCarteiraDTO> ativosCarteira = service.listarCarteiraAcoes();
+        return ResponseEntity.ok(ativosCarteira);
     }
 
     @GetMapping("/fiis")
-    public ResponseEntity<?> listarCarteiraFiis() {
-        try {
-            List<AtivoCarteiraDTO> ativosCarteira = service.listarAtivosCarteiraFiis();
-            return ResponseEntity.ok(ativosCarteira);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<List<AtivoCarteiraDTO>> listarCarteiraFiis() {
+        List<AtivoCarteiraDTO> ativosCarteira = service.listarAtivosCarteiraFiis();
+        return ResponseEntity.ok(ativosCarteira);
     }
 
     @GetMapping("/renda-fixa")
-    public ResponseEntity<?> listarCarteiraRendaFixa() {
-
-            List<AtivoCarteiraDTO> ativosCarteira = service.listarAtivosCarteiraRendaFixa();
-            return ResponseEntity.ok(ativosCarteira);
-
+    public ResponseEntity<List<AtivoCarteiraDTO>> listarCarteiraRendaFixa() {
+        List<AtivoCarteiraDTO> ativosCarteira = service.listarAtivosCarteiraRendaFixa();
+        return ResponseEntity.ok(ativosCarteira);
     }
-
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<AtivoCarteiraDTO> getAtivoCarteiraById(@PathVariable("id") int idAtivoCarteira) {
@@ -68,7 +58,7 @@ public class AtivoCarteiraController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<AtivoCarteiraDTO> atualizarAtivoCarteira(@PathVariable Integer id, @RequestBody AtivoCarteiraDTO ativoCarteiraDTO) {
+    public ResponseEntity<AtivoCarteiraDTO> atualizarAtivoCarteira(@PathVariable Integer id, @RequestBody @Valid AtivoCarteiraDTO ativoCarteiraDTO) {
         return ResponseEntity.ok(service.atualizarAtivoCarteira(id, ativoCarteiraDTO));
     }
 
@@ -76,7 +66,6 @@ public class AtivoCarteiraController {
     public ResponseEntity<List<PatrimonioCategoriaDTO>> getValorPatrimonial() {
         return ResponseEntity.ok(service.getPatrimonioPorCategoria());
     }
-
 
     @GetMapping(value = "/proventos")
     public ResponseEntity<List<ProventosMesDTO>> getProventosMes() {

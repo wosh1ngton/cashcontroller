@@ -35,6 +35,7 @@ import { ListarAportesComponent } from './components/aporte/listar-aportes/lista
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { DefaultComponent } from './components/default/default.component';
 import { LoginComponent } from './components/login/login.component';
 import { CardComponent } from './components/shared/card/card.component';
@@ -88,8 +89,9 @@ registerLocaleData(localePt, 'pt-BR', localePtExtra);
     LoadingService,
     OperacaoRendaVariavelService,
     { provide: LOCALE_ID, useValue: 'pt-BR' },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },  
-     
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+
   ],
   bootstrap: [AppComponent],
   

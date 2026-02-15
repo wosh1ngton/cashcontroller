@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { TipoOperacao } from "src/app/models/tipo-operacao.model";
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { FilterOperacao } from "../models/filter-operacao.model";
 import { TipoEvento } from "../models/tipo-evento.model";
+import { EventoRendaVariavel } from "../models/evento-renda-variavel.model";
 
 @Injectable({
     providedIn: 'root'
@@ -14,38 +14,35 @@ export class EventoRendaVariavelService {
 
     constructor(private http: HttpClient) {}
 
-    findById(id: string)  {
-        return this.http.get(this.baseUrl + '/eventos/' + id);
+    findById(id: string): Observable<EventoRendaVariavel> {
+        return this.http.get<EventoRendaVariavel>(this.baseUrl + '/eventos/' + id);
     }
 
-    getTipoEventos() : Observable<TipoEvento[]> {
+    getTipoEventos(): Observable<TipoEvento[]> {
         return this.http.get<TipoEvento[]>(this.baseUrl + '/eventos/tipo-eventos');
     }
 
-    save(evento: any, periodosDeRecorrencia?: number): Observable<any> {
-        
+    save(evento: EventoRendaVariavel, periodosDeRecorrencia?: number): Observable<void> {
         let params = new HttpParams();
         if (periodosDeRecorrencia !== undefined && periodosDeRecorrencia !== null) {
             params = params.set('periodosDeRecorrencia', periodosDeRecorrencia.toString());
         }
-        return this.http.post(this.baseUrl + '/eventos', evento, { params });
+        return this.http.post<void>(this.baseUrl + '/eventos', evento, { params });
     }
 
-    editar(operacao: any) {
-        return this.http.put(this.baseUrl + '/eventos', operacao);
+    editar(operacao: EventoRendaVariavel): Observable<EventoRendaVariavel> {
+        return this.http.put<EventoRendaVariavel>(this.baseUrl + '/eventos', operacao);
     }
 
-    getEventosRendaVariavel(): Observable<any[]> {
-        return this.http.get<any[]>(this.baseUrl + '/eventos');
+    getEventosRendaVariavel(): Observable<EventoRendaVariavel[]> {
+        return this.http.get<EventoRendaVariavel[]>(this.baseUrl + '/eventos');
     }
 
-    filter(filter: FilterOperacao) {
-        return this.http.post(this.baseUrl + '/eventos/filter', filter);
+    filter(filter: FilterOperacao): Observable<EventoRendaVariavel[]> {
+        return this.http.post<EventoRendaVariavel[]>(this.baseUrl + '/eventos/filter', filter);
     }
 
-    excluir(id: string) {
-        return this.http.delete(this.baseUrl + '/eventos/' + id);
+    excluir(id: string): Observable<void> {
+        return this.http.delete<void>(this.baseUrl + '/eventos/' + id);
     }
-  
-	
 }

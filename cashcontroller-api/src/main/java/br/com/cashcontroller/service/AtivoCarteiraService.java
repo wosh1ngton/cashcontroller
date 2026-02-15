@@ -137,25 +137,23 @@ public class AtivoCarteiraService {
 
         List<AtivoCarteiraRFDTO> carteiraRendaFixa = operacaoService.listarCarteiraRendaFixa();
         Map<String, AtivoCarteiraRFDTO> groupedBySiglaAtivo = agruparPorAtivo(carteiraRendaFixa);
-        List<AtivoCarteiraRFDTO> aggregatedList = new ArrayList<>(groupedBySiglaAtivo.values());
+
+        // Use HashMap for O(1) lookup instead of O(n) stream search per item
+        Map<Integer, AtivoCarteiraRFDTO> aggregatedByAtivoId = new HashMap<>();
+        groupedBySiglaAtivo.values().forEach(item -> aggregatedByAtivoId.put(item.getIdAtivo(), item));
 
         var ativosCarteiraDTO = getCarteira();
         ativosCarteiraDTO = ativosCarteiraDTO.stream().filter(a -> a.getAtivo().getSubclasseAtivo().getId() > 2).toList();
 
-        ativosCarteiraDTO.forEach(
-                ativoCarteiraRFDTO -> {
-                    aggregatedList.stream().filter(item -> item.getIdAtivo() == ativoCarteiraRFDTO.getAtivo().getId())
-                            .findFirst().ifPresent(ativoAtualizado -> {
-                                        ativoCarteiraRFDTO.setCusto(ativoAtualizado.getCusto());
-                                        ativoCarteiraRFDTO.setValorMercado(ativoAtualizado.getValorMercado());
-                                        ativoCarteiraRFDTO.setCustodia(ativoAtualizado.getCustodia());
-                                        ativoCarteiraRFDTO.setPrecoMedio(ativoAtualizado.getPrecoMedio());
-                                    }
-                            );
-
-
-                }
-        );
+        ativosCarteiraDTO.forEach(ativoCarteiraRFDTO -> {
+            AtivoCarteiraRFDTO ativoAtualizado = aggregatedByAtivoId.get(ativoCarteiraRFDTO.getAtivo().getId());
+            if (ativoAtualizado != null) {
+                ativoCarteiraRFDTO.setCusto(ativoAtualizado.getCusto());
+                ativoCarteiraRFDTO.setValorMercado(ativoAtualizado.getValorMercado());
+                ativoCarteiraRFDTO.setCustodia(ativoAtualizado.getCustodia());
+                ativoCarteiraRFDTO.setPrecoMedio(ativoAtualizado.getPrecoMedio());
+            }
+        });
 
         return ativosCarteiraDTO;
     }

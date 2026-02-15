@@ -1,10 +1,10 @@
 package br.com.cashcontroller.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 
 @Getter
@@ -12,7 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AlterarSenhaDTO {
 
+	@NotBlank(message = "Senha atual é obrigatória")
 	private String senhaAtual;
+
+	@NotBlank(message = "Nova senha é obrigatória")
+	@Size(min = 6, message = "Nova senha deve ter no mínimo 6 caracteres")
 	private String novaSenha;
 
 }
