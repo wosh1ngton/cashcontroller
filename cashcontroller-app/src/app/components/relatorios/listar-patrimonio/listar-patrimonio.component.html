@@ -1,6 +1,6 @@
 <div class="grid">
-    <div class="col-6">
-        <p-table [columns]="colsPatrimonio" [value]="patrimonio">
+    <div class="col-12 md:col-6">
+        <p-table [columns]="colsPatrimonio" [value]="patrimonio" [scrollable]="true">
             <ng-template pTemplate="header" let-col>
                 <tr>
                     <th *ngFor="let item of col"> {{ item.header }} </th>
@@ -38,20 +38,19 @@
             </ng-template>
         </p-table>
     </div>
-    <div class="col-3">
-        <p-card header="Patrimônio Acumulado" [style]="{'height': '182px'}">
-
+    <div class="col-6 md:col-3">
+        <p-card header="Patrimônio Acumulado">
 
             <h2>
                 {{valorTotal | currency:'BRL'}}
             </h2>
         </p-card>
     </div>
-    <div class="col-3">
+    <div class="col-6 md:col-3">
         <p-card header="Dinheiros!">
             <h2 style="font-size: medium;">
-                Total: {{totalProventosRendimentos | currency:'BRL'}} <br /> 
-                Proventos: {{totalProventos | currency:'BRL'}} <br /> 
+                Total: {{totalProventosRendimentos | currency:'BRL'}} <br />
+                Proventos: {{totalProventos | currency:'BRL'}} <br />
                 Rendimentos: {{totalRendimentos | currency:'BRL' }}
             </h2>
         </p-card>
@@ -60,8 +59,8 @@
 
 
 
-<div class="grid" *ngIf="dataTopPagadoras.length > 0" style="background-color: #f4f4f4;">    
-    <div>
+<div class="grid" *ngIf="dataTopPagadoras.length > 0" style="background-color: #f4f4f4;">
+    <div class="col-12">
         <div class="m-3 ml-0 text-center">
             <p-button [text]="true" class="p-2" (onClick)="alterarVisualizacao()" label="Todos"> </p-button>
             <p-button [text]="true" class="p-2" (onClick)="alterarVisualizacao('acao')" label="Ações"> </p-button>
@@ -77,6 +76,6 @@
 
 
 
-<div class="card">
+<div class="card" style="width: 100%; overflow-x: auto;">
     <p-chart type="line" [data]="data" [options]="options" />
 </div>

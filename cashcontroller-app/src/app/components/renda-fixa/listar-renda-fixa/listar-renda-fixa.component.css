@@ -1,7 +1,19 @@
-.venda {    
-    color: #ff5252;   
+.venda {
+    color: #ff5252;
 }
 
-.compra {    
+.compra {
     color: #1e7f4d;
+}
+
+.painel-de-botoes {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 768px) {
+    .painel-de-botoes {
+        justify-content: center;
+        gap: 0.5rem;
+    }
 }

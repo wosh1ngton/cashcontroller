@@ -1,8 +1,9 @@
 <div class="grid">
-    <div  [ngClass]="{'col-8': ativoSelecionado, 'col-12': !ativoSelecionado}">
-        <p-table [value]="carteira" styleClass="p-datatable-sm"            
-            [(selection)]="ativoSelecionado" selectionMode="single"           
-            [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" 
+    <div [ngClass]="{'col-12 md:col-8': ativoSelecionado, 'col-12': !ativoSelecionado}">
+        <p-table [value]="carteira" styleClass="p-datatable-sm"
+            [(selection)]="ativoSelecionado" selectionMode="single"
+            [scrollable]="true"
+            [tableStyle]="{ 'border': '1px solid #ccc' }"
             class="tabela-irpf">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
@@ -24,7 +25,7 @@
                     <th pSortableColumn="custodia">Custódia <p-sortIcon field="custodia" /></th>
                     <th>Preço Médio</th>
                     <th>Cotação</th>
-                    <th>Oscilação do dia</th>                    
+                    <th>Oscilação do dia</th>
                     <th pSortableColumn="valorizacao">Valorização <p-sortIcon field="valorizacao" /></th>
                     <th pSortableColumn="totalEmProventos">Proventos <p-sortIcon field="totalEmProventos" /></th>
                     <th pSortableColumn="ganhoDeCapital">Ganho de Capital <p-sortIcon field="ganhoDeCapital" /></th>
@@ -43,7 +44,7 @@
                     <td>{{ item.custodia }}</td>
                     <td>{{ item.precoMedio | currency:'BRL' }}</td>
                     <td>{{ item.cotacao | currency: 'BRL' }}</td>
-                    <td>{{ item.oscilacaoDia | number: '1.0-2' }} %</td>                    
+                    <td>{{ item.oscilacaoDia | number: '1.0-2' }} %</td>
                     <td>
                         <div [ngClass]="{'prejuizo': item.valorizacao < 0, 'lucro': item.valorizacao > 0 }">
                             {{ item.valorizacao | number: '1.0-2' }}
@@ -63,7 +64,7 @@
             </ng-template>
         </p-table>
     </div>
-    <div class="col-4" *ngIf="ativoSelecionado != 0">
+    <div class="col-12 md:col-4" *ngIf="ativoSelecionado != 0">
         <app-detalhar-ativo [idAtivo]="ativoSelecionado">
 
         </app-detalhar-ativo>

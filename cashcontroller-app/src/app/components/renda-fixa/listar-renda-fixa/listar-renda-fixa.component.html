@@ -1,6 +1,6 @@
 <div class="col-12 p-fluid">
     <div class="grid">
-        <div class="col-2 lg:col-1- md:col-2">
+        <div class="col-12 md:col-2 sidebar-filtros">
             <p-card header="Filtros">
                 <div class="p-2">
                     <p class="mt-0">
@@ -8,19 +8,19 @@
                             Filtrar por mês e ano
                         </strong>
                     </p>
-                    <app-filtro-superior [selectedMonth]="filter.mes" 
+                    <app-filtro-superior [selectedMonth]="filter.mes"
                         [selectedAno]="filter.ano"
-                        [tipoDeOperacao]="operacaoRendaFixaService"                         
+                        [tipoDeOperacao]="operacaoRendaFixaService"
                         (selecaoMes)="filtrarPorMes($event)">
                     </app-filtro-superior>
                     <p-toast></p-toast>
                 </div>
 
                 <div class="p-2">
-                    <p> 
+                    <p>
                         <strong>
-                            Filtrar por data específica 
-                        </strong> 
+                            Filtrar por data específica
+                        </strong>
                     </p>
                     <label for="inicio">
                         Início
@@ -46,15 +46,15 @@
         </div>
         <p-toast></p-toast>
 
-        <div class="col-10 lg:col-10 md:col-10">
+        <div class="col-12 md:col-10">
 
-            <div class="p-2 col-12">             
+            <div class="p-2 col-12">
 
                 <div class="painel-de-botoes grid">
-                    <div class="col-2 col-offset-8">
+                    <div class="col-6 md:col-2 md:col-offset-8">
                         <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
                     </div>
-                    <div class="col-2">
+                    <div class="col-6 md:col-2">
                         <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
                     </div>
                 </div>
@@ -64,7 +64,8 @@
                 <p-tabPanel header="Operações">
                     <p-confirmDialog key="deleteOperacao" />
             <p-table [columns]="cols" dataKey="id" editMode="row" [value]="operacoes"
-                [tableStyle]="{ 'min-width': '50rem', 'min-height': '20rem' }" styleClass="p-datatable-sm">
+                [scrollable]="true"
+                [tableStyle]="{ 'min-height': '20rem' }" styleClass="p-datatable-sm">
                 <ng-template pTemplate="header" let-columns>
                     <tr>
                         <th> Ativo </th>
@@ -76,9 +77,6 @@
                         <th>Taxa</th>
                         <th>Custo</th>
                         <th>Valor</th>
-                        <!-- <th *ngFor="let col of columns">
-                            {{ col.header }}
-                        </th> -->
                         <th>
 
                         </th>
@@ -218,8 +216,9 @@
             </p-tabPanel>
             <p-tabPanel header="Eventos">
                 <p-confirmDialog key="deleteEvento" />
-                <p-table [columns]="colsEventos" 
-                [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }"
+                <p-table [columns]="colsEventos"
+                [value]="eventos"
+                [scrollable]="true"
                 styleClass="p-datatable-sm">
                 <ng-template pTemplate="header" let-columns>
                     <tr>
@@ -267,3 +266,4 @@
             </p-tabView>
         </div>
     </div>
+</div>

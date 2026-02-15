@@ -1,12 +1,12 @@
 <div class="grid">
     <p-toast></p-toast>
-    <div class="col-2">
+    <div class="col-12 md:col-2">
         <div class="card flex justify-content-start">
             <p-menu [model]="items" />
         </div>
     </div>
-    <div class="col-10">
-        <div class="flex ml-3 mt-3">
+    <div class="col-12 md:col-10">
+        <div class="flex ml-0 md:ml-3 mt-3" style="width: 100%; overflow-x: auto;">
             <router-outlet></router-outlet>
         </div>
     </div>

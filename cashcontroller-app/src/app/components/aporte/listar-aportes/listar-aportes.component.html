@@ -3,7 +3,6 @@
     <p-button label="Cadastrar Aporte" (click)="showDialogCadastrarAporte()"></p-button>
 </div>
 <div>
-    
 
     <p-table [value]="aportesTabela" [scrollable]="true" scrollHeight="400px" styleClass="p-datatable-sm"
         [tableStyle]="{ 'min-width': '100%', 'border': '1px solid #ccc' }">
@@ -37,13 +36,12 @@
         </ng-template>
     </p-table>
 </div>
-<div class="flex">
-    
+<div class="flex flex-column">
 
-    <div>
+    <div class="w-full">
         <p class="pl-3 font-bold"> Gráfico de Aportes </p>
-        
-        <div class="card" style="width: 110rem;">
+
+        <div class="card" style="width: 100%; overflow-x: auto;">
             <p-chart type="bar" [data]="dataGrafico" [options]="optionsGrafico"  />
         </div>
     </div>

@@ -1,22 +1,13 @@
 .header {
   width: 100%;
-
 }
-/* .barra-header {  
-  background-color: var(--secondary-color-cc);
-  height: 6px;  
-  z-index: 1000;
-  position: relative;
-  
-} */
 
 p-menubar {
   z-index: 1002 !important;
-  position: relative; 
+  position: relative;
 }
 .p-menuitem-text {
   color: #000;
-  
 }
 .p-menuitem-icon {
   color: #000;
@@ -29,7 +20,7 @@ p-menubar {
 
 p-menuitem-link {
   color: #000;
-  z-index: 10001 !important; 
+  z-index: 10001 !important;
   position: relative;
 }
 
@@ -52,6 +43,36 @@ p-menuitem-link {
   box-shadow: 4px 2px 4px 2px #ccc;
 }
 
-/* ::ng-deep .p-menubar.p-component ul > li:last-child {
-    background-color: #ccc;
-} */
+/* Mobile responsive */
+@media screen and (max-width: 768px) {
+  .content {
+    padding: 0.5rem;
+    min-height: auto;
+  }
+
+  .footer {
+    min-height: 3rem;
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  ::ng-deep .p-menubar .p-menubar-button {
+    display: flex !important;
+  }
+
+  ::ng-deep .p-menubar-root-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    z-index: 1003;
+    flex-direction: column;
+  }
+
+  ::ng-deep .p-menubar-mobile-active .p-menubar-root-list {
+    display: flex !important;
+  }
+}

@@ -1,5 +1,6 @@
-<p-table [value]="posicoes" 
-[tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #ccc' }" styleClass="p-datatable-sm">
+<p-table [value]="posicoes"
+[scrollable]="true"
+[tableStyle]="{ 'border': '1px solid #ccc' }" styleClass="p-datatable-sm">
 <ng-template pTemplate="caption">
     <div class="flex align-items-center justify-content-between">
         Posições Encerradas
@@ -8,7 +9,7 @@
 <ng-template pTemplate="header">
     <tr>
         <th colspan="5" class="text-center">Totais: </th>
-        <th> {{ getResultadoPosicoesEncerradas() | currency: 'BRL' }}</th>        
+        <th> {{ getResultadoPosicoesEncerradas() | currency: 'BRL' }}</th>
     </tr>
     <tr>
         <th>Ativo</th>
@@ -17,20 +18,18 @@
         <th>Valor Investido</th>
         <th>Valor da Venda</th>
         <th pSortableColumn="resultadoAtivo">Resultado <p-sortIcon field="resultadoAtivo" /></th>
-        
+
     </tr>
 </ng-template>
 <ng-template pTemplate="body" locale="pt-BR" let-item>
     <tr>
         <td>{{ item.nomeAtivo }}</td>
         <td>{{ item.dataInicio }}</td>
-        <td>{{ item.dataEncerramento }}</td>        
-        <td>{{ item.valorInvestido | currency: 'BRL' }}</td>        
+        <td>{{ item.dataEncerramento }}</td>
+        <td>{{ item.valorInvestido | currency: 'BRL' }}</td>
         <td>{{ item.valorVenda | currency: 'BRL'  }} </td>
         <td>{{ item.resultadoAtivo | currency: 'BRL'  }} </td>
-        
+
     </tr>
 </ng-template>
 </p-table>
-
-

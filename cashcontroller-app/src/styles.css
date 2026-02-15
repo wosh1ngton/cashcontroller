@@ -10,37 +10,150 @@ html {
 
 body {
     font-size: 1rem;
+    overflow-x: hidden;
 }
 
 .p-menubar {
-    
-    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgb(176, 177, 179) 200%);   
+
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgb(176, 177, 179) 200%);
     box-shadow: 0px 4px 4px #ccc;
     z-index: 1000;
-    position: relative;   
-     
+    position: relative;
+
 }
 
 
 h3 {
-    color: #000;   
+    color: #000;
     float: left;
 }
-/* span {    
-    font-size: 3.5rem;    
-    color: #333;
-    font-weight: 100;    
-    margin-left: 4px;
-} */
-.p-inputnumber-input {    
-    width: 100px; 
+
+.p-inputnumber-input {
+    width: 100px;
  }
 
-/*
-.p-menubar {    
-    background-color: var(--secondary-color-cc);    
-} */
+/* ===== RESPONSIVE / MOBILE ===== */
 
-@media screen {
-    
+/* Utility classes for hiding on mobile/desktop */
+@media screen and (max-width: 768px) {
+    .hidden-mobile {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .hidden-desktop {
+        display: none !important;
+    }
+}
+
+/* Sidebar stacking on mobile */
+@media screen and (max-width: 768px) {
+    .sidebar-filtros {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Tables: horizontal scroll on small screens */
+@media screen and (max-width: 768px) {
+    html {
+        font-size: 12px;
+    }
+
+    /* PrimeNG table responsive scroll */
+    .p-datatable-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .p-datatable table {
+        min-width: 600px !important;
+    }
+
+    .p-datatable-sm .p-datatable-thead > tr > th,
+    .p-datatable-sm .p-datatable-tbody > tr > td {
+        padding: 0.3rem 0.4rem !important;
+        font-size: 0.85rem;
+    }
+
+    /* PrimeNG MenuBar mobile hamburger */
+    .p-menubar {
+        flex-wrap: wrap;
+        padding: 0.5rem;
+    }
+
+    .p-menubar-root-list {
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    /* Input number width on mobile */
+    .p-inputnumber-input {
+        width: 100% !important;
+    }
+
+    /* Cards: auto height on mobile */
+    .p-card {
+        height: auto !important;
+    }
+
+    .p-card .p-card-body {
+        padding: 0.75rem !important;
+    }
+
+    /* Dialog responsive */
+    .p-dialog {
+        width: 95vw !important;
+        max-width: 95vw !important;
+    }
+
+    .p-dialog .p-dialog-content {
+        padding: 0.75rem !important;
+    }
+
+    /* TabView responsive */
+    .p-tabview-nav {
+        flex-wrap: wrap;
+    }
+
+    .p-tabview-nav li {
+        flex: 1 1 auto;
+    }
+
+    .p-tabview-nav li a {
+        padding: 0.5rem !important;
+        font-size: 0.85rem;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Charts responsive */
+    .p-chart,
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Dropdown full width */
+    .p-dropdown {
+        width: 100% !important;
+    }
+
+    /* Calendar full width */
+    .p-calendar {
+        width: 100% !important;
+    }
+
+    /* Footer */
+    .footer {
+        font-size: 0.8rem;
+        text-align: center;
+    }
+}
+
+/* Tablet breakpoint */
+@media screen and (max-width: 960px) {
+    .p-datatable-wrapper {
+        overflow-x: auto !important;
+    }
 }

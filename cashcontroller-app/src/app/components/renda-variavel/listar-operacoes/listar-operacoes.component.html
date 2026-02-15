@@ -1,7 +1,7 @@
 <div>
     <div class="col-12">
         <div class="grid">
-            <div class="p-2 col-2">
+            <div class="p-2 col-12 md:col-2 sidebar-filtros">
                 <p-card header="Filtros">
                     <div class="p-2">
                         <p class="mt-0">
@@ -63,21 +63,21 @@
                 </p-card>
 
             </div>
-            <div class="col-10">
+            <div class="col-12 md:col-10">
                 <div class="grid">
                     <div class="col-12">
                         <app-numeros-do-mes [eventos]="eventos" [operacoes]="operacoes" [filtro]="filter">
 
                         </app-numeros-do-mes>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 md:col-6">
                         <app-irpf-mes [filtro]="filter" [filtroChanged]="filtroChange"
                             [subclasseAtivo]="enumSubclasseAtivo.Acao" [tituloSubclasseAtivo]="'Ação'">
 
                         </app-irpf-mes>
                     </div>
 
-                    <div class="col-6">
+                    <div class="col-12 md:col-6">
                         <app-irpf-mes [filtro]="filter" [subclasseAtivo]="enumSubclasseAtivo.FII"
                             [filtroChanged]="filtroChange" [tituloSubclasseAtivo]="'Fii'">
 
@@ -98,7 +98,8 @@
                         <p-confirmDialog key="deleteOperacao" />
                         <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes"
                             [value]="operacoes" styleClass="p-datatable-sm"
-                            [tableStyle]="{ 'min-width': '50rem', 'border': '1px solid #e9e9e9' }">
+                            [scrollable]="true"
+                            [tableStyle]="{ 'border': '1px solid #e9e9e9' }">
                             <ng-template pTemplate="header" let-columns>
                                 <tr class="rowstyle">
                                     <th *ngFor="let col of columns">
@@ -236,7 +237,8 @@
                     </p-tabPanel>
                     <p-tabPanel header="Eventos">
                         <p-confirmDialog key="deleteEvento" />
-                        <p-table [columns]="colsEventos" [value]="eventos" [tableStyle]="{ 'min-width': '50rem' }"
+                        <p-table [columns]="colsEventos" [value]="eventos"
+                            [scrollable]="true"
                             styleClass="p-datatable-sm">
                             <ng-template pTemplate="header" let-columns>
                                 <tr class="rowstyle">

@@ -8,3 +8,19 @@
     display: inline-flex;
     min-width: 40px;
 }
+
+@media screen and (max-width: 768px) {
+    ::ng-deep .item-mes .p-chip {
+        min-width: 32px;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .container-filtros-superiores {
+        padding: 0;
+    }
+
+    .meses {
+        gap: 0.25rem !important;
+    }
+}
