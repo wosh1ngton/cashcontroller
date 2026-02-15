@@ -41,6 +41,7 @@ public interface EventoRepository extends JpaRepository<EventoRendaVariavel, Int
             "a.id = :ativoId")
     List<EventoRendaVariavel> findEventosByAtivo(@Param("ativoId") Integer ativoId);
 
-
+    @Query("SELECT ev FROM EventoRendaVariavel ev JOIN FETCH ev.ativo JOIN FETCH ev.tipoEvento WHERE ev.ativo.id IN :ids ORDER BY ev.dataPagamento ASC")
+    List<EventoRendaVariavel> findByAtivoIdIn(@Param("ids") List<Integer> ids);
 
 }

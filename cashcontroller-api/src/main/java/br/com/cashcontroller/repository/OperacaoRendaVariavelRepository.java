@@ -202,4 +202,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
     @Query("SELECT DISTINCT new br.com.cashcontroller.dto.ItemLabelDTO(o.ativo.id, o.ativo.sigla) FROM OperacaoRendaVariavel o")
     List<ItemLabelDTO> findDistinctAtivo();
 
+    @Query("SELECT op FROM OperacaoRendaVariavel op JOIN FETCH op.ativo JOIN FETCH op.tipoOperacao WHERE op.ativo.id IN :ids ORDER BY op.dataOperacao ASC")
+    List<OperacaoRendaVariavel> findByAtivoIdIn(@Param("ids") List<Integer> ids);
+
 }

@@ -16,5 +16,7 @@ export class AtivoCarteira {
     totalEmProventos: number = 0;
     proventos: number = 0;
     ganhoDeCapital: number = 0;
+    tir: number | null = null;
+    tirMemoriaCalculo: string | null = null;
 
 }

@@ -47,6 +47,9 @@ public class AtivoCarteiraService {
     @Autowired
     OperacaoRendaFixaRepository operacaoRendaFixaRepository;
 
+    @Autowired
+    TirService tirService;
+
     public AtivoCarteiraDTO cadastrarAtivoCarteira(AtivoCarteiraDTO ativoCarteiraDTO) {
         var entity = this.repository.save(AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteiraDTO));
         return AtivoCarteiraMapper.INSTANCE.toDTO(entity);
@@ -73,6 +76,7 @@ public class AtivoCarteiraService {
         var brapiDTO = rendaVariavelService.getFiisBrapi();
         List<AtivoCarteiraDTO> meusFiis = operacaoService.listarCarteiraDeFiis();
         setCotacoes(brapiDTO, meusFiis);
+        tirService.calcularTirParaCarteira(meusFiis);
         return meusFiis;
     }
 
@@ -91,6 +95,7 @@ public class AtivoCarteiraService {
         minhasAcoes.removeIf(ativo -> ativo.getAtivo().getSigla().equals("IVVB11"));
         setCotacoes(brapiDTO, minhasAcoes);
         minhasAcoes.addAll(getIVVB11());
+        tirService.calcularTirParaCarteira(minhasAcoes);
         return minhasAcoes;
     }
 

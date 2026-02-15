@@ -23,6 +23,8 @@ public class AtivoCarteiraDTO {
     private double precoMedio;
     private double totalEmProventos;
     private double ganhoDeCapital;
+    private Double tir;
+    private String tirMemoriaCalculo;
 
     public double getValorizacao() {
         return valorMercado - custo;
