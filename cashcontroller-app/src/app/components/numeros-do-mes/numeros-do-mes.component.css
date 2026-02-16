@@ -1,8 +1,16 @@
+:host h4 {
+    color: var(--cc-text-secondary);
+    font-weight: 500;
+    margin: 0.5rem 0 0.2rem;
+}
+
 .subtitulo-numero-mes {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
+    color: var(--cc-blue-800);
+    font-weight: 700;
 }
 
 @media screen and (max-width: 768px) {

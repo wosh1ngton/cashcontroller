@@ -9,13 +9,17 @@
 }
 
 .middle-text {
-    margin-left: 4px;
+    margin-left: 6px;
+    font-weight: 500;
+    color: var(--cc-blue-800);
 }
 
 .prejuizo {
-    color: red;
+    color: var(--cc-prejuizo);
+    font-weight: 600;
 }
 
 .lucro {
-    color: blue;
+    color: var(--cc-lucro);
+    font-weight: 600;
 }

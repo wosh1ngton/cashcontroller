@@ -88,32 +88,31 @@
                 </div>
                 <div class="grid">
                 <div class="painel-de-botoes col-12">
-
-                    <p-button (click)="showEventoDialog()" label="Evento" class="cor-btn"></p-button>
-                    <p-button (click)="showDialog()" label="Operação" class="cor-btn"></p-button>
+                    <p-button (click)="showEventoDialog()" icon="pi pi-calendar-plus" label="Evento" class="cor-btn"></p-button>
+                    <p-button (click)="showDialog()" icon="pi pi-plus-circle" label="Operação" class="cor-btn"></p-button>
                 </div>
                 </div>
                 <p-tabView [(activeIndex)]="activeIndex">
                     <p-tabPanel header="Operações">
                         <p-confirmDialog key="deleteOperacao" />
-                        <p-table [columns]="cols" dataKey="id" editMode="row" class="m-3 tabela-operacoes"
+                        <p-table [columns]="cols" dataKey="id" editMode="row" class="tabela-operacoes"
                             [value]="operacoes" styleClass="p-datatable-sm"
                             [scrollable]="true"
-                            [tableStyle]="{ 'border': '1px solid #e9e9e9' }">
+                            [rowHover]="true"
+                            [tableStyle]="{ 'border': '1px solid var(--cc-border)', 'border-radius': '8px', 'overflow': 'hidden' }">
                             <ng-template pTemplate="header" let-columns>
-                                <tr class="rowstyle">
+                                <tr>
                                     <th *ngFor="let col of columns">
                                         {{ col.header }}
                                     </th>
-
-                                    <th>
+                                    <th class="col-acoes">
 
                                     </th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-editing="editing" let-ri="rowIndex" let-operacao
                                 let-columns="columns">
-                                <tr class="rowstyle" [pEditableRow]="operacao"
+                                <tr [pEditableRow]="operacao"
                                     [ngClass]="{'venda': operacao.tipoOperacaoDto.id === 2, 'compra': operacao.tipoOperacaoDto.id === 1}">
                                     <td>
                                         <p-cellEditor>
@@ -124,7 +123,7 @@
                                                 </p-dropdown>
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                <strong> {{operacao.ativoDto.sigla }}</strong>
+                                                <span class="sigla-ativo">{{operacao.ativoDto.sigla}}</span>
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
@@ -139,7 +138,6 @@
                                                 {{operacao.quantidadeNegociada}}
                                             </ng-template>
                                         </p-cellEditor>
-
                                     </td>
                                     <td>
                                         <p-cellEditor>
@@ -154,7 +152,6 @@
                                                 {{operacao.dataOperacao | date: 'dd/MM/yyyy'}}
                                             </ng-template>
                                         </p-cellEditor>
-
                                     </td>
                                     <td>
                                         <p-cellEditor>
@@ -164,14 +161,12 @@
                                                 </p-inputNumber>
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{operacao.valorUnitario | currency: 'BRL'}}
+                                                <span class="valor-monetario">{{operacao.valorUnitario | currency: 'BRL'}}</span>
                                             </ng-template>
                                         </p-cellEditor>
-
                                     </td>
                                     <td>
                                         <p-cellEditor>
-
                                             <ng-template pTemplate="input">
                                                 <p-dropdown [options]="tiposOperacao" appendTo="body"
                                                     [(ngModel)]="operacao.tipoOperacaoDto" optionLabel="nome"
@@ -179,16 +174,24 @@
                                                 </p-dropdown>
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{operacao.tipoOperacaoDto.nome }}
+                                                <span [ngClass]="{
+                                                    'badge-compra': operacao.tipoOperacaoDto.id === 1,
+                                                    'badge-venda': operacao.tipoOperacaoDto.id === 2,
+                                                    'badge-outro': operacao.tipoOperacaoDto.id !== 1 && operacao.tipoOperacaoDto.id !== 2
+                                                }">
+                                                    {{operacao.tipoOperacaoDto.nome}}
+                                                </span>
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
                                     <td>
-
-                                        {{operacao.ativoDto.subclasseAtivoDto.nome }}
-
+                                        <span [ngClass]="{
+                                            'badge-fii': operacao.ativoDto.subclasseAtivoDto.id === 1,
+                                            'badge-acao': operacao.ativoDto.subclasseAtivoDto.id === 2
+                                        }">
+                                            {{operacao.ativoDto.subclasseAtivoDto.nome}}
+                                        </span>
                                     </td>
-
                                     <td>
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
@@ -198,40 +201,45 @@
                                                 </p-inputNumber>
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{operacao.valorCorretagem | currency:'BRL'}}
+                                                <span class="valor-monetario">{{operacao.valorCorretagem | currency:'BRL'}}</span>
                                             </ng-template>
                                         </p-cellEditor>
-
                                     </td>
                                     <td>
-                                        {{ operacao.valorTotal | currency:'BRL'}}
+                                        <span class="valor-monetario" style="font-weight: 600;">
+                                            {{ operacao.valorTotal | currency:'BRL'}}
+                                        </span>
                                     </td>
-
-
-                                    <td>
-                                        <div class="flex align-items-center justify-content-center gap-2">
-                                            <p-toast></p-toast>
-
+                                    <td class="col-acoes">
+                                        <div class="flex align-items-center justify-content-center gap-1">
                                             <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
                                                 icon="pi pi-pencil" (click)="onRowEditInit(operacao)"
-                                                class="p-button-rounded p-button-text"></button>
-
+                                                class="p-button-rounded p-button-text btn-acao-tabela btn-editar"></button>
 
                                             <p-button *ngIf="!editing" icon="pi pi-trash"
                                                 (onClick)="validarExclusao(operacao, $event, 'deleteOperacao')"
-                                                styleClass="p-button-danger p-button-text"></p-button>
+                                                styleClass="p-button-danger p-button-text btn-acao-tabela btn-excluir"></p-button>
 
                                             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
                                                 icon="pi pi-check" (click)="onRowEditSave(operacao)"
-                                                class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                                class="p-button-rounded p-button-text p-button-success btn-acao-tabela btn-salvar"></button>
 
                                             <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
                                                 icon="pi pi-times" (click)="onRowEditCancel(operacao, ri)"
-                                                class="p-button-rounded p-button-text p-button-danger"></button>
+                                                class="p-button-rounded p-button-text p-button-danger btn-acao-tabela btn-cancelar"></button>
                                         </div>
                                     </td>
                                 </tr>
-
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="9">
+                                        <div class="empty-state">
+                                            <i class="pi pi-inbox"></i>
+                                            <p>Nenhuma operação encontrada para o período selecionado.</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             </ng-template>
                         </p-table>
                     </p-tabPanel>
@@ -239,45 +247,57 @@
                         <p-confirmDialog key="deleteEvento" />
                         <p-table [columns]="colsEventos" [value]="eventos"
                             [scrollable]="true"
-                            styleClass="p-datatable-sm">
+                            [rowHover]="true"
+                            class="tabela-eventos"
+                            styleClass="p-datatable-sm"
+                            [tableStyle]="{ 'border': '1px solid var(--cc-border)', 'border-radius': '8px', 'overflow': 'hidden' }">
                             <ng-template pTemplate="header" let-columns>
-                                <tr class="rowstyle">
+                                <tr>
                                     <th *ngFor="let col of columns">
                                         {{ col.header }}
                                     </th>
-                                    <th>
+                                    <th class="col-acoes">
 
                                     </th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                                <tr class="rowstyle"
-                                    [ngClass]="{'fii': rowData.ativo.subclasseAtivoDto.id == 1, 'acao': rowData.ativo.subclasseAtivoDto.id == 2}">
+                                <tr [ngClass]="{'fii': rowData.ativo.subclasseAtivoDto.id == 1, 'acao': rowData.ativo.subclasseAtivoDto.id == 2}">
 
                                     <td *ngFor="let col of columns">
                                         <ng-container *ngIf="col.type === 'number'">
-                                            {{ rowData[col.field] | currency: 'BRL' }}
+                                            <span class="valor-monetario">{{ rowData[col.field] | currency: 'BRL' }}</span>
                                         </ng-container>
                                         <ng-container *ngIf="col.type === 'objeto'">
                                             {{ rowData[col.field].nome }}
                                         </ng-container>
                                         <ng-container *ngIf="col.type === 'ativo'">
-                                            <strong> {{ rowData[col.field].sigla }} </strong>
+                                            <span class="sigla-ativo">{{ rowData[col.field].sigla }}</span>
                                         </ng-container>
                                         <ng-container *ngIf="col.type === 'date'">
                                             {{ rowData[col.field] | date: 'dd/MM/yyyy'}}
-
                                         </ng-container>
                                     </td>
-                                    <td>
-                                        <button pButton pRipple type="button" icon="pi pi-pencil"
-                                            (click)="showEventoDialog(rowData)"
-                                            class="p-button-rounded p-button-text p-button-primary mr-2"></button>
+                                    <td class="col-acoes">
+                                        <div class="flex align-items-center justify-content-center gap-1">
+                                            <button pButton pRipple type="button" icon="pi pi-pencil"
+                                                (click)="showEventoDialog(rowData)"
+                                                class="p-button-rounded p-button-text btn-acao-tabela btn-editar"></button>
 
-                                        <p-button icon="pi pi-trash"
-                                            (click)="validarExclusaoEvento(rowData, $event, 'deleteEvento')"
-                                            styleClass="p-button-danger p-button-text"></p-button>
-
+                                            <p-button icon="pi pi-trash"
+                                                (click)="validarExclusaoEvento(rowData, $event, 'deleteEvento')"
+                                                styleClass="p-button-danger p-button-text btn-acao-tabela btn-excluir"></p-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <i class="pi pi-calendar-times"></i>
+                                            <p>Nenhum evento encontrado para o período selecionado.</p>
+                                        </div>
                                     </td>
                                 </tr>
                             </ng-template>

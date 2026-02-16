@@ -1,9 +1,11 @@
 .venda {
-    color: #ff5252;
+    color: var(--cc-prejuizo);
+    font-weight: 500;
 }
 
 .compra {
-    color: #1e7f4d;
+    color: var(--cc-lucro);
+    font-weight: 500;
 }
 
 .painel-de-botoes {

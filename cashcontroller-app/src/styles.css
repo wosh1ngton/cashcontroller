@@ -1,40 +1,281 @@
 :root {
-    --primary-color-cc: #f4f4f4;
-    --secondary-color-cc: #000080;
+    /* === Paleta de Azul Profissional === */
+    --cc-blue-900: #0F172A;
+    --cc-blue-800: #1E293B;
+    --cc-blue-700: #1D4ED8;
+    --cc-blue-600: #2563EB;
+    --cc-blue-500: #3B82F6;
+    --cc-blue-400: #60A5FA;
+    --cc-blue-300: #93C5FD;
+    --cc-blue-200: #BFDBFE;
+    --cc-blue-100: #DBEAFE;
+    --cc-blue-50: #EFF6FF;
+
+    /* Cores semânticas */
+    --cc-bg: #F1F5F9;
+    --cc-surface: #FFFFFF;
+    --cc-text: #1E293B;
+    --cc-text-secondary: #64748B;
+    --cc-border: #E2E8F0;
+    --cc-lucro: #059669;
+    --cc-prejuizo: #DC2626;
+
+    /* Legacy vars (para retrocompat) */
+    --primary-color-cc: #F1F5F9;
+    --secondary-color-cc: #1D4ED8;
 }
+
 html {
     font-size: 13px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Inter var', Arial, Helvetica, sans-serif;
     height: 100%;
 }
 
 body {
     font-size: 1rem;
     overflow-x: hidden;
+    background-color: var(--cc-bg);
+    color: var(--cc-text);
+    margin: 0;
 }
-
-.p-menubar {
-
-    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgb(176, 177, 179) 200%);
-    box-shadow: 0px 4px 4px #ccc;
-    z-index: 1000;
-    position: relative;
-
-}
-
 
 h3 {
-    color: #000;
+    color: var(--cc-text);
     float: left;
 }
 
 .p-inputnumber-input {
     width: 100px;
- }
+}
+
+/* === MENUBAR GLOBAL === */
+.p-menubar {
+    background: linear-gradient(135deg, var(--cc-blue-900) 0%, var(--cc-blue-800) 100%);
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+    z-index: 1000;
+    position: relative;
+    padding: 0.4rem 1.5rem;
+}
+
+/* Itens raiz do menubar - texto branco */
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content {
+    background: transparent;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-text {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-icon {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content:hover .p-menuitem-text,
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content:hover .p-menuitem-icon {
+    color: #FFFFFF !important;
+}
+
+/* Submenus - fundo branco, texto escuro */
+.p-menubar .p-submenu-list {
+    background: #FFFFFF !important;
+    border: 1px solid var(--cc-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+    padding: 0.25rem 0;
+}
+
+.p-menubar .p-submenu-list .p-menuitem-content {
+    background: transparent;
+}
+
+.p-menubar .p-submenu-list .p-menuitem-link {
+    color: var(--cc-text) !important;
+}
+
+.p-menubar .p-submenu-list .p-menuitem-text {
+    color: var(--cc-text) !important;
+    font-weight: 400;
+}
+
+.p-menubar .p-submenu-list .p-menuitem-icon {
+    color: var(--cc-text-secondary) !important;
+}
+
+.p-menubar .p-submenu-list .p-menuitem-content:hover {
+    background: var(--cc-blue-50) !important;
+}
+
+.p-menubar .p-submenu-list .p-menuitem-content:hover .p-menuitem-text,
+.p-menubar .p-submenu-list .p-menuitem-content:hover .p-menuitem-icon {
+    color: var(--cc-blue-700) !important;
+}
+
+/* Botão hamburger mobile */
+.p-menubar .p-menubar-button {
+    color: #FFFFFF !important;
+}
+
+.p-menubar .p-menubar-button:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* === TABELAS GLOBAIS === */
+.p-datatable .p-datatable-thead > tr > th {
+    background: var(--cc-blue-50);
+    color: var(--cc-blue-800);
+    border-bottom: 2px solid var(--cc-blue-200);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    transition: background-color 0.15s;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+    background-color: var(--cc-blue-50) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+    background: var(--cc-blue-100) !important;
+    color: var(--cc-blue-800);
+}
+
+.p-datatable .p-sortable-column.p-highlight {
+    background: var(--cc-blue-100) !important;
+    color: var(--cc-blue-700) !important;
+}
+
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+    color: var(--cc-blue-600) !important;
+}
+
+/* Caption da tabela */
+.p-datatable .p-datatable-header {
+    background: var(--cc-blue-700);
+    color: #FFFFFF;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1rem;
+    letter-spacing: 0.03em;
+}
+
+/* === CARDS GLOBAIS === */
+.p-card {
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+    border: 1px solid var(--cc-border);
+    transition: box-shadow 0.2s;
+}
+
+.p-card:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1), 0 2px 4px rgba(15, 23, 42, 0.06);
+}
+
+.p-card .p-card-title {
+    color: var(--cc-blue-800);
+    font-weight: 600;
+}
+
+/* === BOTÕES PRIMÁRIOS === */
+.p-button {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-link) {
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+}
+
+/* === DIALOGS === */
+.p-dialog .p-dialog-header {
+    background: var(--cc-blue-700);
+    color: #FFFFFF;
+    border-radius: 10px 10px 0 0;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* === P-MENU / SIDEBAR === */
+.p-menu {
+    border-radius: 10px;
+    border: 1px solid var(--cc-border);
+}
+
+.p-menu .p-menuitem-link:hover {
+    background: var(--cc-blue-50) !important;
+}
+
+.p-menu .p-menuitem-link:hover .p-menuitem-text,
+.p-menu .p-menuitem-link:hover .p-menuitem-icon {
+    color: var(--cc-blue-700) !important;
+}
+
+/* === CHIPS / TAGS === */
+.p-chip {
+    border-radius: 6px;
+}
+
+/* === TOOLTIP === */
+.p-tooltip .p-tooltip-text {
+    background: var(--cc-blue-900);
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    white-space: pre-line;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+}
+
+.p-tooltip .p-tooltip-arrow {
+    border-top-color: var(--cc-blue-900);
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--cc-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cc-blue-300);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cc-blue-400);
+}
 
 /* ===== RESPONSIVE / MOBILE ===== */
 
-/* Utility classes for hiding on mobile/desktop */
 @media screen and (max-width: 768px) {
     .hidden-mobile {
         display: none !important;
@@ -47,20 +288,17 @@ h3 {
     }
 }
 
-/* Sidebar stacking on mobile */
 @media screen and (max-width: 768px) {
     .sidebar-filtros {
         margin-bottom: 1rem;
     }
 }
 
-/* Tables: horizontal scroll on small screens */
 @media screen and (max-width: 768px) {
     html {
         font-size: 12px;
     }
 
-    /* PrimeNG table responsive scroll */
     .p-datatable-wrapper {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
@@ -76,7 +314,6 @@ h3 {
         font-size: 0.85rem;
     }
 
-    /* PrimeNG MenuBar mobile hamburger */
     .p-menubar {
         flex-wrap: wrap;
         padding: 0.5rem;
@@ -87,12 +324,10 @@ h3 {
         width: 100%;
     }
 
-    /* Input number width on mobile */
     .p-inputnumber-input {
         width: 100% !important;
     }
 
-    /* Cards: auto height on mobile */
     .p-card {
         height: auto !important;
     }
@@ -101,7 +336,6 @@ h3 {
         padding: 0.75rem !important;
     }
 
-    /* Dialog responsive */
     .p-dialog {
         width: 95vw !important;
         max-width: 95vw !important;
@@ -111,7 +345,6 @@ h3 {
         padding: 0.75rem !important;
     }
 
-    /* TabView responsive */
     .p-tabview-nav {
         flex-wrap: wrap;
     }
@@ -127,31 +360,26 @@ h3 {
         justify-content: center;
     }
 
-    /* Charts responsive */
     .p-chart,
     canvas {
         width: 100% !important;
         height: auto !important;
     }
 
-    /* Dropdown full width */
     .p-dropdown {
         width: 100% !important;
     }
 
-    /* Calendar full width */
     .p-calendar {
         width: 100% !important;
     }
 
-    /* Footer */
     .footer {
         font-size: 0.8rem;
         text-align: center;
     }
 }
 
-/* Tablet breakpoint */
 @media screen and (max-width: 960px) {
     .p-datatable-wrapper {
         overflow-x: auto !important;

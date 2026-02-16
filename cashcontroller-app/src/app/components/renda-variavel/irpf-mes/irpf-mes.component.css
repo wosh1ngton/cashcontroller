@@ -1,18 +1,19 @@
-
-.tabela-irpf tbody td, .tabela-irpf thead th  {    
+.tabela-irpf tbody td, .tabela-irpf thead th {
     padding: 4px;
-    
 }
-.tabela-irpf thead, .tabela-irpf tr  {
-    font-size: 11px;    
+
+.tabela-irpf thead, .tabela-irpf tr {
+    font-size: 11px;
 }
 
 .lucro {
-    color: #0b4c97;
+    color: var(--cc-lucro);
+    font-weight: 600;
 }
 
 .prejuizo {
-    color: #d43737e1;
+    color: var(--cc-prejuizo);
+    font-weight: 600;
 }
 
 .p-card-content {

@@ -6,41 +6,44 @@ p-menubar {
   z-index: 1002 !important;
   position: relative;
 }
+
 .p-menuitem-text {
-  color: #000;
+  color: rgba(255, 255, 255, 0.85);
 }
+
 .p-menuitem-icon {
-  color: #000;
+  color: rgba(255, 255, 255, 0.7);
 }
+
 .content {
-  padding-top: 1rem;
+  padding-top: 1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   min-height: 80vh;
-  background-color: #ffffff;
+  background-color: var(--cc-bg);
 }
 
 p-menuitem-link {
-  color: #000;
+  color: rgba(255, 255, 255, 0.85);
   z-index: 10001 !important;
   position: relative;
 }
 
 .p-menuitem-link-active > span {
   font-weight: bold;
+  color: #FFFFFF !important;
 }
 
 .footer {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgb(176, 177, 179) 200%
-  );
-  min-height: 4rem;
+  background: linear-gradient(135deg, var(--cc-blue-900) 0%, var(--cc-blue-800) 100%);
+  min-height: 3.5rem;
   width: 100%;
-  color: #000;
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 4px 2px 4px 2px #ccc;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
 }
 
 /* Mobile responsive */
@@ -66,13 +69,39 @@ p-menuitem-link {
     top: 100%;
     left: 0;
     width: 100%;
-    background: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background: var(--cc-blue-900);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     z-index: 1003;
     flex-direction: column;
   }
 
   ::ng-deep .p-menubar-mobile-active .p-menubar-root-list {
     display: flex !important;
+  }
+
+  /* Submenus no mobile: fundo levemente mais claro */
+  ::ng-deep .p-menubar .p-submenu-list {
+    background: var(--cc-blue-800) !important;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding-left: 1rem;
+  }
+
+  ::ng-deep .p-menubar .p-submenu-list .p-menuitem-text {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  ::ng-deep .p-menubar .p-submenu-list .p-menuitem-icon {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  ::ng-deep .p-menubar .p-submenu-list .p-menuitem-content:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  ::ng-deep .p-menubar .p-submenu-list .p-menuitem-content:hover .p-menuitem-text,
+  ::ng-deep .p-menubar .p-submenu-list .p-menuitem-content:hover .p-menuitem-icon {
+    color: #FFFFFF !important;
   }
 }

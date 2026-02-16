@@ -1,21 +1,25 @@
 .middle-aligned {
-    display: table-cell;
-    vertical-align: middle;
-  }
-  
-  .middle-aligned img,
-  .middle-aligned .middle-text {
-    vertical-align: middle;
-  }
-  
-  .middle-text {
-      margin-left: 4px;
-  }
-  
-  .prejuizo {
-      color: red;
-  }
-  
-  .lucro {
-      color: blue;
-  }
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.middle-aligned img,
+.middle-aligned .middle-text {
+  vertical-align: middle;
+}
+
+.middle-text {
+    margin-left: 6px;
+    font-weight: 500;
+    color: var(--cc-blue-800);
+}
+
+.prejuizo {
+    color: var(--cc-prejuizo);
+    font-weight: 600;
+}
+
+.lucro {
+    color: var(--cc-lucro);
+    font-weight: 600;
+}

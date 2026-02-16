@@ -1,5 +1,15 @@
 .card-body {
-    background-color: aqua;
+    background-color: transparent;
+}
+
+:host ::ng-deep .p-card {
+    border-left: 3px solid var(--cc-blue-500);
+}
+
+:host ::ng-deep .p-card .p-card-title {
+    color: var(--cc-blue-800);
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 @media screen and (max-width: 768px) {

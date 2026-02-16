@@ -1,58 +1,78 @@
-.venda {
-    color: #ff5252;
-}
+.venda { font-weight: 600; }
+.venda td:first-child { border-left: 3px solid var(--cc-prejuizo); }
+.compra { font-weight: 600; }
+.compra td:first-child { border-left: 3px solid var(--cc-lucro); }
+.fii td:first-child { border-left: 3px solid var(--cc-lucro); }
+.acao td:first-child { border-left: 3px solid var(--cc-blue-600); }
 
-.compra {
-    color: #1e7f4d;
+.badge-compra, .badge-venda, .badge-outro {
+    display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase;
 }
+.badge-compra { background: rgba(5,150,105,0.1); color: var(--cc-lucro); }
+.badge-venda { background: rgba(220,38,38,0.1); color: var(--cc-prejuizo); }
+.badge-outro { background: var(--cc-blue-50); color: var(--cc-blue-700); }
 
-.fii {
-    color: #1e7f4d;
+.badge-fii, .badge-acao {
+    display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
 }
+.badge-fii { background: rgba(5,150,105,0.1); color: var(--cc-lucro); }
+.badge-acao { background: rgba(37,99,235,0.1); color: var(--cc-blue-700); }
 
-.acao {
-    color: #3150A8;
-}
-.dialog-content {
-    height: auto;
-}
-
-.tabela-operacoes thead, .tabela-operacoes tr {
-    font-size: 13px;
-
-}
+.sigla-ativo { font-weight: 700; color: var(--cc-blue-800); font-size: 0.9rem; }
+.valor-monetario { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.col-acoes { width: 90px; text-align: center; }
+.dialog-content { height: auto; }
 
 .painel-de-botoes {
-    display: flex;
-    justify-content: flex-end;
-    column-gap: 1rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-.rowstyle {
-    background-color: #f4f4f4;
+    display: flex; justify-content: flex-end; column-gap: 0.75rem;
+    margin-top: 1rem; flex-wrap: wrap;
 }
 
+.empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 3rem 1rem; color: var(--cc-text-secondary);
+}
+.empty-state i { font-size: 2.5rem; color: var(--cc-blue-200); margin-bottom: 0.75rem; }
+.empty-state p { font-size: 0.9rem; margin: 0; }
 
+::ng-deep .tabela-operacoes .p-datatable-thead > tr > th,
+::ng-deep .tabela-eventos .p-datatable-thead > tr > th {
+    background: var(--cc-blue-50); color: var(--cc-blue-800); font-weight: 600;
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em;
+    padding: 0.6rem 0.75rem; border-bottom: 2px solid var(--cc-blue-200); white-space: nowrap;
+}
+::ng-deep .tabela-operacoes .p-datatable-tbody > tr,
+::ng-deep .tabela-eventos .p-datatable-tbody > tr { transition: background-color 0.15s; }
+::ng-deep .tabela-operacoes .p-datatable-tbody > tr:hover,
+::ng-deep .tabela-eventos .p-datatable-tbody > tr:hover { background: var(--cc-blue-50) !important; }
+::ng-deep .tabela-operacoes .p-datatable-tbody > tr > td,
+::ng-deep .tabela-eventos .p-datatable-tbody > tr > td {
+    padding: 0.5rem 0.75rem; vertical-align: middle; font-size: 0.85rem;
+    border-bottom: 1px solid var(--cc-border);
+}
+
+::ng-deep .btn-acao-tabela { width: 2rem !important; height: 2rem !important; border-radius: 8px !important; transition: all 0.15s !important; }
+::ng-deep .btn-acao-tabela:hover { transform: scale(1.1); }
+::ng-deep .btn-editar:hover { background: rgba(37,99,235,0.1) !important; color: var(--cc-blue-700) !important; }
+::ng-deep .btn-excluir:hover { background: rgba(220,38,38,0.1) !important; }
+::ng-deep .btn-salvar:hover { background: rgba(5,150,105,0.1) !important; }
+::ng-deep .btn-cancelar:hover { background: rgba(220,38,38,0.1) !important; }
 
 ::ng-deep .cor-btn > .p-button {
-    --border-angle: 0deg;
-    border-radius: 12px;
-    animation: border-angle-rotate 4s infinite linear;
-    color: #fff;
-
-
-    background:
-    linear-gradient(#3150A8, #3B82F6) padding-box;
+    border-radius: 10px; color: #fff; font-weight: 500;
+    background: linear-gradient(135deg, var(--cc-blue-700), var(--cc-blue-600));
+    border: none; box-shadow: 0 2px 6px rgba(37,99,235,0.25); transition: all 0.2s;
+}
+::ng-deep .cor-btn > .p-button:hover {
+    background: linear-gradient(135deg, var(--cc-blue-600), var(--cc-blue-500));
+    box-shadow: 0 4px 12px rgba(37,99,235,0.35); transform: translateY(-1px);
 }
 
-@media screen and (max-width: 768px) {
-    .painel-de-botoes {
-        justify-content: center;
-        gap: 0.5rem;
-    }
+::ng-deep .sidebar-filtros .p-card { border-radius: 10px; border: 1px solid var(--cc-border); }
+::ng-deep .sidebar-filtros .p-card .p-card-title { font-size: 1rem; color: var(--cc-blue-800); font-weight: 700; }
 
-    .tabela-operacoes thead, .tabela-operacoes tr {
-        font-size: 11px;
-    }
+@media screen and (max-width: 768px) {
+    .painel-de-botoes { justify-content: center; gap: 0.5rem; }
 }

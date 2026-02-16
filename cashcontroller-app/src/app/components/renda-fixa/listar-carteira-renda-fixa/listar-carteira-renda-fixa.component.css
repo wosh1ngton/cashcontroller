@@ -1,0 +1,19 @@
+.middle-aligned {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.middle-text {
+    font-weight: 500;
+    color: var(--cc-blue-800);
+}
+
+.prejuizo {
+    color: var(--cc-prejuizo);
+    font-weight: 600;
+}
+
+.lucro {
+    color: var(--cc-lucro);
+    font-weight: 600;
+}
