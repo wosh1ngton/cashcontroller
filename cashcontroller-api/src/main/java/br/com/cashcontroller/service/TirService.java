@@ -110,7 +110,7 @@ public class TirService {
             double valorBruto = custodiaNaData * evento.getValor();
             double valorLiquido = valorBruto;
             if (evento.getTipoEvento().getId() == TipoEventoEnum.JSCP.getId()) {
-                valorLiquido = valorBruto - valorBruto * Taxa.ALIQUOTA_JSCP;
+                valorLiquido = valorBruto - valorBruto * Taxa.getAliquotaJSCP(evento.getDataCom());
             }
             if (valorLiquido > 0) {
                 totalProventos += valorLiquido;
@@ -165,7 +165,7 @@ public class TirService {
             double valorLiquido = valorBruto;
 
             if (evento.getTipoEvento().getId() == TipoEventoEnum.JSCP.getId()) {
-                valorLiquido = valorBruto - valorBruto * Taxa.ALIQUOTA_JSCP;
+                valorLiquido = valorBruto - valorBruto * Taxa.getAliquotaJSCP(evento.getDataCom());
             }
 
             if (valorLiquido > 0) {

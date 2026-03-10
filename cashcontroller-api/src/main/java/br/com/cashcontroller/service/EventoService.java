@@ -12,6 +12,7 @@ import br.com.cashcontroller.service.util.CalculaImpostoService;
 import br.com.cashcontroller.utils.DataUtil;
 import br.com.cashcontroller.utils.Taxa;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 public class EventoService {
@@ -188,14 +190,20 @@ public class EventoService {
 
 	public Map<Integer, Double> getTotalProventosRendaFixaBatch(List<Integer> ativoIds) {
 		if (ativoIds.isEmpty()) return Collections.emptyMap();
+		long t0 = System.currentTimeMillis();
 
+		long tQuery1 = System.currentTimeMillis();
 		List<EventoRendaFixa> allEvents = eventoRendaFixaRepository.findEventosByAtivoIn(ativoIds);
+		log.info("[PERF]     findEventosByAtivoIn: {}ms ({} eventos)", System.currentTimeMillis() - tQuery1, allEvents.size());
+
+		long tQuery2 = System.currentTimeMillis();
 		List<AtivoCarteiraRFDTO> allParams = operacaoRendaFixaRepository.findAtivoParamsRendaFixaByAtivoIds(ativoIds);
+		log.info("[PERF]     findAtivoParamsRendaFixaByAtivoIds: {}ms ({} params)", System.currentTimeMillis() - tQuery2, allParams.size());
 
 		Map<Integer, AtivoCarteiraRFDTO> paramsMap = allParams.stream()
 				.collect(Collectors.toMap(AtivoCarteiraRFDTO::getIdAtivo, p -> p, (a, b) -> a));
 
-		return allEvents.stream()
+		var result = allEvents.stream()
 				.collect(Collectors.groupingBy(ev -> ev.getAtivo().getId()))
 				.entrySet().stream()
 				.collect(Collectors.toMap(
@@ -210,13 +218,16 @@ public class EventoService {
 									.sum();
 						}
 				));
+		log.info("[PERF]     getTotalProventosRendaFixaBatch total: {}ms", System.currentTimeMillis() - t0);
+		return result;
 	}
 
 
 	private double getValorLiquidoEvento(EventoListRendaVariavelDTO eventoDto) {
 		var totalBruto = getValorBrutoEvento(eventoDto);
 		if(eventoDto.getTipoEvento().getId() == TipoEventoEnum.JSCP.getId()) {
-            return totalBruto - totalBruto * Taxa.ALIQUOTA_JSCP;
+			double aliquota = Taxa.getAliquotaJSCP(eventoDto.getDataCom());
+            return totalBruto - totalBruto * aliquota;
 		} else {
 			return totalBruto;
 		}

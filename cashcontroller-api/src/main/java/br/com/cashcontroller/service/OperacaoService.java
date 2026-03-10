@@ -444,19 +444,36 @@ public class OperacaoService {
 
 
     public List<AtivoCarteiraRFDTO> listarCarteiraRendaFixa() {
+        long inicio = System.currentTimeMillis();
 
+        long t0 = System.currentTimeMillis();
         List<AtivoCarteiraRFDTO> operacoesAtivosCustodiados = this.operacaoRendaFixaRepository.listarOperacoesAtivosCustodiados();
-        List<PuTesouroDireto> precosTesouro = puTesouroDiretoRepository.listarValoresMaisRecentesPorTitulo();
+        log.info("[PERF] listarOperacoesAtivosCustodiados: {}ms ({} registros)", System.currentTimeMillis() - t0, operacoesAtivosCustodiados.size());
 
+        t0 = System.currentTimeMillis();
+        List<String> titulosTesouro = operacoesAtivosCustodiados.stream()
+                .filter(op -> op.getIdSubclasseAtivo() == SubclasseAtivoEnum.TESOURO_DIRETO.getId())
+                .map(AtivoCarteiraRFDTO::getNomeAtivo)
+                .distinct()
+                .collect(Collectors.toList());
+        List<PuTesouroDireto> precosTesouro = titulosTesouro.isEmpty()
+                ? Collections.emptyList()
+                : puTesouroDiretoRepository.listarValoresMaisRecentesPorTitulos(titulosTesouro);
+        log.info("[PERF] listarValoresMaisRecentesPorTitulo: {}ms ({} titulos, {} registros)", System.currentTimeMillis() - t0, titulosTesouro.size(), precosTesouro.size());
+
+        t0 = System.currentTimeMillis();
             operacoesAtivosCustodiados = operacoesAtivosCustodiados.stream().filter(operacaoAtivo -> {
                 List<OperacaoRendaFixa> operacoes = verificarVendaParcial(operacaoAtivo);
                 return operacoes.isEmpty() || operacoes.stream().anyMatch(operacao -> operacao.getId() == operacaoAtivo.getIdOperacao());
 
             }).collect(Collectors.toList());
+        log.info("[PERF] verificarVendaParcial (loop): {}ms ({} ativos restantes)", System.currentTimeMillis() - t0, operacoesAtivosCustodiados.size());
 
+        t0 = System.currentTimeMillis();
         setValoresAtivos(operacoesAtivosCustodiados, precosTesouro);
+        log.info("[PERF] setValoresAtivos: {}ms", System.currentTimeMillis() - t0);
 
-
+        log.info("[PERF] === listarCarteiraRendaFixa TOTAL: {}ms ===", System.currentTimeMillis() - inicio);
         return operacoesAtivosCustodiados;
 
     }
@@ -469,13 +486,19 @@ public class OperacaoService {
                 .distinct()
                 .collect(Collectors.toList());
 
+        long t0 = System.currentTimeMillis();
         Map<Integer, Double> proventosMap = eventoService.getTotalProventosRendaFixaBatch(ativoIds);
+        log.info("[PERF]   getTotalProventosRendaFixaBatch: {}ms ({} ativos)", System.currentTimeMillis() - t0, ativoIds.size());
+
+        t0 = System.currentTimeMillis();
         Map<Integer, AtivoCarteira> ativoCarteiraMap = ativoCarteiraRepository.findByAtivoIdIn(ativoIds)
                 .stream()
                 .collect(Collectors.toMap(ac -> ac.getAtivo().getId(), ac -> ac, (a, b) -> a));
+        log.info("[PERF]   findByAtivoIdIn: {}ms", System.currentTimeMillis() - t0);
 
         Set<Integer> processedAtivoIds = new HashSet<>();
 
+        long tRentabilidade = System.currentTimeMillis();
         carteira.forEach(
                 operacaoRendaFixaDto -> {
                     operacaoRendaFixaDto.setCusto(operacaoRendaFixaDto.getCustodia() * operacaoRendaFixaDto.getPrecoMedio());
@@ -485,7 +508,9 @@ public class OperacaoService {
                         setValoresTesouroDireto(precosTesouro, operacaoRendaFixaDto, ativoCarteiraMap);
 
                     } else if (operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.CREDITO_BANCARIO.getId()) {
+                        long tCalc = System.currentTimeMillis();
                         operacaoRendaFixaDto.setValorMercado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
+                        log.info("[PERF]     calcularRentabilidade (mercado) [{}]: {}ms", operacaoRendaFixaDto.getSiglaAtivo(), System.currentTimeMillis() - tCalc);
 
                     } else if(operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.CREDITO_PRIVADO.getId() ||
                              operacaoRendaFixaDto.getIdSubclasseAtivo() == SubclasseAtivoEnum.PREVIDENCIA.getId())  {
@@ -496,9 +521,12 @@ public class OperacaoService {
                         AtivoCarteira ac = ativoCarteiraMap.get(operacaoRendaFixaDto.getIdAtivo());
                         operacaoRendaFixaDto.setValorMercado(ac != null ? ac.getValorMercado() : 0.0);
                     }
+                    long tCalc2 = System.currentTimeMillis();
                     operacaoRendaFixaDto.setValorContratado(calcularRentabilidade.calcularRentabilidade(operacaoRendaFixaDto));
+                    log.info("[PERF]     calcularRentabilidade (contratado) [{}]: {}ms", operacaoRendaFixaDto.getSiglaAtivo(), System.currentTimeMillis() - tCalc2);
                 }
         );
+        log.info("[PERF]   loop calcularRentabilidade total: {}ms ({} ativos)", System.currentTimeMillis() - tRentabilidade, carteira.size());
     }
 
     private void setValoresTesouroDireto(List<PuTesouroDireto> precosTesouro, AtivoCarteiraRFDTO operacaoRendaFixaDto, Map<Integer, AtivoCarteira> ativoCarteiraMap) {

@@ -139,16 +139,24 @@ public class AtivoCarteiraService {
 
 
     public List<AtivoCarteiraDTO> listarAtivosCarteiraRendaFixa() {
+        long inicio = System.currentTimeMillis();
 
+        long t0 = System.currentTimeMillis();
         List<AtivoCarteiraRFDTO> carteiraRendaFixa = operacaoService.listarCarteiraRendaFixa();
+        log.info("[PERF] operacaoService.listarCarteiraRendaFixa(): {}ms", System.currentTimeMillis() - t0);
+
+        t0 = System.currentTimeMillis();
         Map<String, AtivoCarteiraRFDTO> groupedBySiglaAtivo = agruparPorAtivo(carteiraRendaFixa);
+        log.info("[PERF] agruparPorAtivo: {}ms", System.currentTimeMillis() - t0);
 
         // Use HashMap for O(1) lookup instead of O(n) stream search per item
         Map<Integer, AtivoCarteiraRFDTO> aggregatedByAtivoId = new HashMap<>();
         groupedBySiglaAtivo.values().forEach(item -> aggregatedByAtivoId.put(item.getIdAtivo(), item));
 
+        t0 = System.currentTimeMillis();
         var ativosCarteiraDTO = getCarteira();
         ativosCarteiraDTO = ativosCarteiraDTO.stream().filter(a -> a.getAtivo().getSubclasseAtivo().getId() > 2).toList();
+        log.info("[PERF] getCarteira + filtro: {}ms ({} ativos)", System.currentTimeMillis() - t0, ativosCarteiraDTO.size());
 
         ativosCarteiraDTO.forEach(ativoCarteiraRFDTO -> {
             AtivoCarteiraRFDTO ativoAtualizado = aggregatedByAtivoId.get(ativoCarteiraRFDTO.getAtivo().getId());
@@ -160,6 +168,7 @@ public class AtivoCarteiraService {
             }
         });
 
+        log.info("[PERF] === listarAtivosCarteiraRendaFixa TOTAL: {}ms ===", System.currentTimeMillis() - inicio);
         return ativosCarteiraDTO;
     }
 

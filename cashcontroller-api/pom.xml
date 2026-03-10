@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>br.com.cashcontroller</groupId>
 	<artifactId>cashcontroller-api</artifactId>
-	<version>1.4.2</version>
+	<version>1.5.0</version>
 	<name>CashController</name>
 	<description>API de gestão de ativos pessoais</description>
 	<properties>

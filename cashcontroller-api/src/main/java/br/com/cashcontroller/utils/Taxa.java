@@ -1,5 +1,7 @@
 package br.com.cashcontroller.utils;
 
+import java.time.LocalDate;
+
 public final class Taxa {
 
     //taxa antiga, pré 02/02/2021
@@ -15,7 +17,16 @@ public final class Taxa {
     public static double LIMITE_IR = 20000;
     public static double ALIQUOTA_IR = 0.15;
     public static double ALIQUOTA_JSCP = 0.15;
+    public static double ALIQUOTA_JSCP_2026 = 0.175;
 
+    private static final LocalDate DATA_CORTE_JSCP_2026 = LocalDate.of(2026, 2, 1);
+
+    public static double getAliquotaJSCP(LocalDate dataCom) {
+        if (dataCom != null && dataCom.isAfter(DATA_CORTE_JSCP_2026)) {
+            return ALIQUOTA_JSCP_2026;
+        }
+        return ALIQUOTA_JSCP;
+    }
 
     public static double convertAnnualToMonthlyInterestRate(double annualRate) {
         annualRate = annualRate / 100;
