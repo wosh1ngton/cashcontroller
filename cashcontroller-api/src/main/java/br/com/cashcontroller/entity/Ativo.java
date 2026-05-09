@@ -31,6 +31,9 @@ public class Ativo {
 	@JoinColumn(name = "ID_SUBCLASSE_ATIVO", nullable = false)
 	private SubclasseAtivo subclasseAtivo;
 
+	@Column(name = "FL_INTERNACIONAL")
+	private boolean internacional;
+
 	@OneToOne(mappedBy = "ativo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private ParametroRendaFixa parametroRendaFixa;
 

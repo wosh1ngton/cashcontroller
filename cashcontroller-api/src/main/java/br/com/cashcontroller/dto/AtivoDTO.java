@@ -17,6 +17,7 @@ public class AtivoDTO {
 	private String logo;
 	private SubclasseAtivoDTO subclasseAtivoDto;
 	private ParametroRendaFixaDTO parametroRendaFixaDto;
+	private boolean internacional;
 	private double precoMedio;
 
 	public AtivoDTO(int id, String sigla) {

@@ -26,12 +26,13 @@ public interface AtivoCarteiraRepository extends JpaRepository<AtivoCarteira, In
     @Query("SELECT " +
             "new br.com.cashcontroller.dto.PatrimonioCategoriaDTO(" +
             "sub.id, " +
+            "a.internacional, " +
             "SUM(ac.valorMercado))" +
             "FROM AtivoCarteira ac " +
             "INNER JOIN ac.ativo a " +
             "INNER JOIN a.subclasseAtivo sub " +
             "GROUP BY " +
-            "sub.id ")
+            "sub.id, a.internacional ")
     List<PatrimonioCategoriaDTO> getPatrimonioPorCategoria();
 
 

@@ -217,16 +217,23 @@ public class AtivoCarteiraService {
     public List<PatrimonioCategoriaDTO> getPatrimonioPorCategoria() {
         var patrimonioPorCategoria = repository.getPatrimonioPorCategoria();
 
-        var rendaFixa = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() > 2)
+        var rendaInternacional = patrimonioPorCategoria.stream().filter(PatrimonioCategoriaDTO::isInternacional)
                 .mapToDouble(PatrimonioCategoriaDTO::getValor).reduce(0.0, Double::sum);
 
-        var Acoes = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 2);
-        var Fiis = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 1);
+        var rendaFixa = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() > 2 && !val.isInternacional())
+                .mapToDouble(PatrimonioCategoriaDTO::getValor).reduce(0.0, Double::sum);
+
+        var acoes = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 2 && !val.isInternacional())
+                .mapToDouble(PatrimonioCategoriaDTO::getValor).sum();
+
+        var fiis = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 1 && !val.isInternacional())
+                .mapToDouble(PatrimonioCategoriaDTO::getValor).sum();
 
         List<PatrimonioCategoriaDTO> lista = Arrays.asList(
-                new PatrimonioCategoriaDTO(0, "Ações", 40.0, Acoes.mapToDouble(PatrimonioCategoriaDTO::getValor).sum()),
-                new PatrimonioCategoriaDTO(0, "Fiis", 30.0, Fiis.mapToDouble(PatrimonioCategoriaDTO::getValor).sum()),
-                new PatrimonioCategoriaDTO(0, "Renda Fixa", 30.0, rendaFixa)
+                new PatrimonioCategoriaDTO(0, "Ações", 30.0, acoes),
+                new PatrimonioCategoriaDTO(0, "Fiis", 30.0, fiis),
+                new PatrimonioCategoriaDTO(0, "Renda Fixa", 30.0, rendaFixa),
+                new PatrimonioCategoriaDTO(0, "Renda Internacional", 10.0, rendaInternacional)
         );
 
         return lista;

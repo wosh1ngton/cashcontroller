@@ -27,6 +27,7 @@ public class AtivoAddDTO {
 	@Positive(message = "Subclasse do ativo deve ser informada")
 	private int subclasseAtivo;
 
+	private boolean internacional;
 	private double precoMedio;
 
 	public AtivoAddDTO(int id, String nome, double precoMedio) {

@@ -6,7 +6,8 @@ export class Ativo {
     nome: string = "";
     precoMedio: number = 0;
     sigla: string = "";
-    logo: string = "";    
+    logo: string = "";
+    internacional: boolean = false;
     parametroRendaFixaDto = new ParametroRendaFixa();
-    subclasseAtivoDto: SubclasseAtivo = new SubclasseAtivo(); 
+    subclasseAtivoDto: SubclasseAtivo = new SubclasseAtivo();
 }

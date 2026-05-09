@@ -55,10 +55,15 @@
             </div>
         </div>
         <div class="field grid">
-            <label for="indexador" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> Isento de Imposto </label>
+            <label for="isIsento" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> Isento de Imposto </label>
             <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
                 <p-checkbox [(ngModel)]="isIsento" label="Isento" [binary]="true" name="isIsento" />
-
+            </div>
+        </div>
+        <div class="field grid">
+            <label for="internacional" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end"> Ativo Internacional </label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-checkbox [(ngModel)]="ativo.internacional" label="Internacional" [binary]="true" name="internacional" />
             </div>
         </div>
 

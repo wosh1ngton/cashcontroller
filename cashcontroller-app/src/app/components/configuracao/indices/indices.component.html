@@ -1,7 +1,8 @@
-<div class="grid">
-    <div class="col-2 col-offset-10">
+
+<div>
         <button pButton (click)="cadastrarIndice()" label="Cadastrar Índice" class="cor-btn" size="small"></button>
-    </div>   
+</div>
+    <div style="width: 80vw;">
     <p-dataView [value]="indices()" [rows]="15" [paginator]="true">
         <ng-template pTemplate="list" let-items>
           <div class="col-span-12" *ngFor="let item of items; let first = first">
