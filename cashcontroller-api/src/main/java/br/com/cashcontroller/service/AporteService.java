@@ -4,6 +4,7 @@ import br.com.cashcontroller.dto.AporteDTO;
 import br.com.cashcontroller.entity.Aporte;
 import br.com.cashcontroller.mapper.AporteMapper;
 import br.com.cashcontroller.repository.AporteRepository;
+import br.com.cashcontroller.security.SecurityUtils;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class AporteService {
     AporteRepository aporteRepository;
 
     public Aporte cadastrarAporte(Aporte aporte) {
+        aporte.setUser(SecurityUtils.getCurrentUser());
         var aporteSalvo =  aporteRepository.save(aporte);
         return aporteSalvo;
     }

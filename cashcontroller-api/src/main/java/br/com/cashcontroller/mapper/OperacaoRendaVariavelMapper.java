@@ -22,6 +22,7 @@ public interface OperacaoRendaVariavelMapper {
 	
 	@Mapping(source = "ativoDto", target = "ativo.id")
 	@Mapping(source = "tipoOperacaoDto", target = "tipoOperacao.id")
+	@Mapping(target = "user", ignore = true)
 	OperacaoRendaVariavel toSaveEntity(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO);
 
 
@@ -33,6 +34,7 @@ public interface OperacaoRendaVariavelMapper {
 	@Mapping(target = "ativo", source = "ativoDto")
 	@Mapping(target = "tipoOperacao", source = "tipoOperacaoDto")
 	@Mapping(target = "ativo.subclasseAtivo", source = "ativoDto.subclasseAtivoDto")
+	@Mapping(target = "user", ignore = true)
 	OperacaoRendaVariavel toEntity(OperacaoRendaVariavelDTO operacaoRendaVariavelDTO);
 
 	@Mapping(source = "ativoDto.id", target = "ativoDto")

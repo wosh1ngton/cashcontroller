@@ -2,6 +2,7 @@ package br.com.cashcontroller.entity;
 
 import java.time.LocalDate;
 
+import br.com.cashcontroller.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,12 +15,16 @@ import lombok.Setter;
 @Entity
 @Table(name = "OPERACAO_RENDA_VARIAVEL")
 public class OperacaoRendaVariavel {
-	
+
 	@Id
 	@Column(name = "ID_OPERACAO_RENDA_VARIAVEL")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "ID_USUARIO", nullable = false)
+	private User user;
+
 	@Column(name = "QT_VALOR_ATIVO")
 	private double valorUnitario;
 	

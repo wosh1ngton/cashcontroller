@@ -16,6 +16,7 @@ import br.com.cashcontroller.mapper.AtivoMapper;
 import br.com.cashcontroller.mapper.SubclasseAtivoMapper;
 import br.com.cashcontroller.repository.AtivoRepository;
 import br.com.cashcontroller.repository.SubclasseRepository;
+import br.com.cashcontroller.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -33,15 +34,20 @@ public class AtivoService {
 		Ativo ativo = AtivoMapper.INSTANCE.toAddEntity(ativoAddDto);
 		if (ativoAddDto.getParametroRendaFixaDto() != null) {
 			ativo.getParametroRendaFixa().setAtivo(ativo);
+			ativo.setUser(SecurityUtils.getCurrentUser());
 		}
 		var entitySaved = ativoRepository.saveAndFlush(ativo);
 		return AtivoMapper.INSTANCE.toAddDTO(entitySaved);
 	}
-	
+
 	public AtivoAddDTO atualizarAtivo(AtivoAddDTO ativoAddDto) {
 		Ativo ativo = new Ativo();
 		if(ativoAddDto.getId() != 0) {
 			ativo = AtivoMapper.INSTANCE.toAddEntity(ativoAddDto);
+			Ativo existing = ativoRepository.findById(ativoAddDto.getId()).orElse(null);
+			if (existing != null) {
+				ativo.setUser(existing.getUser());
+			}
 		}
 		return AtivoMapper.INSTANCE.toAddDTO(ativoRepository.save(ativo));
 	}

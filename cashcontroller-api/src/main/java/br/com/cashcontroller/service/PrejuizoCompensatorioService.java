@@ -7,6 +7,7 @@ import br.com.cashcontroller.dto.enums.SubclasseAtivoEnum;
 import br.com.cashcontroller.entity.PrejuizoAcumulado;
 import br.com.cashcontroller.mapper.PrejuizoAcumuladoMapper;
 import br.com.cashcontroller.repository.PrejuizoAcumuladoRepository;
+import br.com.cashcontroller.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,7 @@ public class PrejuizoCompensatorioService {
             repository.delete(prejuizoExistente);
         };
         PrejuizoAcumulado prejuizoAcumulado = PrejuizoAcumuladoMapper.INSTANCE.toEntity(prejuizoAcumuladoDTO);
+        prejuizoAcumulado.setUser(SecurityUtils.getCurrentUser());
         repository.save(prejuizoAcumulado);
 
 

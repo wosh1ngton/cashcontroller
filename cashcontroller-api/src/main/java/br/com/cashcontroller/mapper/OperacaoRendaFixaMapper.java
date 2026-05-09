@@ -22,6 +22,8 @@ public interface OperacaoRendaFixaMapper {
 	@Mapping(source = "ativoDto", target = "ativo")
 	@Mapping(source = "tipoOperacaoDto", target = "tipoOperacao")
 	@Mapping(target = "ativo.subclasseAtivo", source = "ativoDto.subclasseAtivoDto")
+	@Mapping(target = "ativo.user", ignore = true)
+	@Mapping(target = "user", ignore = true)
 	OperacaoRendaFixa toEntity(OperacaoRendaFixaDTO operacaoRendaFixaDto);
 	
 	List<OperacaoRendaFixaDTO> toListDTO(List<OperacaoRendaFixa> operacoesEntity);

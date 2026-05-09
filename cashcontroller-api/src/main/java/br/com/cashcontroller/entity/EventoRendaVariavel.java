@@ -1,5 +1,6 @@
 package br.com.cashcontroller.entity;
 
+import br.com.cashcontroller.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,10 @@ public class EventoRendaVariavel {
     @Column(name = "ID_EVENTO_RENDA_VARIAVEL")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ID_USUARIO", nullable = false)
+    private User user;
 
     @Column(name = "DT_COM")
     private LocalDate dataCom;

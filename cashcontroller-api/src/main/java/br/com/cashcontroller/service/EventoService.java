@@ -7,7 +7,9 @@ import br.com.cashcontroller.external.service.FeriadosService;
 import br.com.cashcontroller.mapper.EventoRendaFixaMapper;
 import br.com.cashcontroller.mapper.EventoRendaVariavelMapper;
 import br.com.cashcontroller.mapper.ParametroEventoFIIMapper;
+import br.com.cashcontroller.model.User;
 import br.com.cashcontroller.repository.*;
+import br.com.cashcontroller.security.SecurityUtils;
 import br.com.cashcontroller.service.util.CalculaImpostoService;
 import br.com.cashcontroller.utils.DataUtil;
 import br.com.cashcontroller.utils.Taxa;
@@ -48,12 +50,14 @@ public class EventoService {
 
 	public void cadastrarEvento(EventoAddRendaFixaDTO eventoDTO) {
 			EventoRendaFixa evento = EventoRendaFixaMapper.INSTANCE.toEntity(eventoDTO);
+			evento.setUser(SecurityUtils.getCurrentUser());
 			eventoRendaFixaRepository.save(evento);
 	}
 	public void cadastrarEvento(EventoAddRendaVariavelDTO eventoDTO, String periodosDeRecorrencia) {
 
 		if(Objects.equals(periodosDeRecorrencia, "0")) {
 			EventoRendaVariavel evento = EventoRendaVariavelMapper.INSTANCE.toEntity(eventoDTO);
+			evento.setUser(SecurityUtils.getCurrentUser());
 			eventoRepository.save(evento);
 		} else {
 			cadastrarBlocoDeEventos(eventoDTO, periodosDeRecorrencia);
@@ -87,7 +91,11 @@ public class EventoService {
 			eventoDtoAdicional.setDataPagamento(DataUtil.getDataPagamentoFII(primeiroDiaUtilMes, params.getDiaUtilDtPagamento(), feriados));
 			eventosRecorrentes.add(eventoDtoAdicional);
 		}
-		var eventos = eventosRecorrentes.stream().map(EventoRendaVariavelMapper.INSTANCE::toEntity).collect(Collectors.toList());
+		User currentUser = SecurityUtils.getCurrentUser();
+		var eventos = eventosRecorrentes.stream()
+				.map(EventoRendaVariavelMapper.INSTANCE::toEntity)
+				.peek(ev -> ev.setUser(currentUser))
+				.collect(Collectors.toList());
 		eventoRepository.saveAll(eventos);
 	}
 
@@ -101,7 +109,13 @@ public class EventoService {
 	public EventoAddRendaVariavelDTO atualizarEvento(EventoAddRendaVariavelDTO eventoDTO) {
 		EventoRendaVariavel evento = new EventoRendaVariavel();
 		if(eventoDTO.getId() != 0) {
+			User user = eventoRepository.findById(eventoDTO.getId())
+					.map(EventoRendaVariavel::getUser)
+					.orElseGet(SecurityUtils::getCurrentUser);
 			evento = EventoRendaVariavelMapper.INSTANCE.toEntity(eventoDTO);
+			evento.setUser(user);
+		} else {
+			evento.setUser(SecurityUtils.getCurrentUser());
 		}
 		return EventoRendaVariavelMapper.INSTANCE.toDTO(eventoRepository.save(evento));
 	}
@@ -109,7 +123,13 @@ public class EventoService {
 	public EventoAddRendaFixaDTO atualizarEventoRendaFixa(EventoAddRendaFixaDTO eventoDTO) {
 		EventoRendaFixa evento = new EventoRendaFixa();
 		if(eventoDTO.getId() != 0) {
+			User user = eventoRendaFixaRepository.findById(eventoDTO.getId())
+					.map(EventoRendaFixa::getUser)
+					.orElseGet(SecurityUtils::getCurrentUser);
 			evento = EventoRendaFixaMapper.INSTANCE.toEntity(eventoDTO);
+			evento.setUser(user);
+		} else {
+			evento.setUser(SecurityUtils.getCurrentUser());
 		}
 		return EventoRendaFixaMapper.INSTANCE.toDTO(eventoRendaFixaRepository.save(evento));
 	}

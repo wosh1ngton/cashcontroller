@@ -25,12 +25,15 @@ public interface AtivoCarteiraMapper  {
     AtivoCarteiraAddDTO toAddDTO(AtivoCarteira ativoCarteira);
 
     @Mapping(target = "ativo.subclasseAtivo", ignore = true)
+    @Mapping(target = "user", ignore = true)
     AtivoCarteira toEntity(AtivoCarteiraDTO ativoCarteiraDTO);
 
     @Mapping(source = "ativo", target = "ativo.id")
+    @Mapping(target = "user", ignore = true)
     AtivoCarteira toAddEntity(AtivoCarteiraAddDTO ativoCarteiraDTO);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     void updateEntityFromDto(AtivoCarteiraDTO dto, @MappingTarget AtivoCarteira entity);
 
     @Mapping(target = "idSubclasseAtivo", source = "ativo.subclasseAtivo.id")

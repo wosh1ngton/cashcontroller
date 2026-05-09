@@ -1,5 +1,6 @@
 package br.com.cashcontroller.entity;
 
+import br.com.cashcontroller.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,15 +13,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "ATIVO")
 public class Ativo {
-	
+
 	@Id
 	@Column(name = "ID_ATIVO")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@Column(name = "NM_ATIVO")
 	private String nome;
-	
+
 	@Column(name = "SG_ATIVO")
 	private String sigla;
 
@@ -33,6 +34,10 @@ public class Ativo {
 
 	@Column(name = "FL_INTERNACIONAL")
 	private boolean internacional;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_USUARIO")
+	private User user;
 
 	@OneToOne(mappedBy = "ativo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private ParametroRendaFixa parametroRendaFixa;

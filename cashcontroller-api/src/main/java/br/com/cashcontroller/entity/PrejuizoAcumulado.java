@@ -1,7 +1,10 @@
 package br.com.cashcontroller.entity;
 
+import br.com.cashcontroller.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 
 import java.time.LocalDate;
@@ -15,6 +18,12 @@ public class PrejuizoAcumulado {
     @Column(name = "ID_PREJUIZO")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ID_USUARIO", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private User user;
 
     @Column(name = "ANO_MES")
     private String anoMes;

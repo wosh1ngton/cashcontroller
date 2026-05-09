@@ -2,8 +2,10 @@ package br.com.cashcontroller.entity;
 
 import java.time.LocalDate;
 
+import br.com.cashcontroller.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,12 +23,16 @@ import lombok.Setter;
 @Entity
 @Table(name = "OPERACAO_RENDA_FIXA")
 public class OperacaoRendaFixa {
-	
+
 	@Id
 	@Column(name = "ID_OPERACAO_RENDA_FIXA")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "ID_USUARIO", nullable = false)
+	private User user;
+
 	@Column(name = "QT_VALOR_ATIVO")
 	private double valorUnitario;
 	

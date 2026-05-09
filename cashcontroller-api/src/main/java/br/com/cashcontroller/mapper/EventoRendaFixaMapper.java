@@ -21,6 +21,7 @@ public interface EventoRendaFixaMapper {
 
     @Mapping(source = "ativo", target = "ativo.id")
     @Mapping(source = "tipoEvento", target = "tipoEvento.id")
+    @Mapping(target = "user", ignore = true)
     EventoRendaFixa toEntity(EventoAddRendaFixaDTO eventoDto);
 
     @Mapping(source = "ativo.subclasseAtivo", target = "ativo.subclasseAtivoDto")

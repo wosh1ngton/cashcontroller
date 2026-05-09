@@ -29,11 +29,13 @@ public interface AtivoMapper {
 
     @Mapping(source = "parametroRendaFixaDto", target = "parametroRendaFixa")
 	@Mapping(source = "subclasseAtivoDto", target = "subclasseAtivo")
+    @Mapping(target = "user", ignore = true)
     Ativo toEntity(AtivoDTO ativoDto);
 
     @Mapping(source = "parametroRendaFixaDto.isIsento", target = "parametroRendaFixa.isIsento")
     @Mapping(source = "subclasseAtivo", target = "subclasseAtivo.id")
     @Mapping(source = "parametroRendaFixaDto", target = "parametroRendaFixa")
+    @Mapping(target = "user", ignore = true)
     Ativo toAddEntity(AtivoAddDTO ativoAddDto);
 
 }

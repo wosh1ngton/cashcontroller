@@ -11,6 +11,7 @@ import br.com.cashcontroller.mapper.AtivoCarteiraMapper;
 import br.com.cashcontroller.repository.AtivoCarteiraRepository;
 import br.com.cashcontroller.repository.AtivoRepository;
 import br.com.cashcontroller.repository.OperacaoRendaFixaRepository;
+import br.com.cashcontroller.security.SecurityUtils;
 import br.com.cashcontroller.service.util.CalculaImpostoService;
 import br.com.cashcontroller.service.util.CalcularRentabilidade;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,9 @@ public class AtivoCarteiraService {
     TirService tirService;
 
     public AtivoCarteiraDTO cadastrarAtivoCarteira(AtivoCarteiraDTO ativoCarteiraDTO) {
-        var entity = this.repository.save(AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteiraDTO));
+        var entity = AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteiraDTO);
+        entity.setUser(SecurityUtils.getCurrentUser());
+        entity = this.repository.save(entity);
         return AtivoCarteiraMapper.INSTANCE.toDTO(entity);
     }
 
@@ -282,17 +285,21 @@ public class AtivoCarteiraService {
             carteiraAlterada = new ArrayList<>();
         }
 
-        var carteira = getCarteira().stream().filter(ativo -> idSubclasse > 2
-                ? ativo.getAtivo().getSubclasseAtivo().getId() > 2
-                : ativo.getAtivo().getSubclasseAtivo().getId() == idSubclasse).toList();
-        List<AtivoCarteira> updateCarteiraAcoes = carteira.stream()
-                .map(ativoCarteira -> {
-                    ativoCarteira.setValorMercado(carteiraAlterada.stream().filter(item -> item.getAtivo().getId() == ativoCarteira.getAtivo().getId()).mapToDouble(AtivoCarteiraDTO::getValorMercado).sum());
-                    return AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteira);
-                })
+        List<AtivoCarteira> entidades = repository.findAll().stream()
+                .filter(ativo -> ativo.getCustodia() > 0)
+                .filter(ativo -> idSubclasse > 2
+                        ? ativo.getAtivo().getSubclasseAtivo().getId() > 2
+                        : ativo.getAtivo().getSubclasseAtivo().getId() == idSubclasse)
                 .collect(Collectors.toList());
 
-        repository.saveAll(updateCarteiraAcoes);
+        entidades.forEach(entity -> {
+            double valorMercado = carteiraAlterada.stream()
+                    .filter(item -> item.getAtivo().getId() == entity.getAtivo().getId())
+                    .mapToDouble(AtivoCarteiraDTO::getValorMercado).sum();
+            entity.setValorMercado(valorMercado);
+        });
+
+        repository.saveAll(entidades);
     }
 
 }

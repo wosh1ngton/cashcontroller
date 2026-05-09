@@ -1,5 +1,6 @@
 package br.com.cashcontroller.entity;
 
+import br.com.cashcontroller.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,10 @@ public class AtivoCarteira {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_ATIVO_CARTEIRA")
     private int id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ID_USUARIO", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_ATIVO")
