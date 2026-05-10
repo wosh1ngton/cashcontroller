@@ -72,18 +72,18 @@ public class OperacaoService {
     }
 
     public List<OperacaoRendaVariavelDTO> listarOperacoesRendaVariavel() {
-        List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findAll();
+        List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findAllByUser(SecurityUtils.getCurrentUserId());
         return OperacaoRendaVariavelMapper.INSTANCE.toListDTO(operacoes);
     }
 
     public List<OperacaoRendaVariavelDTO> listarOperacoesRendaVariavelPorData(Filter filter) {
-        List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findOperacoesByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), filter.getAtivo());
+        List<OperacaoRendaVariavel> operacoes = operacaoRendaVariavelRepository.findOperacoesByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), filter.getAtivo(), SecurityUtils.getCurrentUserId());
         return OperacaoRendaVariavelMapper.INSTANCE.toListDTO(operacoes);
     }
 
     public List<OperacaoRendaFixaDTO> listarOperacoesRendaFixaPorData(Filter filter) {
 
-        List<OperacaoRendaFixa> operacoes = operacaoRendaFixaRepository.findOperacoesByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes());
+        List<OperacaoRendaFixa> operacoes = operacaoRendaFixaRepository.findOperacoesByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), SecurityUtils.getCurrentUserId());
         return OperacaoRendaFixaMapper.INSTANCE.toListDTO(operacoes);
     }
 
@@ -98,7 +98,7 @@ public class OperacaoService {
         double valorBase = operacaoDto.getValorUnitario() * operacaoDto.getQuantidadeNegociada();
         if (operacaoDto.getTipoOperacaoDto() == TipoOperacaoEnum.VENDA.getId()) {
             LocalDate startDate = LocalDate.of(2015, 1, 1);
-            double pmAtivo = this.operacaoRendaVariavelRepository.calcularPrecoMedio(operacaoDto.getAtivoDto(), operacaoDto.getDataOperacao(), startDate).getPrecoMedio();
+            double pmAtivo = this.operacaoRendaVariavelRepository.calcularPrecoMedio(operacaoDto.getAtivoDto(), operacaoDto.getDataOperacao(), startDate, SecurityUtils.getCurrentUserId()).getPrecoMedio();
             valorBase = pmAtivo * operacaoDto.getQuantidadeNegociada();
         }
         return calcularTaxaseImpostos(operacaoDto, valorBase);
@@ -117,7 +117,7 @@ public class OperacaoService {
     }
 
     public List<OperacaoRendaFixaDTO> listarOperacoesRendaFixa() {
-        List<OperacaoRendaFixa> operacoes = operacaoRendaFixaRepository.findAll();
+        List<OperacaoRendaFixa> operacoes = operacaoRendaFixaRepository.findAllByUser(SecurityUtils.getCurrentUserId());
         return OperacaoRendaFixaMapper.INSTANCE.toListDTO(operacoes);
     }
 
@@ -127,7 +127,7 @@ public class OperacaoService {
     }
 
     public List<ItemLabelDTO> listarAtivosOperados() {
-        return this.operacaoRendaVariavelRepository.findDistinctAtivo();
+        return this.operacaoRendaVariavelRepository.findDistinctAtivo(SecurityUtils.getCurrentUserId());
     }
 
     public OperacaoRendaVariavelDTO cadastrarOperacaoRendaVariavel(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
@@ -157,14 +157,14 @@ public class OperacaoService {
 
     private int desdobrarAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
         int fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
-        int totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
+        int totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto(), SecurityUtils.getCurrentUserId());
         int totalDoAumento = (fatorDeProporcao * totalAtualDeAcoes) - totalAtualDeAcoes;
         return totalDoAumento;
     }
 
     private int agruparAtivo(OperacaoRendaVariavelSaveDTO operacaoRendaVariavelSaveDTO) {
         int fatorDeProporcao = operacaoRendaVariavelSaveDTO.getQuantidadeNegociada();
-        int totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto());
+        int totalAtualDeAcoes = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(operacaoRendaVariavelSaveDTO.getAtivoDto(), SecurityUtils.getCurrentUserId());
         int totalDecrescimo = totalAtualDeAcoes - (totalAtualDeAcoes / fatorDeProporcao);
         return totalDecrescimo;
     }
@@ -176,7 +176,7 @@ public class OperacaoService {
         operacaoRendaVariavelDTO.setCustoTotal(custoTotalOperacao(saveDto));
         operacaoRendaVariavelDTO.setValorTotal(valorTotalOperacao(saveDto));
 
-        var operacaoExistente = this.operacaoRendaVariavelRepository.findById(operacaoRendaVariavelDTO.getId())
+        var operacaoExistente = this.operacaoRendaVariavelRepository.findByIdAndUser(operacaoRendaVariavelDTO.getId(), SecurityUtils.getCurrentUserId())
                 .orElseThrow(() -> new NullPointerException("registro.nao.encontrado"));
 
 
@@ -193,16 +193,16 @@ public class OperacaoService {
     }
 
     private boolean posicaoLiquidada(int idAtivo) {
-        int custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo);
+        int custodia = operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo, SecurityUtils.getCurrentUserId());
         return custodia == 0;
     }
 
     private void updateOrCreateAtivoCarteira(int ativo, double quantidadeDiff, double custoDiff, int tipoOperacao) {
-        Optional<AtivoCarteira> ativoCarteira = ativoCarteiraRepository.findByIdAtivo(ativo);
+        Optional<AtivoCarteira> ativoCarteira = ativoCarteiraRepository.findByIdAtivo(ativo, SecurityUtils.getCurrentUserId());
 
         if (!ativoCarteira.isPresent()) {
             AtivoCarteira novoAtivoCarteira = new AtivoCarteira();
-            novoAtivoCarteira.setAtivo(ativoRepository.findById(ativo).get());
+            novoAtivoCarteira.setAtivo(ativoRepository.findByIdVisibleToUser(ativo, SecurityUtils.getCurrentUserId()).get());
             novoAtivoCarteira.setCustodia(quantidadeDiff);
             novoAtivoCarteira.setCusto(custoDiff);
             novoAtivoCarteira.setUser(SecurityUtils.getCurrentUser());
@@ -255,11 +255,11 @@ public class OperacaoService {
             double valorBase = 0.0;
             LocalDate startDate = LocalDate.of(2015, 1, 1);
             double pmAtivo = operacaoRendaFixaDto.getValorUnitario();
-            var operacoes = this.operacaoRendaVariavelRepository.listarOperacoesPorAtivo(operacaoRendaFixaDto.getAtivoDto().getId());
+            var operacoes = this.operacaoRendaVariavelRepository.listarOperacoesPorAtivo(operacaoRendaFixaDto.getAtivoDto().getId(), SecurityUtils.getCurrentUserId());
             if(!operacoes.isEmpty()) {
                 pmAtivo = this.operacaoRendaFixaRepository.calcularPrecoMedio(operacaoRendaFixaDto.getAtivoDto().getId(),
                         operacaoRendaFixaDto.getDataOperacao(),
-                        startDate).getPrecoMedio();
+                        startDate, SecurityUtils.getCurrentUserId()).getPrecoMedio();
             }
             return pmAtivo * operacaoRendaFixaDto.getQuantidadeNegociada();
 
@@ -270,7 +270,7 @@ public class OperacaoService {
     @Transactional
     public OperacaoRendaFixaDTO atualizarOperacaoRendaFixa(OperacaoRendaFixaDTO operacaoRendaFixaDTO) {
 
-        Optional<OperacaoRendaFixa> operacaoOptional = this.operacaoRendaFixaRepository.findById(operacaoRendaFixaDTO.getId());
+        Optional<OperacaoRendaFixa> operacaoOptional = this.operacaoRendaFixaRepository.findByIdAndUser(operacaoRendaFixaDTO.getId(), SecurityUtils.getCurrentUserId());
         if (operacaoOptional.isPresent()) {
             OperacaoRendaFixa operacaoUpdated;
             operacaoUpdated = OperacaoRendaFixaMapper.INSTANCE.toEntity(operacaoRendaFixaDTO);
@@ -288,7 +288,7 @@ public class OperacaoService {
 
     public void excluirOperacaoRendaVariavel(int id) {
 
-        Optional<OperacaoRendaVariavel> operacao = operacaoRendaVariavelRepository.findById(id);
+        Optional<OperacaoRendaVariavel> operacao = operacaoRendaVariavelRepository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
         operacao.ifPresent(value -> {
             updateOrCreateAtivoCarteira(value.getAtivo().getId(), value.getQuantidadeNegociada(), value.getCustoTotal(), 2);
             this.operacaoRendaVariavelRepository.delete(value);
@@ -298,14 +298,14 @@ public class OperacaoService {
 
     public void excluirOperacaoRendaFixa(int id) {
 
-        Optional<OperacaoRendaFixa> operacao = operacaoRendaFixaRepository.findById(id);
+        Optional<OperacaoRendaFixa> operacao = operacaoRendaFixaRepository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
         operacao.ifPresent(value -> this.operacaoRendaFixaRepository.delete(value));
 
     }
 
 
     public OperacaoRendaVariavelDTO findById(Integer id) {
-        return OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.findById(id).get());
+        return OperacaoRendaVariavelMapper.INSTANCE.toDTO(operacaoRendaVariavelRepository.findByIdAndUser(id, SecurityUtils.getCurrentUserId()).get());
     }
 
     public void atualizarPrejuizoAcumulado(String anoMes, Integer subclasseAtivoId) {
@@ -404,7 +404,7 @@ public class OperacaoService {
 
     private AtivoDTO calcularPrecoMedio(int idAtivo, LocalDate dataDeCorte) {
         LocalDate startDate = LocalDate.of(2015, 1, 1);
-        return this.operacaoRendaVariavelRepository.calcularPrecoMedio(idAtivo, dataDeCorte, startDate);
+        return this.operacaoRendaVariavelRepository.calcularPrecoMedio(idAtivo, dataDeCorte, startDate, SecurityUtils.getCurrentUserId());
 
     }
 
@@ -419,7 +419,7 @@ public class OperacaoService {
     }
 
     public List<AtivoCarteiraDTO> listarCarteiraDeAcoes() {
-        var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeAcoes();
+        var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeAcoes(SecurityUtils.getCurrentUserId());
         carteira
                 .forEach(ativoCarteira -> {
 
@@ -453,7 +453,7 @@ public class OperacaoService {
         long inicio = System.currentTimeMillis();
 
         long t0 = System.currentTimeMillis();
-        List<AtivoCarteiraRFDTO> operacoesAtivosCustodiados = this.operacaoRendaFixaRepository.listarOperacoesAtivosCustodiados();
+        List<AtivoCarteiraRFDTO> operacoesAtivosCustodiados = this.operacaoRendaFixaRepository.listarOperacoesAtivosCustodiados(SecurityUtils.getCurrentUserId());
         log.info("[PERF] listarOperacoesAtivosCustodiados: {}ms ({} registros)", System.currentTimeMillis() - t0, operacoesAtivosCustodiados.size());
 
         t0 = System.currentTimeMillis();
@@ -497,7 +497,7 @@ public class OperacaoService {
         log.info("[PERF]   getTotalProventosRendaFixaBatch: {}ms ({} ativos)", System.currentTimeMillis() - t0, ativoIds.size());
 
         t0 = System.currentTimeMillis();
-        Map<Integer, AtivoCarteira> ativoCarteiraMap = ativoCarteiraRepository.findByAtivoIdIn(ativoIds)
+        Map<Integer, AtivoCarteira> ativoCarteiraMap = ativoCarteiraRepository.findByAtivoIdIn(ativoIds, SecurityUtils.getCurrentUserId())
                 .stream()
                 .collect(Collectors.toMap(ac -> ac.getAtivo().getId(), ac -> ac, (a, b) -> a));
         log.info("[PERF]   findByAtivoIdIn: {}ms", System.currentTimeMillis() - t0);
@@ -552,13 +552,13 @@ public class OperacaoService {
 
     public List<OperacaoRendaFixa> verificarVendaParcial(AtivoCarteiraRFDTO ativoCarteiraRFDTO) {
 
-        List<OperacaoRendaFixa> operacoesAtivoVendaParcial = operacaoRendaFixaRepository.listarOperacoesAtivoVendaParcial(ativoCarteiraRFDTO.getIdAtivo());
+        List<OperacaoRendaFixa> operacoesAtivoVendaParcial = operacaoRendaFixaRepository.listarOperacoesAtivoVendaParcial(ativoCarteiraRFDTO.getIdAtivo(), SecurityUtils.getCurrentUserId());
 
         double totalListado = operacoesAtivoVendaParcial.stream()
                 .filter(op -> op.getTipoOperacao().getId() != 2)
                 .mapToDouble(OperacaoRendaFixa::getQuantidadeNegociada)
                 .sum();
-        double custodia = operacaoRendaFixaRepository.getCustodiaByIdAtivo(ativoCarteiraRFDTO.getIdAtivo());
+        double custodia = operacaoRendaFixaRepository.getCustodiaByIdAtivo(ativoCarteiraRFDTO.getIdAtivo(), SecurityUtils.getCurrentUserId());
 
         Iterator<OperacaoRendaFixa> iterator = operacoesAtivoVendaParcial.iterator();
         while (custodia < totalListado && iterator.hasNext()) {
@@ -584,7 +584,7 @@ public class OperacaoService {
     }
 
     public List<AtivoCarteiraDTO> listarCarteiraDeFiis() {
-        var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeFiis();
+        var carteira = this.operacaoRendaVariavelRepository.listarCarteiraDeFiis(SecurityUtils.getCurrentUserId());
         carteira
                 .forEach(ativoCarteira -> {
                             ativoCarteira.setTotalEmProventos(this.eventoService.getTotalProventosPorAtivo(ativoCarteira.getAtivo().getId()));
@@ -596,11 +596,11 @@ public class OperacaoService {
     }
 
     public List<PosicaoEncerradaDTO> listarPosicoesEncerradas() {
-        return this.operacaoRendaVariavelRepository.listarAtivosComOperacoesFechadas();
+        return this.operacaoRendaVariavelRepository.listarAtivosComOperacoesFechadas(SecurityUtils.getCurrentUserId());
     }
 
     private double calcularGanhoDeCapital(int idAtivo) {
-        var operacoes = operacaoRendaVariavelRepository.listarOperacoesPorAtivo(idAtivo);
+        var operacoes = operacaoRendaVariavelRepository.listarOperacoesPorAtivo(idAtivo, SecurityUtils.getCurrentUserId());
         var operacoesDto = OperacaoRendaVariavelMapper.INSTANCE.toListDTO(operacoes);
         return operacoesDto.stream()
                 .mapToDouble(op -> op.getValorTotal() - op.getCustoTotal())
@@ -608,24 +608,24 @@ public class OperacaoService {
     }
 
     public List<Integer> listarAnosComOperacoes() {
-        return this.operacaoRendaVariavelRepository.listarAnosComOperacoes();
+        return this.operacaoRendaVariavelRepository.listarAnosComOperacoes(SecurityUtils.getCurrentUserId());
     }
 
     public List<Integer> listarAnosComOperacoes(Optional<Boolean> rendaFixa) {
-        return this.operacaoRendaFixaRepository.listarAnosComOperacoes();
+        return this.operacaoRendaFixaRepository.listarAnosComOperacoes(SecurityUtils.getCurrentUserId());
     }
 
 
     public List<MesDTO> listarMesesComOperacoes(@PathVariable(value = "ano") Integer ano) {
-        return this.operacaoRendaVariavelRepository.listarMesesComOperacoesOuEventosPorAno(ano);
+        return this.operacaoRendaVariavelRepository.listarMesesComOperacoesOuEventosPorAno(ano, SecurityUtils.getCurrentUserId());
     }
 
     public List<MesDTO> listarMesesComOperacoesRF(@PathVariable(value = "ano") Integer ano) {
-        return this.operacaoRendaFixaRepository.listarMesesComOperacoesPorAno(ano);
+        return this.operacaoRendaFixaRepository.listarMesesComOperacoesPorAno(ano, SecurityUtils.getCurrentUserId());
     }
 
     public List<OperacaoRendaVariavelDTO> listarOperacoesPorAtivo(int idAtivo) {
-        var operacoes = this.operacaoRendaVariavelRepository.listarOperacoesPorAtivo(idAtivo);
+        var operacoes = this.operacaoRendaVariavelRepository.listarOperacoesPorAtivo(idAtivo, SecurityUtils.getCurrentUserId());
         return operacoes.stream().map(OperacaoRendaVariavelMapper.INSTANCE::toDTO).collect(Collectors.toList());
 
     }

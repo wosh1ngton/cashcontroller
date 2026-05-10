@@ -44,7 +44,7 @@ public class AtivoService {
 		Ativo ativo = new Ativo();
 		if(ativoAddDto.getId() != 0) {
 			ativo = AtivoMapper.INSTANCE.toAddEntity(ativoAddDto);
-			Ativo existing = ativoRepository.findById(ativoAddDto.getId()).orElse(null);
+			Ativo existing = ativoRepository.findByIdVisibleToUser(ativoAddDto.getId(), SecurityUtils.getCurrentUserId()).orElse(null);
 			if (existing != null) {
 				ativo.setUser(existing.getUser());
 			}
@@ -54,30 +54,30 @@ public class AtivoService {
 
 	public void excluirAtivo(int id) {
 
-		Optional<Ativo> ativo = ativoRepository.findById(id);
+		Optional<Ativo> ativo = ativoRepository.findByIdVisibleToUser(id, SecurityUtils.getCurrentUserId());
         ativo.ifPresent(value -> this.ativoRepository.delete(value));
 
 	}
 
 	public AtivoDTO findById(int id) {
 
-		Optional<Ativo> ativo = ativoRepository.findById(id);
+		Optional<Ativo> ativo = ativoRepository.findByIdVisibleToUser(id, SecurityUtils.getCurrentUserId());
 		return AtivoMapper.INSTANCE.toDTO(ativo.get());
 
 	}
-	
+
 	public List<AtivoDTO> listarAtivos() {
-		List<Ativo> ativos =  ativoRepository.findAll();
+		List<Ativo> ativos =  ativoRepository.findAllVisibleToUser(SecurityUtils.getCurrentUserId());
 		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
 	}
 
 	public List<AtivoDTO> listarAtivosPorClasse(int id) {
-		List<Ativo> ativos =  ativoRepository.findByClasseAtivo(id);
+		List<Ativo> ativos =  ativoRepository.findByClasseAtivo(id, SecurityUtils.getCurrentUserId());
 		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
 	}
 
 	public List<AtivoDTO> listarAtivosPorSubClasse(int id) {
-		List<Ativo> ativos =  ativoRepository.findBySubClasseAtivo(id);
+		List<Ativo> ativos =  ativoRepository.findBySubClasseAtivo(id, SecurityUtils.getCurrentUserId());
 		return ativos.stream().map(AtivoMapper.INSTANCE::toDTO).collect(Collectors.toList());
 	}
 	

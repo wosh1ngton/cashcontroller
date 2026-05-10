@@ -6,6 +6,7 @@ import br.com.cashcontroller.entity.EventoRendaVariavel;
 import br.com.cashcontroller.entity.OperacaoRendaVariavel;
 import br.com.cashcontroller.repository.EventoRepository;
 import br.com.cashcontroller.repository.OperacaoRendaVariavelRepository;
+import br.com.cashcontroller.security.SecurityUtils;
 import br.com.cashcontroller.service.util.CalcularXIRR;
 import br.com.cashcontroller.service.util.CalcularXIRR.FluxoCaixa;
 import br.com.cashcontroller.utils.Taxa;
@@ -41,8 +42,9 @@ public class TirService {
                 .map(a -> a.getAtivo().getId())
                 .collect(Collectors.toList());
 
-        List<OperacaoRendaVariavel> todasOperacoes = operacaoRepository.findByAtivoIdIn(ativoIds);
-        List<EventoRendaVariavel> todosEventos = eventoRepository.findByAtivoIdIn(ativoIds);
+        Long userId = SecurityUtils.getCurrentUserId();
+        List<OperacaoRendaVariavel> todasOperacoes = operacaoRepository.findByAtivoIdIn(ativoIds, userId);
+        List<EventoRendaVariavel> todosEventos = eventoRepository.findByAtivoIdIn(ativoIds, userId);
 
         Map<Integer, List<OperacaoRendaVariavel>> operacoesPorAtivo = todasOperacoes.stream()
                 .collect(Collectors.groupingBy(op -> op.getAtivo().getId()));

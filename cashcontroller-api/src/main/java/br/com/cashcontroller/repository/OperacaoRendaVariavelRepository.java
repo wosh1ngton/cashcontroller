@@ -10,9 +10,16 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoRendaVariavel, Integer> {
+
+    @Query("SELECT op FROM OperacaoRendaVariavel op WHERE op.user.id = :userId")
+    List<OperacaoRendaVariavel> findAllByUser(@Param("userId") Long userId);
+
+    @Query("SELECT op FROM OperacaoRendaVariavel op WHERE op.id = :id AND op.user.id = :userId")
+    Optional<OperacaoRendaVariavel> findByIdAndUser(@Param("id") Integer id, @Param("userId") Long userId);
 
     @Query("SELECT " +
                 "op " +
@@ -20,7 +27,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "INNER JOIN op.ativo a " +
             "INNER JOIN a.subclasseAtivo sub " +
             "WHERE " +
-            "((:endDate IS NULL) OR (:startDate IS NULL) OR (op.dataOperacao BETWEEN :startDate AND :endDate)) " +
+            "op.user.id = :userId " +
+            "AND ((:endDate IS NULL) OR (:startDate IS NULL) OR (op.dataOperacao BETWEEN :startDate AND :endDate)) " +
             "AND ((:id IS NULL) OR (:id = 0) OR (sub.id = :id)) " +
             "AND ((:ativo IS NULL) OR (:ativo = 0) OR (a.id = :ativo)) " +
             "AND ((:ano IS NULL or :ano = 0) OR (:mes IS NULL  or :mes = 0) OR (YEAR(op.dataOperacao) = :ano AND MONTH(op.dataOperacao) = :mes))")
@@ -29,7 +37,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
                                                     @Param("id") Integer id,
                                                     @Param("ano") Integer ano,
                                                     @Param("mes") Integer mes,
-                                                    @Param("ativo") Integer ativo);
+                                                    @Param("ativo") Integer ativo,
+                                                    @Param("userId") Long userId);
 
 
 
@@ -39,8 +48,9 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "INNER JOIN op.ativo a " +
             "WHERE " +
             "a.id = :idAtivo " +
+            "AND op.user.id = :userId " +
             "ORDER BY op.dataOperacao DESC")
-    List<OperacaoRendaVariavel> listarOperacoesPorAtivo(@Param("idAtivo") int idAtivo);
+    List<OperacaoRendaVariavel> listarOperacoesPorAtivo(@Param("idAtivo") int idAtivo, @Param("userId") Long userId);
 
 
     @Query("SELECT new br.com.cashcontroller.dto.AtivoDTO( " +
@@ -52,10 +62,12 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "FROM OperacaoRendaVariavel op " +
             "INNER JOIN op.ativo a " +
             "INNER JOIN op.tipoOperacao to " +
-            "WHERE a.id = :idAtivo AND (op.dataOperacao BETWEEN :startDate AND :dataDeCorte)")
+            "WHERE a.id = :idAtivo AND (op.dataOperacao BETWEEN :startDate AND :dataDeCorte) " +
+            "AND op.user.id = :userId")
     AtivoDTO calcularPrecoMedio(@Param("idAtivo") int idAtivo,
                                 @Param("dataDeCorte") LocalDate dataDeCorte,
-                                @Param("startDate") LocalDate startDate);
+                                @Param("startDate") LocalDate startDate,
+                                @Param("userId") Long userId);
 
 
     @Query("SELECT new br.com.cashcontroller.dto.AtivoCarteiraDTO(" +
@@ -68,7 +80,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    (" +
             "        SELECT SUM(CASE WHEN to.id != 2 and to.id != 5 and to.id != 4 THEN opi.custoTotal WHEN to.id = 2 or to.id= 5 THEN -opi.custoTotal ELSE 0 END) " +
             " / SUM(CASE WHEN to.id IN(1, 3, 4) THEN opi.quantidadeNegociada WHEN to.id in(2, 5) THEN -opi.quantidadeNegociada ELSE 0 END) " +
-            "        FROM OperacaoRendaVariavel opi JOIN opi.tipoOperacao to WHERE opi.ativo.id = op.ativo.id " +
+            "        FROM OperacaoRendaVariavel opi JOIN opi.tipoOperacao to WHERE opi.ativo.id = op.ativo.id AND opi.user.id = :userId " +
             "    ) AS pm) " +
             "FROM " +
             "    OperacaoRendaVariavel op " +
@@ -80,6 +92,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "   op.tipoOperacao top " +
             "WHERE " +
             "   sub.id = 2 " +
+            "   AND op.user.id = :userId " +
             "GROUP BY " +
             "    a " +
             "HAVING " +
@@ -88,7 +101,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "       WHEN top.id = 2 or top.id = 5 THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) > 0")
-    List<AtivoCarteiraDTO> listarCarteiraDeAcoes();
+    List<AtivoCarteiraDTO> listarCarteiraDeAcoes(@Param("userId") Long userId);
 
 
 
@@ -102,7 +115,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "    (" +
             "  SELECT SUM(CASE WHEN to.id != 2 and to.id != 5 and to.id != 4 and to.id != 6 THEN opi.custoTotal WHEN to.id = 2 or to.id= 5 or to.id = 6 THEN -opi.custoTotal ELSE 0 END) " +
             " / SUM(CASE WHEN to.id != 2 and to.id != 5  THEN opi.quantidadeNegociada WHEN to.id = 2 or to.id = 5 THEN -opi.quantidadeNegociada ELSE 0 END) " +
-            "        FROM OperacaoRendaVariavel opi JOIN opi.tipoOperacao to WHERE opi.ativo.id = op.ativo.id " +
+            "        FROM OperacaoRendaVariavel opi JOIN opi.tipoOperacao to WHERE opi.ativo.id = op.ativo.id AND opi.user.id = :userId " +
             "    ) AS pm) " +
             "FROM " +
             "    OperacaoRendaVariavel op " +
@@ -114,6 +127,7 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "   op.tipoOperacao top " +
             "WHERE " +
             "   sub.id = 1 " +
+            "   AND op.user.id = :userId " +
             "GROUP BY " +
             "    a " +
             "HAVING " +
@@ -122,27 +136,26 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "       WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) > 0")
-    List<AtivoCarteiraDTO> listarCarteiraDeFiis();
+    List<AtivoCarteiraDTO> listarCarteiraDeFiis(@Param("userId") Long userId);
 
 
 
 
-
-    @Query("SELECT distinct(YEAR(op.dataOperacao)) FROM OperacaoRendaVariavel op ")
-    List<Integer> listarAnosComOperacoes();
+    @Query("SELECT distinct(YEAR(op.dataOperacao)) FROM OperacaoRendaVariavel op WHERE op.user.id = :userId")
+    List<Integer> listarAnosComOperacoes(@Param("userId") Long userId);
 
     @Query("SELECT DISTINCT new br.com.cashcontroller.dto.MesDTO(mes, ano) " +
             "FROM (" +
             "    SELECT Month(o.dataOperacao) as mes, Year(o.dataOperacao) as ano " +
             "    FROM OperacaoRendaVariavel o " +
-            "    WHERE Year(o.dataOperacao) = :ano " +
+            "    WHERE Year(o.dataOperacao) = :ano AND o.user.id = :userId " +
             "    UNION " +
             "    SELECT Month(e.dataPagamento) as mes, Year(e.dataPagamento) as ano " +
             "    FROM EventoRendaVariavel e " +
-            "    WHERE Year(e.dataPagamento) = :ano " +
+            "    WHERE Year(e.dataPagamento) = :ano AND e.user.id = :userId " +
             ") AS combined " +
             "ORDER BY mes")
-    List<MesDTO> listarMesesComOperacoesOuEventosPorAno(@Param("ano") int ano);
+    List<MesDTO> listarMesesComOperacoesOuEventosPorAno(@Param("ano") int ano, @Param("userId") Long userId);
 
 
     @Query("SELECT " +
@@ -156,8 +169,8 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "JOIN " +
             "    op.ativo a " +
             "JOIN " +
-            "   op.tipoOperacao top WHERE a.id = :id")
-    int getCustodiaPorAtivo(@Param("id") int id);
+            "   op.tipoOperacao top WHERE a.id = :id AND op.user.id = :userId")
+    int getCustodiaPorAtivo(@Param("id") int id, @Param("userId") Long userId);
 
 
     @Query("SELECT " +
@@ -171,24 +184,25 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "JOIN " +
             "    op.ativo a " +
             "JOIN " +
-            "   op.tipoOperacao top WHERE a.id = :id AND op.dataOperacao <= :dataCom")
-    int getCustodiaPorAtivo(@Param("id") int id, @Param("dataCom") LocalDate dataCom);
+            "   op.tipoOperacao top WHERE a.id = :id AND op.dataOperacao <= :dataCom AND op.user.id = :userId")
+    int getCustodiaPorAtivo(@Param("id") int id, @Param("dataCom") LocalDate dataCom, @Param("userId") Long userId);
 
     @Query("SELECT new br.com.cashcontroller.dto.PosicaoEncerradaDTO(" +
-            "    (SELECT MIN(op2.dataOperacao) FROM OperacaoRendaVariavel op2 WHERE op2.ativo.id = a.id) as data_inicio, " +
+            "    (SELECT MIN(op2.dataOperacao) FROM OperacaoRendaVariavel op2 WHERE op2.ativo.id = a.id AND op2.user.id = :userId) as data_inicio, " +
             "    CONCAT(a.nome, ' - ', a.sigla), " +
             "    SUM(CASE " +
             "        WHEN top.id != 2 and top.id != 5  THEN op.quantidadeNegociada " +
             "        WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "        ELSE 0 " +
             "    END) AS soma, " +
-            "    (SELECT MAX(op3.dataOperacao) FROM OperacaoRendaVariavel op3 WHERE op3.ativo.id = a.id) as data_encerramento, " +
+            "    (SELECT MAX(op3.dataOperacao) FROM OperacaoRendaVariavel op3 WHERE op3.ativo.id = a.id AND op3.user.id = :userId) as data_encerramento, " +
             "   SUM(CASE WHEN top.id = 2 THEN op.custoTotal ELSE 0 END) AS valorInvestido, " +
             "   SUM(CASE WHEN top.id = 2 THEN op.valorTotal ELSE 0 END) AS valorVenda" +
             ") " +
             "FROM OperacaoRendaVariavel op " +
             "JOIN op.ativo a " +
             "JOIN op.tipoOperacao top " +
+            "WHERE op.user.id = :userId " +
             "GROUP BY a " +
             "HAVING " +
             "       SUM(CASE" +
@@ -196,13 +210,13 @@ public interface OperacaoRendaVariavelRepository extends JpaRepository<OperacaoR
             "       WHEN top.id = 2 or top.id = 5  THEN -op.quantidadeNegociada " +
             "       ELSE 0 " +
             "       END) = 0")
-    List<PosicaoEncerradaDTO> listarAtivosComOperacoesFechadas();
+    List<PosicaoEncerradaDTO> listarAtivosComOperacoesFechadas(@Param("userId") Long userId);
 
 
-    @Query("SELECT DISTINCT new br.com.cashcontroller.dto.ItemLabelDTO(o.ativo.id, o.ativo.sigla) FROM OperacaoRendaVariavel o")
-    List<ItemLabelDTO> findDistinctAtivo();
+    @Query("SELECT DISTINCT new br.com.cashcontroller.dto.ItemLabelDTO(o.ativo.id, o.ativo.sigla) FROM OperacaoRendaVariavel o WHERE o.user.id = :userId")
+    List<ItemLabelDTO> findDistinctAtivo(@Param("userId") Long userId);
 
-    @Query("SELECT op FROM OperacaoRendaVariavel op JOIN FETCH op.ativo JOIN FETCH op.tipoOperacao WHERE op.ativo.id IN :ids ORDER BY op.dataOperacao ASC")
-    List<OperacaoRendaVariavel> findByAtivoIdIn(@Param("ids") List<Integer> ids);
+    @Query("SELECT op FROM OperacaoRendaVariavel op JOIN FETCH op.ativo JOIN FETCH op.tipoOperacao WHERE op.ativo.id IN :ids AND op.user.id = :userId ORDER BY op.dataOperacao ASC")
+    List<OperacaoRendaVariavel> findByAtivoIdIn(@Param("ids") List<Integer> ids, @Param("userId") Long userId);
 
 }

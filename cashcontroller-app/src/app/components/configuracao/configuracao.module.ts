@@ -14,6 +14,7 @@ import { IndicesComponent } from './indices/indices.component';
 import { CadastrarIndiceComponent } from './indices/cadastrar-indice/cadastrar-indice.component';
 import { ListarUsuarioComponent } from './usuario/listar-usuario/listar-usuario.component';
 import { FormUsuarioComponent } from './usuario/form-usuario/form-usuario.component';
+import { CadastrarUsuarioComponent } from './usuario/cadastrar-usuario/cadastrar-usuario.component';
 import { MessageService } from 'primeng/api';
 
 @NgModule({
@@ -25,6 +26,7 @@ import { MessageService } from 'primeng/api';
     CadastrarIndiceComponent,
     ListarUsuarioComponent,
     FormUsuarioComponent,
+    CadastrarUsuarioComponent,
   ],
   imports: [
     CommonModule,

@@ -135,7 +135,8 @@ public class AtivoCarteiraService {
 
 
     private List<AtivoCarteiraDTO> getCarteira() {
-        var entities = this.repository.findAll().stream().filter(item -> item.getCustodia() > 0).toList();
+        var entities = this.repository.findAllByUser(SecurityUtils.getCurrentUserId()).stream()
+                .filter(item -> item.getCustodia() > 0).toList();
         var ativosCarteiraDTO =  entities.stream().map(AtivoCarteiraMapper.INSTANCE::toListDTO).collect(Collectors.toList());
         return ativosCarteiraDTO;
     }
@@ -208,7 +209,7 @@ public class AtivoCarteiraService {
 
 
     public AtivoCarteiraDTO getAtivoCarteiraById(int id) {
-        Optional<AtivoCarteira> optionalAtivoCarteira = repository.findById(id);
+        Optional<AtivoCarteira> optionalAtivoCarteira = repository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
         if(optionalAtivoCarteira.isPresent()) {
             return AtivoCarteiraMapper.INSTANCE.toDTO(optionalAtivoCarteira.get());
         } else {
@@ -218,7 +219,7 @@ public class AtivoCarteiraService {
     }
 
     public List<PatrimonioCategoriaDTO> getPatrimonioPorCategoria() {
-        var patrimonioPorCategoria = repository.getPatrimonioPorCategoria();
+        var patrimonioPorCategoria = repository.getPatrimonioPorCategoria(SecurityUtils.getCurrentUserId());
 
         var rendaInternacional = patrimonioPorCategoria.stream().filter(PatrimonioCategoriaDTO::isInternacional)
                 .mapToDouble(PatrimonioCategoriaDTO::getValor).reduce(0.0, Double::sum);
@@ -244,12 +245,12 @@ public class AtivoCarteiraService {
     }
 
     public List<ProventosMesDTO> listarProventos() {
-        var proventos = repository.listarProventosAnoMes();
+        var proventos = repository.listarProventosAnoMes(SecurityUtils.getCurrentUserId());
         return  proventos;
     }
 
     public List<TopPagadoraProventosDTO> listarPagadoras() {
-        var topPagadoras = repository.listarTopPagadoras();
+        var topPagadoras = repository.listarTopPagadoras(SecurityUtils.getCurrentUserId());
         topPagadoras = topPagadoras.stream().map(res -> {
             var logo = ativoRepository.findUrlLogoBySigla(res.getAtivo());
             logo.ifPresent(res::setLogo);
@@ -263,7 +264,7 @@ public class AtivoCarteiraService {
        this.repository.delete(AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteira));
     }
     public AtivoCarteiraDTO atualizarAtivoCarteira(int id, AtivoCarteiraDTO ativoCarteiraAddDTO) {
-        Optional<AtivoCarteira> ativoCarteiraOptional = repository.findById(id);
+        Optional<AtivoCarteira> ativoCarteiraOptional = repository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
         if(ativoCarteiraOptional.isPresent()) {
         AtivoCarteiraMapper.INSTANCE.updateEntityFromDto(ativoCarteiraAddDTO, ativoCarteiraOptional.get());
         AtivoCarteira savedAtivoCarteira = repository.save(ativoCarteiraOptional.get());
@@ -285,7 +286,7 @@ public class AtivoCarteiraService {
             carteiraAlterada = new ArrayList<>();
         }
 
-        List<AtivoCarteira> entidades = repository.findAll().stream()
+        List<AtivoCarteira> entidades = repository.findAllByUser(SecurityUtils.getCurrentUserId()).stream()
                 .filter(ativo -> ativo.getCustodia() > 0)
                 .filter(ativo -> idSubclasse > 2
                         ? ativo.getAtivo().getSubclasseAtivo().getId() > 2

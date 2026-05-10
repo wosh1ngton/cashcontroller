@@ -21,11 +21,11 @@ public class PrejuizoCompensatorioService {
     PrejuizoAcumuladoRepository repository;
 
     public Double getPrejuizoMesAnterior(String anoMes, Integer subclasseAtivoId) {
-        return repository.findPrejuizoAcumulado(anoMes, subclasseAtivoId);
+        return repository.findPrejuizoAcumulado(anoMes, subclasseAtivoId, SecurityUtils.getCurrentUserId());
     }
 
     public PrejuizoAcumulado getPrejuizoByAnoMesCategoria(String anoMes, Integer subclasseAtivoId) {
-        return repository.findByAnoMesAndSubclasseAtivoId(anoMes, subclasseAtivoId);
+        return repository.findByAnoMesAndSubclasseAtivoId(anoMes, subclasseAtivoId, SecurityUtils.getCurrentUserId());
     }
 
     public void atualizaPrejuizoAcumulado(String anoMesAnterior, String anoMesAtual, Integer subclasseAtivoId,
@@ -33,7 +33,7 @@ public class PrejuizoCompensatorioService {
 
 
 
-        Double valorPrejuizoAcumulado = repository.findPrejuizoAcumulado(anoMesAnterior, subclasseAtivoId);
+        Double valorPrejuizoAcumulado = repository.findPrejuizoAcumulado(anoMesAnterior, subclasseAtivoId, SecurityUtils.getCurrentUserId());
         PrejuizoAcumuladoDTO prejuizoAcumuladoDTO = new PrejuizoAcumuladoDTO();
 
         setPrejuizoAcumulado(resultadoMes, prejuizoAcumuladoDTO, valorPrejuizoAcumulado, vendasMes, subclasseAtivoId);

@@ -27,14 +27,14 @@ public class AporteService {
     }
 
     public List<Aporte> listarAportes() {
-        return aporteRepository.findAll()
+        return aporteRepository.findAllByUser(SecurityUtils.getCurrentUserId())
                 .stream().sorted(Comparator.comparing(Aporte::getDataAporte)
                         .reversed())
                 .toList();
     }
 
     public void excluirAporte(Integer id) {
-        var entity = aporteRepository.findById(id);
+        var entity = aporteRepository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
         if(entity.isPresent()) {
             aporteRepository.delete(entity.get());
         } else {
@@ -45,7 +45,8 @@ public class AporteService {
 
     public AporteDTO editarAporte(AporteDTO aporteDTO) {
 
-        Aporte aporte = aporteRepository.getReferenceById(aporteDTO.getId());
+        Aporte aporte = aporteRepository.findByIdAndUser(aporteDTO.getId(), SecurityUtils.getCurrentUserId())
+                .orElseThrow(() -> new RuntimeException("aporte.nao.encontrado"));
         aporte.setDataAporte(aporteDTO.getDataAporte());
         aporte.setValorAporte(aporteDTO.getValorAporte());
         var aporteSalvo = aporteRepository.save(aporte);

@@ -102,14 +102,14 @@ public class EventoService {
 
 
 	private long getCustodiaPorData(int idAtivo, LocalDate dataCom) {
-		var custodia = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo, dataCom);
+		var custodia = this.operacaoRendaVariavelRepository.getCustodiaPorAtivo(idAtivo, dataCom, SecurityUtils.getCurrentUserId());
 		return  custodia;
 	}
-	
+
 	public EventoAddRendaVariavelDTO atualizarEvento(EventoAddRendaVariavelDTO eventoDTO) {
 		EventoRendaVariavel evento = new EventoRendaVariavel();
 		if(eventoDTO.getId() != 0) {
-			User user = eventoRepository.findById(eventoDTO.getId())
+			User user = eventoRepository.findByIdAndUser(eventoDTO.getId(), SecurityUtils.getCurrentUserId())
 					.map(EventoRendaVariavel::getUser)
 					.orElseGet(SecurityUtils::getCurrentUser);
 			evento = EventoRendaVariavelMapper.INSTANCE.toEntity(eventoDTO);
@@ -123,7 +123,7 @@ public class EventoService {
 	public EventoAddRendaFixaDTO atualizarEventoRendaFixa(EventoAddRendaFixaDTO eventoDTO) {
 		EventoRendaFixa evento = new EventoRendaFixa();
 		if(eventoDTO.getId() != 0) {
-			User user = eventoRendaFixaRepository.findById(eventoDTO.getId())
+			User user = eventoRendaFixaRepository.findByIdAndUser(eventoDTO.getId(), SecurityUtils.getCurrentUserId())
 					.map(EventoRendaFixa::getUser)
 					.orElseGet(SecurityUtils::getCurrentUser);
 			evento = EventoRendaFixaMapper.INSTANCE.toEntity(eventoDTO);
@@ -136,20 +136,20 @@ public class EventoService {
 
 	public void excluirEvento(int id) {
 
-		Optional<EventoRendaVariavel> evento = eventoRepository.findById(id);
+		Optional<EventoRendaVariavel> evento = eventoRepository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
 		evento.ifPresent(value -> this.eventoRepository.delete(value));
 
 	}
 
 	public void excluirEventoRendaFixa(int id) {
 
-		Optional<EventoRendaFixa> evento = eventoRendaFixaRepository.findById(id);
+		Optional<EventoRendaFixa> evento = eventoRendaFixaRepository.findByIdAndUser(id, SecurityUtils.getCurrentUserId());
 		evento.ifPresent(value -> this.eventoRendaFixaRepository.delete(value));
 
 	}
 
 	public List<EventoListRendaVariavelDTO> listarEventos() {
-		List<EventoRendaVariavel> eventos =  eventoRepository.findAll();
+		List<EventoRendaVariavel> eventos =  eventoRepository.findAllByUser(SecurityUtils.getCurrentUserId());
 		var eventosDTO = eventos.stream().map(EventoRendaVariavelMapper.INSTANCE::toListDTO).collect(Collectors.toList());
 		return eventosDTO;
 	}
@@ -161,7 +161,7 @@ public class EventoService {
 
 	public List<EventoListRendaVariavelDTO> listarEventosRendaVariavelPorData(Filter filter) {
 
-		List<EventoRendaVariavel> eventos = eventoRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), filter.getAtivo());
+		List<EventoRendaVariavel> eventos = eventoRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), filter.getAtivo(), SecurityUtils.getCurrentUserId());
 		return eventos.stream().map(EventoRendaVariavelMapper.INSTANCE::toListDTO)
 				.peek(eventoDto -> eventoDto.setValorTotal(
 				getValorLiquidoEvento(eventoDto)
@@ -171,12 +171,12 @@ public class EventoService {
 
 	public List<EventoListRendaFixaDTO> listarEventosRendaFixaPorData(Filter filter) {
 
-		List<EventoRendaFixa> eventos = eventoRendaFixaRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes());
+		List<EventoRendaFixa> eventos = eventoRendaFixaRepository.findEventosByData(filter.getStartDate(), filter.getEndDate(), filter.getSubclasse(), filter.getAno(), filter.getMes(), SecurityUtils.getCurrentUserId());
 
 		return eventos.stream()
 					.map(EventoRendaFixaMapper.INSTANCE::toListDTO)
 					.peek(eventoDto -> {
-						Optional<AtivoCarteiraRFDTO> ativo = operacaoRendaFixaRepository.findAtivoCarteiraRendaFixaById(eventoDto.getAtivo().getId());
+						Optional<AtivoCarteiraRFDTO> ativo = operacaoRendaFixaRepository.findAtivoCarteiraRendaFixaById(eventoDto.getAtivo().getId(), SecurityUtils.getCurrentUserId());
 						if(ativo.isPresent()) {
 							eventoDto.setValorTotal(calculaImpostoService.getValorLiquidoImpostoEvento(eventoDto.getValor(), ativo.get().getIsIsento(), ativo.get().getDataOperacao()));
 						}
@@ -187,7 +187,7 @@ public class EventoService {
 
 
 	public double getTotalProventosPorAtivo(int ativoId) {
-		return  eventoRepository.findEventosByAtivo(ativoId)
+		return  eventoRepository.findEventosByAtivo(ativoId, SecurityUtils.getCurrentUserId())
 				.stream()
 					.map(EventoRendaVariavelMapper.INSTANCE::toListDTO)
 					.mapToDouble(this::getValorLiquidoEvento)
@@ -196,12 +196,12 @@ public class EventoService {
 
 	public double getTotalProventosPorAtivoRendaFixa(int ativoId) {
 
-		var eventosDto = eventoRendaFixaRepository.findEventosByAtivo(ativoId)
+		var eventosDto = eventoRendaFixaRepository.findEventosByAtivo(ativoId, SecurityUtils.getCurrentUserId())
 				.stream().map(EventoRendaFixaMapper.INSTANCE::toListDTO).toList();
 
 		return eventosDto.stream()
 				.mapToDouble(evento -> {
-					Optional<AtivoCarteiraRFDTO> operacao = operacaoRendaFixaRepository.findAtivoCarteiraRendaFixaById(evento.getAtivo().getId());
+					Optional<AtivoCarteiraRFDTO> operacao = operacaoRendaFixaRepository.findAtivoCarteiraRendaFixaById(evento.getAtivo().getId(), SecurityUtils.getCurrentUserId());
 					evento.setValorTotal(this.calculaImpostoService.getValorLiquidoImpostoEvento(evento.getValor(), operacao.get().getIsIsento(), operacao.get().getDataOperacao()));
 					return evento.getValorTotal();
 				})
@@ -213,11 +213,12 @@ public class EventoService {
 		long t0 = System.currentTimeMillis();
 
 		long tQuery1 = System.currentTimeMillis();
-		List<EventoRendaFixa> allEvents = eventoRendaFixaRepository.findEventosByAtivoIn(ativoIds);
+		Long userId = SecurityUtils.getCurrentUserId();
+		List<EventoRendaFixa> allEvents = eventoRendaFixaRepository.findEventosByAtivoIn(ativoIds, userId);
 		log.info("[PERF]     findEventosByAtivoIn: {}ms ({} eventos)", System.currentTimeMillis() - tQuery1, allEvents.size());
 
 		long tQuery2 = System.currentTimeMillis();
-		List<AtivoCarteiraRFDTO> allParams = operacaoRendaFixaRepository.findAtivoParamsRendaFixaByAtivoIds(ativoIds);
+		List<AtivoCarteiraRFDTO> allParams = operacaoRendaFixaRepository.findAtivoParamsRendaFixaByAtivoIds(ativoIds, userId);
 		log.info("[PERF]     findAtivoParamsRendaFixaByAtivoIds: {}ms ({} params)", System.currentTimeMillis() - tQuery2, allParams.size());
 
 		Map<Integer, AtivoCarteiraRFDTO> paramsMap = allParams.stream()

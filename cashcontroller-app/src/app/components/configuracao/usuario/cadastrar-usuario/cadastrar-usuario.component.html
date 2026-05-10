@@ -1,0 +1,41 @@
+<div class="dialog-content mr-3 ml-3">
+    <form #formNovoUser="ngForm">
+
+        <div class="field grid">
+            <label for="username" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Usuário</label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <input pInputText id="username" name="username" required
+                    [(ngModel)]="username" />
+            </div>
+        </div>
+
+        <div class="field grid">
+            <label for="novaSenha" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Senha</label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-password
+                    [(ngModel)]="novaSenha" name="novaSenha" [feedback]="true" [toggleMask]="true" />
+            </div>
+        </div>
+
+        <div class="field grid">
+            <label for="conferenciaSenha" class="col-12 lg:col-2 md:col-2 sm:col-12 sm:justify-content-end">Confirmar Senha</label>
+            <div class="col-12 lg:col-10 md:col-10 sm:col-12 p-fluid">
+                <p-password
+                    [(ngModel)]="conferenciaSenha" name="conferenciaSenha" [feedback]="false" [toggleMask]="true" />
+            </div>
+        </div>
+
+        <div class="field grid" *ngIf="novaSenha && conferenciaSenha && !confereSenha()">
+            <p-message severity="info" text="As senhas não conferem" />
+        </div>
+
+        <div class="grid">
+            <div class="col-11 lg:col-3 sm:col-12 lg:col-offset-9 p-fluid">
+                <p-button label="Cadastrar" class="cor-btn" size="small"
+                    [disabled]="!formularioValido()"
+                    (onClick)="save(formNovoUser)"></p-button>
+            </div>
+        </div>
+
+    </form>
+</div>
