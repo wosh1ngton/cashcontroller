@@ -4,23 +4,28 @@ import { ConfiguracaoComponent } from './configuracao/configuracao.component';
 import { ListarAtivosComponent } from './listar-ativos/listar-ativos.component';
 import { IndicesComponent } from './indices/indices.component';
 import { ListarUsuarioComponent } from './usuario/listar-usuario/listar-usuario.component';
+import { AlocacaoMetaComponent } from './alocacao-meta/alocacao-meta.component';
 
 const routes: Routes = [
-  { 
-    path: 'configuracoes', 
-    component: ConfiguracaoComponent 
+  {
+    path: 'configuracoes',
+    component: ConfiguracaoComponent
   },
-  { 
-    path: 'listar-ativo', 
-    component: ListarAtivosComponent 
-  }, 
-  { 
-    path: 'listar-usuarios', 
+  {
+    path: 'listar-ativo',
+    component: ListarAtivosComponent
+  },
+  {
+    path: 'listar-usuarios',
     component: ListarUsuarioComponent
   },
-  { 
-    path: 'listar-indices/:id', 
+  {
+    path: 'listar-indices/:id',
     component: IndicesComponent
+  },
+  {
+    path: 'alocacao-meta',
+    component: AlocacaoMetaComponent
   },
 ];
 

@@ -15,6 +15,7 @@ import { CadastrarIndiceComponent } from './indices/cadastrar-indice/cadastrar-i
 import { ListarUsuarioComponent } from './usuario/listar-usuario/listar-usuario.component';
 import { FormUsuarioComponent } from './usuario/form-usuario/form-usuario.component';
 import { CadastrarUsuarioComponent } from './usuario/cadastrar-usuario/cadastrar-usuario.component';
+import { AlocacaoMetaComponent } from './alocacao-meta/alocacao-meta.component';
 import { MessageService } from 'primeng/api';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { MessageService } from 'primeng/api';
     ListarUsuarioComponent,
     FormUsuarioComponent,
     CadastrarUsuarioComponent,
+    AlocacaoMetaComponent,
   ],
   imports: [
     CommonModule,

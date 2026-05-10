@@ -30,7 +30,12 @@ export class ConfiguracaoComponent implements OnInit {
         label: 'Usuários',
         icon: 'pi pi-user',
         routerLink: 'listar-usuarios',
-       
+
+      },
+      {
+        label: 'Alocação Alvo',
+        icon: 'pi pi-percentage',
+        routerLink: 'alocacao-meta',
       },
     ];
     

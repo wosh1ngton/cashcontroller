@@ -3,6 +3,7 @@ package br.com.cashcontroller.service;
 import br.com.cashcontroller.dto.*;
 import br.com.cashcontroller.entity.Ativo;
 import br.com.cashcontroller.entity.AtivoCarteira;
+import br.com.cashcontroller.entity.enums.CategoriaAlocacao;
 import br.com.cashcontroller.external.dto.stock.BrapiDTO;
 import br.com.cashcontroller.external.dto.stock.StocksDTO;
 import br.com.cashcontroller.external.service.RendaVariavelService;
@@ -50,6 +51,9 @@ public class AtivoCarteiraService {
 
     @Autowired
     TirService tirService;
+
+    @Autowired
+    AlocacaoMetaService alocacaoMetaService;
 
     public AtivoCarteiraDTO cadastrarAtivoCarteira(AtivoCarteiraDTO ativoCarteiraDTO) {
         var entity = AtivoCarteiraMapper.INSTANCE.toEntity(ativoCarteiraDTO);
@@ -233,11 +237,13 @@ public class AtivoCarteiraService {
         var fiis = patrimonioPorCategoria.stream().filter(val -> val.getSubClasseId() == 1 && !val.isInternacional())
                 .mapToDouble(PatrimonioCategoriaDTO::getValor).sum();
 
+        var metas = alocacaoMetaService.obterPercentuaisPorCategoria();
+
         List<PatrimonioCategoriaDTO> lista = Arrays.asList(
-                new PatrimonioCategoriaDTO(0, "Ações", 30.0, acoes),
-                new PatrimonioCategoriaDTO(0, "Fiis", 30.0, fiis),
-                new PatrimonioCategoriaDTO(0, "Renda Fixa", 30.0, rendaFixa),
-                new PatrimonioCategoriaDTO(0, "Renda Internacional", 10.0, rendaInternacional)
+                new PatrimonioCategoriaDTO(0, CategoriaAlocacao.ACOES.getDescricao(), metas.get(CategoriaAlocacao.ACOES), acoes),
+                new PatrimonioCategoriaDTO(0, CategoriaAlocacao.FIIS.getDescricao(), metas.get(CategoriaAlocacao.FIIS), fiis),
+                new PatrimonioCategoriaDTO(0, CategoriaAlocacao.RENDA_FIXA.getDescricao(), metas.get(CategoriaAlocacao.RENDA_FIXA), rendaFixa),
+                new PatrimonioCategoriaDTO(0, CategoriaAlocacao.RENDA_INTERNACIONAL.getDescricao(), metas.get(CategoriaAlocacao.RENDA_INTERNACIONAL), rendaInternacional)
         );
 
         return lista;
