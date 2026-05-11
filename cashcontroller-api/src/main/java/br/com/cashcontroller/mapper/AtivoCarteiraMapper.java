@@ -5,7 +5,6 @@ import br.com.cashcontroller.dto.AtivoCarteiraAddDTO;
 import br.com.cashcontroller.dto.AtivoCarteiraDTO;
 import br.com.cashcontroller.dto.AtivoCarteiraRFDTO;
 import br.com.cashcontroller.entity.AtivoCarteira;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -13,11 +12,12 @@ import org.mapstruct.factory.Mappers;
 public interface AtivoCarteiraMapper  {
 
     AtivoCarteiraMapper INSTANCE = Mappers.getMapper(AtivoCarteiraMapper.class);
-
+    @Mapping(target = "ativo.user", ignore = true)
     @Mapping(target = "ativo.parametroRendaFixa.ativo", ignore = true)
     @Mapping(target = "ativo.subclasseAtivo", ignore = true)
     AtivoCarteiraDTO toDTO(AtivoCarteira ativoCarteira);
 
+    @Mapping(target = "ativo.user", ignore = true)
     @Mapping(target = "ativo.parametroRendaFixa.ativo", ignore = true)
     AtivoCarteiraDTO toListDTO(AtivoCarteira ativoCarteira);
 
